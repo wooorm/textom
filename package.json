@@ -21,7 +21,7 @@
     "url": "https://github.com/wooorm/textom.git"
   },
   "scripts": {
-    "test": "make lint\nmake cover"
+    "test": "make test"
   },
   "files": [
     "index.js"

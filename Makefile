@@ -1,5 +1,9 @@
+make: lint cover
 
 test:
+	@./node_modules/.bin/mocha --reporter spec spec/*.spec.js
+
+watch:
 	@./node_modules/.bin/mocha --reporter min --watch spec/**/*
 
 lint:
@@ -8,4 +12,4 @@ lint:
 cover:
 	@./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- -- -u exports -R spec spec/**/*
 
-.PHONY: lint cover
+.PHONY: make test watch lint cover
