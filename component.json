@@ -1,0 +1,8 @@
+{
+  "name": "TextOM",
+  "repo": "wooorm/textom.git",
+  "version": "0.0.1",
+  "description": "Object model for natural languages",
+  "keywords": ["natural", "language", "object", "model"],
+  "scripts": ["index.js"]
+}
