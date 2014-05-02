@@ -1,10 +1,8 @@
 # TextOM [![Build Status](https://travis-ci.org/wooorm/textom.png)](https://travis-ci.org/wooorm/textom)
 
-  **TextOM** provides an object model for natural language in JavaScript. No dependencies. NodeJS, and the browser. Lots of tests (180+), including 370+ assertions. 100% coverage.
+**TextOM** provides an object model for natural language in JavaScript. No dependencies. NodeJS, and the browser. Lots of tests (180+), including 370+ assertions. 100% coverage.
 
-[![browser support](https://ci.testling.com/wooorm/textom.png)](https://ci.testling.com/wooorm/textom)
-
-  Note: This project is **not** a parser for natural language, its rather the core that lies underneath such a parser. Its like a simplified and modified version of the DOM, without any parsing capabilities.
+Note: This project is **not** a parser for natural language, its rather the core that lies underneath such a parser. Its like a simplified and modified version of the DOM, without any parsing capabilities.
 
 ## Installation
 
