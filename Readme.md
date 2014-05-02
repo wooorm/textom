@@ -20,14 +20,6 @@ cd textom
 npm install
 ```
 
-### With component
-
-```sh
-component install wooorm/textom
-```
-
-[Learn more about component](https://github.com/component/component).
-
 ## Usage
 
 ````js
