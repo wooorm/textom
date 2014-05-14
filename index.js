@@ -140,8 +140,10 @@
                 throw new Error('No item was provided to insert');
             }
 
-            if (parent.hierarchy + 1 !== appendee.hierarchy) {
-                throw new Error('HierarchyError: A node was inserted in a wrong place');
+            if ('hierarchy' in appendee && 'hierarchy' in parent) {
+                if (parent.hierarchy + 1 !== appendee.hierarchy) {
+                    throw new Error('HierarchyError: A node was inserted in a wrong place');
+                }
             }
 
             // Insert after...
@@ -428,7 +430,6 @@
      * @static
      */
     Node.prototype.type = 0;
-    Node.prototype.hierarchy = 0;
 
     /**
      * Inherit the contexts' (Super) prototype into a given Constructor. E.g.,
