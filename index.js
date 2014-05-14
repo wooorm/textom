@@ -66,7 +66,7 @@
             // Set the next node of item to the appendee.
             item.next = appendee;
 
-            // If the parent has no last node or if item is the parent last 
+            // If the parent has no last node or if item is the parent last
             // node, link the parents last node to the appendee.
             if (item === parent.tail || !parent.tail) {
                 parent.tail = appendee;
@@ -81,7 +81,7 @@
         }
 
         /**
-         * Inserts the given `prependee` before the given `item` (which should 
+         * Inserts the given `prependee` before the given `item` (which should
          * always be its parents head).
          *
          * @param {Object} item
@@ -105,11 +105,11 @@
             // Set the previous node of item to the prependee.
             item.prev = prependee;
 
-            // If item is the first node in the parent parent, link the parents 
+            // If item is the first node in the parent parent, link the parents
             // first node to the prependee.
             parent.head = prependee;
 
-            // If the the parent parent has no last node, link the parents last 
+            // If the the parent parent has no last node, link the parents last
             // node to item.
             if (!parent.tail) {
                 parent.tail = item;
@@ -122,7 +122,7 @@
         }
 
         /**
-         * Inserts the given `appendee` after (when given), the `item`, and 
+         * Inserts the given `appendee` after (when given), the `item`, and
          * otherwise as the first item of the given parents.
          *
          * @param {Object} parent
@@ -140,6 +140,10 @@
                 throw new Error('No item was provided to insert');
             }
 
+            if (parent.hierarchy + 1 !== appendee.hierarchy) {
+                throw new Error('HierarchyError: A node was inserted in a wrong place');
+            }
+
             // Insert after...
             if (item) {
 
@@ -154,7 +158,7 @@
                 }
 
                 /* istanbul ignore if: Wrong-useage */
-                if (typeof item.remove !== 'function') {
+                if (typeof appendee.remove !== 'function') {
                     throw new Error('The operated on node did not have a `remove` method');
                 }
 
@@ -175,7 +179,7 @@
             // Set the prependees parent to reference parent.
             appendee.parent = parent;
 
-            // Set parent's first node to the prependee and return the 
+            // Set parent's first node to the prependee and return the
             // appendee.
             parent.head = appendee;
             parent[0] = appendee;
@@ -185,7 +189,7 @@
         }
 
         /**
-         * Detach a node from its (when applicable) parent, links its (when 
+         * Detach a node from its (when applicable) parent, links its (when
          * existing) previous and next items to eachother.
          *
          * @param {Object} node
@@ -209,31 +213,31 @@
                 return node;
             }
 
-            // If node is the last item in the parent, link the parents last 
+            // If node is the last item in the parent, link the parents last
             // item to the previous item.
             if (parent.tail === node) {
                 parent.tail = prev;
             }
 
-            // If node is the first item in the parent, link the parents first 
+            // If node is the first item in the parent, link the parents first
             // item to the next item.
             if (parent.head === node) {
                 parent.head = next;
             }
 
-            // If both the last and first items in the parent are the same, 
+            // If both the last and first items in the parent are the same,
             // remove the link to the last item.
             if (parent.tail === parent.head) {
                 parent.tail = null;
             }
 
-            // If a previous item exists, link its next item to nodes next 
+            // If a previous item exists, link its next item to nodes next
             // item.
             if (prev) {
                 prev.next = next;
             }
 
-            // If a next item exists, link its previous item to nodes previous 
+            // If a next item exists, link its previous item to nodes previous
             // item.
             if (next) {
                 next.prev = prev;
@@ -245,8 +249,8 @@
                 _arraySplice.call(parent, indice, 1);
             }
 
-            // Remove links from node to both the next and previous items, and to the 
-            // parent parent.
+            // Remove links from node to both the next and previous items, and
+            // to the parent parent.
             node.prev = node.next = node.parent = null;
 
             // Return node.
@@ -281,7 +285,7 @@
                     Constructor[key] = Super[key];
                 }
             }
-    
+
             prototype_.constructor = Constructor;
             Constructor.prototype = prototype_;
         }
@@ -314,7 +318,7 @@
                 if (!node.parent) {
                     return node;
                 }
-        
+
                 node = node.parent;
             }
         }
@@ -399,7 +403,7 @@
 
 
     /**
-     * Expose `TextOM`. Defined below, and used to instantiate a new 
+     * Expose `TextOM`. Defined below, and used to instantiate a new
      * `RootNode`.
      */
     exports = module.exports = TextOM;
@@ -424,6 +428,7 @@
      * @static
      */
     Node.prototype.type = 0;
+    Node.prototype.hierarchy = 0;
 
     /**
      * Inherit the contexts' (Super) prototype into a given Constructor. E.g.,
@@ -458,7 +463,7 @@
     prototype.head = null;
 
     /**
-     * The last child of a parent (unless the last child is also the first 
+     * The last child of a parent (unless the last child is also the first
      * child), null otherwise.
      *
      * @api public
@@ -499,7 +504,7 @@
     };
 
     /**
-     * Return a child at given position in parent, and null otherwise. (like 
+     * Return a child at given position in parent, and null otherwise. (like
      * NodeList#item).
      *
      * @param {?number} [index=0] - the position to find a child at.
@@ -512,15 +517,15 @@
             throw new Error('Parent#item expected its given argument to be ' +
                 'either a number, null, or undefined.');
         }
-        
+
         return this[index || 0] || null;
     };
 
     /**
      * Return the result of calling `toString` on each of `Parent`s children.
      *
-     * NOTE The `toString` method is intentionally generic; It can be 
-     * transferred to other kinds of (linked-list-like) objects for use as a 
+     * NOTE The `toString` method is intentionally generic; It can be
+     * transferred to other kinds of (linked-list-like) objects for use as a
      * method.
      *
      * @return {String}
@@ -566,9 +571,9 @@
      * @readonly
      */
     prototype.parent = null;
-    
+
     /**
-     * The next node, null otherwise (when `child` is the parents last child 
+     * The next node, null otherwise (when `child` is the parents last child
      * or detached).
      *
      * @api public
@@ -576,9 +581,9 @@
      * @readonly
      */
     prototype.next = null;
-    
+
     /**
-     * The previous node, null otherwise (when `child` is the parents first 
+     * The previous node, null otherwise (when `child` is the parents first
      * child or detached).
      *
      * @api public
@@ -610,7 +615,7 @@
     };
 
     /**
-     * Remove the operated on child, and insert a given child at its previous 
+     * Remove the operated on child, and insert a given child at its previous
      * position in the parent.
      *
      * @param {Child} child - the child to replace the operated on child with.
@@ -619,9 +624,9 @@
      */
     prototype.replace = function (child) {
         var result = append(this.parent, this, child);
-        
+
         remove(this);
-        
+
         return result;
     };
 
@@ -692,7 +697,7 @@
     };
 
     /**
-     * (Re)sets and returns the internal value of a Text with the stringified 
+     * (Re)sets and returns the internal value of a Text with the stringified
      * version of the given value.
      *
      * @param {?String} [value=''] - the value to set
@@ -703,9 +708,9 @@
         /*jshint eqnull:true, -W093 */
         return this._value = (value == null) ? '' : '' + value;
     };
-    
+
     /**
-     * Split the Text into two, dividing the internal value from 0–position, 
+     * Split the Text into two, dividing the internal value from 0–position,
      * and position–length (both not including the character at `position`).
      *
      * @param {?number} [position=0] - the position to split at.
@@ -716,7 +721,7 @@
         var self = this,
             value = self._value,
             cloneNode;
-        
+
         /*jshint eqnull:true*/
         if (position == null || position !== position || position === Infinity ||
             position === -Infinity) {
@@ -726,13 +731,13 @@
         } else if (position < 0) {
             position = Math.abs((value.length + position) % value.length);
         }
-        
+
         // This throws if we're not attached, thus preventing substringing.
         cloneNode = append(self.parent, self.prev, new self.constructor());
-        
+
         self.fromString(value.slice(position));
         cloneNode.fromString(value.slice(0, position));
-        
+
         return cloneNode;
     };
 
@@ -760,6 +765,7 @@
      * @static
      */
     RootNode.prototype.type = 1;
+    RootNode.prototype.hierarchy = 1;
 
     /**
      * Inherit from `Parent.prototype`.
@@ -768,7 +774,7 @@
 
 
     /**
-     * Expose ParagraphNode. Constructs a new ParagraphNode (inheriting from 
+     * Expose ParagraphNode. Constructs a new ParagraphNode (inheriting from
      * both Parent and Child);
      *
      * @api public
@@ -786,6 +792,7 @@
      * @static
      */
     ParagraphNode.prototype.type = 2;
+    ParagraphNode.prototype.hierarchy = 2;
 
     /**
      * Inherit from `Parent.prototype` and `Child.prototype`.
@@ -794,7 +801,7 @@
 
 
     /**
-     * Expose SentenceNode. Constructs a new SentenceNode (inheriting from 
+     * Expose SentenceNode. Constructs a new SentenceNode (inheriting from
      * both Parent and Child);
      *
      * @api public
@@ -812,6 +819,7 @@
      * @static
      */
     SentenceNode.prototype.type = 3;
+    SentenceNode.prototype.hierarchy = 3;
 
     /**
      * Inherit from `Parent.prototype` and `Child.prototype`.
@@ -833,13 +841,14 @@
      * @static
      */
     WordNode.prototype.type = 4;
+    WordNode.prototype.hierarchy = 4;
 
     /**
      * Inherit from `Text.prototype`.
      */
     Text.isImplementedBy(WordNode);
-    
-    
+
+
     /**
      * Expose WhiteSpaceNode.
      */
@@ -855,13 +864,14 @@
      * @static
      */
     WhiteSpaceNode.prototype.type = 5;
+    WhiteSpaceNode.prototype.hierarchy = 4;
 
     /**
      * Inherit from `Text.prototype`.
      */
     Text.isImplementedBy(WhiteSpaceNode);
-    
-    
+
+
     /**
      * Expose PunctuationNode.
      */
@@ -877,13 +887,14 @@
      * @static
      */
     PunctuationNode.prototype.type = 6;
+    PunctuationNode.prototype.hierarchy = 4;
 
     /**
      * Inherit from `Text.prototype`.
      */
     Text.isImplementedBy(PunctuationNode);
-    
-    
+
+
     /**
      * Expose Range.
      */
@@ -926,7 +937,7 @@
      * @readonly
      */
     prototype.endOffset = null;
-    
+
     // prototype.commonAncestorContainer = null;
 
     /**
@@ -959,13 +970,13 @@
             throw new Error('An `offset` was given but it was either NaN, or not a number');
         } else if (offset < 0) {
             throw new Error('An `offset` was given, but it was a negative number');
-        // If offset is greater than node's length, throw an "IndexSizeError" 
+        // If offset is greater than node's length, throw an "IndexSizeError"
         // exception.
         } else if ('length' in node && offset > length) {
             throw new Error('This should be an `IndexSizeError`');
         }
 
-        // If boundaryPoint is after the range's end, set range's end to 
+        // If boundaryPoint is after the range's end, set range's end to
         // boundaryPoint.
         if (endContainer) {
 
@@ -985,7 +996,7 @@
                         return RANGE_BREAK;
                     }
                 });
-                
+
                 if (!switchContainers) {
                     walkBackwards(node, function (node_) {
                         if (node_ === endContainer) {
@@ -995,7 +1006,7 @@
                     });
                 }
             }
-            
+
             if (switchContainers) {
                 self.endContainer = node;
                 self.endOffset = offset;
@@ -1003,7 +1014,7 @@
                 offset = endOffset;
             }
         }
-        
+
         // Set range's start to boundaryPoint.
         self.startContainer = node;
         self.startOffset = offset;
@@ -1025,7 +1036,7 @@
         if (!node.parent) {
             throw new Error('A `node` was given to `setEnd`, but it was not attached');
         }
-        
+
 
         var self = this,
             length = node.length,
@@ -1040,16 +1051,16 @@
             throw new Error('An `offset` was given but it was either NaN, or not a number');
         } else if (offset < 0) {
             throw new Error('An `offset` was given, but it was a negative number');
-        // If offset is greater than node's length, throw an "IndexSizeError" 
+        // If offset is greater than node's length, throw an "IndexSizeError"
         // exception.
         } else if ('length' in node && offset > length) {
             throw new Error('This should be an `IndexSizeError`');
         }
-        
-        // If boundaryPoint is before the range's start, set range's start to 
+
+        // If boundaryPoint is before the range's start, set range's start to
         // boundaryPoint.
         if (startContainer) {
-            
+
             if (findRoot(startContainer) !== findRoot(node)) {
                 throw new Error('A node was given that does not share the same root as the current `startContainer`');
             }
@@ -1099,7 +1110,7 @@
     };
 
     /**
-     * Return the result of calling `toString` on each of Text node inside 
+     * Return the result of calling `toString` on each of Text node inside
      * `range`, substringing when necessary;
      *
      * @return {String}
@@ -1120,12 +1131,12 @@
         if (startContainer === endContainer && startOffset === endOffset) {
             return value;
         }
-        
+
         if (findRoot(startContainer) !== findRoot(endContainer)) {
             return value;
         }
-        
-        // If start node equals end node, and it is a Text node, return the 
+
+        // If start node equals end node, and it is a Text node, return the
         // substring of that Text node's data beginning at start offset and
         // ending at end offset.
         if (startContainer === endContainer) {
@@ -1144,7 +1155,7 @@
             value += arraySlice.call(startContainer, startOffset);
         }
 
-        // Append to value the concatenation, in tree order, of the data of all 
+        // Append to value the concatenation, in tree order, of the data of all
         // Text nodes that are contained in the context object.
         walkForwards(startContainer, function (node) {
             if (node === endContainer) {
@@ -1167,7 +1178,7 @@
 
 
     /**
-     * Define `TextOM`. Exported above, and used to instantiate a new 
+     * Define `TextOM`. Exported above, and used to instantiate a new
      * `RootNode`.
      *
      * @api public
@@ -1176,9 +1187,9 @@
     function TextOM() {
         return new RootNode();
     }
-    
+
     var NodeProtype = Node.prototype;
-    
+
     /**
      * Export all node types to `exports` (i.e. `TextOM`), and `Node#`.
      */
@@ -1188,7 +1199,7 @@
     exports.WORD_NODE = NodeProtype.WORD_NODE = WordNode.prototype.type;
     exports.PUNCTUATION_NODE = NodeProtype.PUNCTUATION_NODE = PunctuationNode.prototype.type;
     exports.WHITE_SPACE_NODE = NodeProtype.WHITE_SPACE_NODE = WhiteSpaceNode.prototype.type;
-    
+
     /**
      * Export all `Node`s and `Range` to `exports` (i.e. `TextOM`).
      */
