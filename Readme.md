@@ -349,6 +349,8 @@ module textom
     Child prepend(Child child);
     Child append(Child child);
 
+    [NewObject] Parent split(unsigned long position);
+    
     string toString();
   };
   Parent implements Node;
