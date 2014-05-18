@@ -336,8 +336,6 @@ module textom
     const unsigned long WORD_NODE = 4
     const unsigned long PUNCTUATION_NODE = 5
     const unsigned long WHITE_SPACE_NODE = 6
-
-    readonly attribute unsigned long type;
   };
 
   [ArrayClass]
