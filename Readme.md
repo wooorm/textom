@@ -376,27 +376,31 @@ module textom
   interface Text {
     string toString();
     string fromString(String value);
-    [NewObject] Child split(unsigned long position);
+    [NewObject] Text split(unsigned long position);
   };
   Text implements Child;
 
   interface RootNode {
     readonly attribute unsigned long type = 1;
+    readonly attribute unsigned long hierarchy = 1;
   };
   RootNode implements Parent;
 
   interface ParagraphNode {
     readonly attribute unsigned long type = 2;
+    readonly attribute unsigned long hierarchy = 2;
   };
   ParagraphNode implements Element;
 
   interface SentenceNode {
     readonly attribute unsigned long type = 3;
+    readonly attribute unsigned long hierarchy = 3;
   };
   SentenceNode implements Element;
 
   interface WordNode {
     readonly attribute unsigned long type = 4;
+    readonly attribute unsigned long hierarchy = 4;
   };
   WordNode implements Text;
 
@@ -407,6 +411,7 @@ module textom
 
   interface PunctuationNode {
     readonly attribute unsigned long type = 6;
+    readonly attribute unsigned long hierarchy = 4;
   };
   PunctuationNode implements Text;
 
