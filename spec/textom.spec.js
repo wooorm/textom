@@ -50,12 +50,6 @@ describe('TextOM.Node', function () {
     });
 });
 
-describe('TextOM.Node#type', function () {
-    it('should be 0', function () {
-        assert(nodePrototype.type === 0);
-    });
-});
-
 describe('TextOM.Node#ROOT_NODE', function () {
     it('should be equal to the `type` property on an instance of `RootNode`', function () {
         assert(TextOM.Node.prototype.ROOT_NODE === (new TextOM.RootNode()).type);
@@ -164,16 +158,16 @@ describe('TextOM.Parent#length', function () {
 describe('TextOM.Parent#prepend(childNode)', function () {
     it('should throw when falsey values are provided', function () {
         var parent = new Parent();
-        assert.throws(function () { parent.prepend(); });
-        assert.throws(function () { parent.prepend(null); });
-        assert.throws(function () { parent.prepend(undefined); });
-        assert.throws(function () { parent.prepend(false); });
+        assert.throws(function () { parent.prepend(); }, /undefined/);
+        assert.throws(function () { parent.prepend(null); }, /null/);
+        assert.throws(function () { parent.prepend(undefined); }, /undefined/);
+        assert.throws(function () { parent.prepend(false); }, /false/);
     });
 
     it('should throw when non-removable nodes are prepended (e.g., not inheriting from TextOM.Child)', function () {
         var parent = new Parent();
-        assert.throws(function () { parent.prepend(new Node()); });
-        assert.throws(function () { parent.prepend({}); });
+        assert.throws(function () { parent.prepend(new Node()); }, /remove/);
+        assert.throws(function () { parent.prepend({}); }, /remove/);
     });
 
     it('should call the `remove` method on the prependee', function () {
@@ -312,16 +306,16 @@ describe('TextOM.Parent#prepend(childNode)', function () {
 describe('TextOM.Parent#append(childNode)', function () {
     it('should throw when falsey values are provided', function () {
         var parent = new Parent();
-        assert.throws(function () { parent.append(); });
-        assert.throws(function () { parent.append(null); });
-        assert.throws(function () { parent.append(undefined); });
-        assert.throws(function () { parent.append(false); });
+        assert.throws(function () { parent.append(); }, /undefined/);
+        assert.throws(function () { parent.append(null); }, /null/);
+        assert.throws(function () { parent.append(undefined); }, /undefined/);
+        assert.throws(function () { parent.append(false); }, /false/);
     });
 
     it('should throw when non-removable nodes are appended (e.g., not inheriting from TextOM.Child)', function () {
         var parent = new Parent();
-        assert.throws(function () { parent.append(new Node()); });
-        assert.throws(function () { parent.append({}); });
+        assert.throws(function () { parent.append(new Node()); }, /remove/);
+        assert.throws(function () { parent.append({}); }, /remove/);
     });
 
     it('should call the `remove` method on the appendee', function () {
@@ -446,9 +440,9 @@ describe('TextOM.Parent#append(childNode)', function () {
 describe('TextOM.Parent#item(index?)', function () {
     it('should throw on non-nully, non-number (including NaN) values', function () {
         var parent = new Parent();
-        assert.throws(function () { parent.item('string'); });
-        assert.throws(function () { parent.item(0/0); });
-        assert.throws(function () { parent.item(true); });
+        assert.throws(function () { parent.item('string'); }, /string/);
+        assert.throws(function () { parent.item(0/0); }, /NaN/);
+        assert.throws(function () { parent.item(true); }, /true/);
     });
 
     it('should return the first child when the given index is either null, undefined, or not given', function () {
@@ -470,6 +464,139 @@ describe('TextOM.Parent#item(index?)', function () {
         assert(parent.item(3) === null);
     });
 
+});
+
+describe('TextOM.Parent#split(position)', function () {
+
+    it('should throw when the operated on item is not attached', function () {
+        var parent = new Parent();
+
+        assert.throws(function () { parent.split(); }, /undefined/);
+    });
+
+    it('should throw when a position was given, not of type number', function () {
+        var parent = new Parent(),
+            element = parent.append(new Element());
+
+        assert.throws(function () { element.split('failure'); }, /failure/);
+    });
+
+    it('should return a new instance() of the operated on item', function () {
+        var parent = new Parent(),
+            element = parent.append(new Element(''));
+
+        assert(element.split() instanceof element.constructor);
+    });
+
+    it('should treat a given negative position, as an position from the end (e.g., when the internal value of element is `alfred`, treat `-1` as `5`)', function () {
+        var parent = new Parent(),
+            element = parent.append(new Element());
+
+        element.append(new Text('alfred'));
+        element.append(new Text('bertrand'));
+
+        element.split(-1);
+
+        assert(element.toString() === 'bertrand');
+        assert(element.prev.toString() === 'alfred');
+    });
+
+    it('should NOT throw when NaN, or -Infinity are given (but treat it as `0`)', function () {
+        var parent = new Parent(),
+            element = parent.append(new Element());
+
+        element.append(new Text('alfred'));
+        element.append(new Text('bertrand'));
+
+        element.split(NaN);
+
+        assert(element.toString() === 'alfredbertrand');
+        assert(element.prev.toString() === '');
+
+        element.split(-Infinity);
+
+        assert(element.toString() === 'alfredbertrand');
+        assert(element.prev.toString() === '');
+    });
+
+    it('should NOT throw when Infinity is given (but treat it as `this.length`)', function () {
+        var parent = new Parent(),
+            element = parent.append(new Element());
+
+        element.append(new Text('alfred'));
+        element.append(new Text('bertrand'));
+
+        element.split(Infinity);
+
+        assert(element.toString() === '');
+        assert(element.prev.toString() === 'alfredbertrand');
+    });
+
+    it('should NOT throw when a position greater than the length of the element is given (but treat it as `this.length`)', function () {
+        var parent = new Parent(),
+            element = parent.append(new Element());
+
+        element.append(new Text('alfred'));
+        element.append(new Text('bertrand'));
+
+        element.split(3);
+
+        assert(element.toString() === '');
+        assert(element.prev.toString() === 'alfredbertrand');
+    });
+
+    it('should NOT throw when a nully position is given, but treat it as `0`', function () {
+        var parent = new Parent(),
+            element = parent.append(new Element());
+
+        element.append(new Text('alfred'));
+        element.append(new Text('bertrand'));
+
+        element.split();
+        assert(element.toString() === 'alfredbertrand');
+        assert(element.prev.toString() === '');
+
+        element.split(null);
+        assert(element.toString() === 'alfredbertrand');
+        assert(element.prev.toString() === '');
+
+        element.split(undefined);
+        assert(element.toString() === 'alfredbertrand');
+        assert(element.prev.toString() === '');
+    });
+
+    it('should remove the children of the current items value, from `0` to the given position', function () {
+        var parent = new Parent(),
+            element = parent.append(new Element());
+
+        element.append(new Text('alfred'));
+        element.append(new Text('bertrand'));
+
+        element.split(1);
+
+        assert(element.toString() === 'bertrand');
+    });
+
+    it('should prepend a new instance() of the operated on item', function () {
+        var parent = new Parent(),
+            element = parent.append(new Element());
+
+        element.split();
+
+        assert(element.prev instanceof element.constructor);
+    });
+
+    it('should move the part of the current items value, from `0` to the given position, to prepended item', function () {
+        var parent = new Parent(),
+            element = parent.append(new Element());
+
+        element.append(new Text('alfred'));
+        element.append(new Text('bertrand'));
+
+        element.split(1);
+
+        assert(element.prev.toString() === 'alfred');
+    });
 });
 
 describe('TextOM.Parent#toString', function () {
@@ -508,7 +635,7 @@ describe('TextOM.Child', function () {
     });
 });
 
-describe('TextOM.child#parent', function () {
+describe('TextOM.Child#parent', function () {
     it('should be `null` when not attached', function () {
         assert(childPrototype.parent === null);
         assert((new Child()).parent === null);
@@ -524,7 +651,7 @@ describe('TextOM.child#parent', function () {
     });
 });
 
-describe('TextOM.child#prev', function () {
+describe('TextOM.Child#prev', function () {
     it('should be `null` when not attached', function () {
         assert(childPrototype.prev === null);
         assert((new Child()).prev === null);
@@ -551,7 +678,7 @@ describe('TextOM.child#prev', function () {
     });
 });
 
-describe('TextOM.child#next', function () {
+describe('TextOM.Child#next', function () {
     it('should be `null` when not attached', function () {
         assert(childPrototype.next === null);
         assert((new Child()).next === null);
@@ -580,23 +707,23 @@ describe('TextOM.child#next', function () {
 
 describe('TextOM.Child#before(childNode)', function () {
     it('should throw when not attached', function () {
-        assert.throws(function () { (new Child()).before(new Child()); });
+        assert.throws(function () { (new Child()).before(new Child()); }, /Illegal invocation/);
     });
 
     it('should throw when falsey values are provided', function () {
         var child = (new Parent()).append(new Child());
 
-        assert.throws(function () { child.before(); });
-        assert.throws(function () { child.before(null); });
-        assert.throws(function () { child.before(undefined); });
-        assert.throws(function () { child.before(false); });
+        assert.throws(function () { child.before(); }, /undefined/);
+        assert.throws(function () { child.before(null); }, /null/);
+        assert.throws(function () { child.before(undefined); }, /undefined/);
+        assert.throws(function () { child.before(false); }, /false/);
     });
 
     it('should throw when non-removable nodes are prepended (e.g., not inheriting from TextOM.Child)', function () {
         var child = (new Parent()).append(new Child());
 
-        assert.throws(function () { child.before(new Node()); });
-        assert.throws(function () { child.before({}); });
+        assert.throws(function () { child.before(new Node()); }, /remove/);
+        assert.throws(function () { child.before({}); }, /remove/);
     });
 
     it('should call the `remove` method on the prependee', function () {
@@ -726,23 +853,23 @@ describe('TextOM.Child#before(childNode)', function () {
 
 describe('TextOM.Child#after(childNode)', function () {
     it('should throw when not attached', function () {
-        assert.throws(function () { (new Child()).after(new Child()); });
+        assert.throws(function () { (new Child()).after(new Child()); }, /Illegal invocation/);
     });
 
     it('should throw when falsey values are provided', function () {
         var child = (new Parent()).append(new Child());
 
-        assert.throws(function () { child.after(); });
-        assert.throws(function () { child.after(null); });
-        assert.throws(function () { child.after(undefined); });
-        assert.throws(function () { child.after(false); });
+        assert.throws(function () { child.after(); }, /undefined/);
+        assert.throws(function () { child.after(null); }, /null/);
+        assert.throws(function () { child.after(undefined); }, /undefined/);
+        assert.throws(function () { child.after(false); }, /false/);
     });
 
     it('should throw when non-removable nodes are appended (e.g., not inheriting from TextOM.Child)', function () {
         var child = (new Parent()).append(new Child());
 
-        assert.throws(function () { child.after(new Node()); });
-        assert.throws(function () { child.after({}); });
+        assert.throws(function () { child.after(new Node()); }, /remove/);
+        assert.throws(function () { child.after({}); }, /remove/);
     });
 
     it('should call the `remove` method on the appendee', function () {
@@ -1016,23 +1143,23 @@ describe('TextOM.Child#remove()', function () {
 
 describe('TextOM.Child#replace(childNode)', function () {
     it('should throw when not attached', function () {
-        assert.throws(function () { (new Child()).replace(new Child()); });
+        assert.throws(function () { (new Child()).replace(new Child()); }, /Illegal invocation/);
     });
 
     it('should throw when falsey values are provided', function () {
         var child = (new Parent()).append(new Child());
 
-        assert.throws(function () { child.replace(); });
-        assert.throws(function () { child.replace(null); });
-        assert.throws(function () { child.replace(undefined); });
-        assert.throws(function () { child.replace(false); });
+        assert.throws(function () { child.replace(); }, /undefined/);
+        assert.throws(function () { child.replace(null); }, /null/);
+        assert.throws(function () { child.replace(undefined); }, /undefined/);
+        assert.throws(function () { child.replace(false); }, /false/);
     });
 
     it('should throw when non-removable nodes are given (e.g., not inheriting from TextOM.Child)', function () {
         var child = (new Parent()).append(new Child());
 
-        assert.throws(function () { child.replace(new Node()); });
-        assert.throws(function () { child.replace({}); });
+        assert.throws(function () { child.replace(new Node()); }, /remove/);
+        assert.throws(function () { child.replace({}); }, /remove/);
     });
 
     it('should call the `remove` method on the replacee', function () {
@@ -1188,9 +1315,9 @@ describe('TextOM.Element()', function () {
     });
 
     // The following tests are a bit weird, because:
-    // - First, we need to ducktype because inheritance of both Child and 
+    // - First, we need to ducktype because inheritance of both Child and
     //   Parent is impossible not work.
-    // - Second, istanbul overwrites methods on prototypes to detect if their 
+    // - Second, istanbul overwrites methods on prototypes to detect if their
     //   called. Thus, what used to be the same method, is now overwritten.
     it('should inherit from `Child`', function () {
         var element = new Element();
@@ -1268,14 +1395,14 @@ describe('TextOM.Text#split(position)', function () {
     it('should throw when the operated on item is not attached', function () {
         var box = new Text('alfred');
 
-        assert.throws(function () { box.split(); });
+        assert.throws(function () { box.split(); }, /Illegal invocation/);
     });
 
     it('should throw when a position was given, not of type number', function () {
         var parent = new Parent(),
             box = parent.append(new Text('alfred'));
 
-        assert.throws(function () { box.split('failure'); });
+        assert.throws(function () { box.split('failure'); }, /failure/);
     });
 
     it('should return a new instance() of the operated on item', function () {
@@ -1295,7 +1422,7 @@ describe('TextOM.Text#split(position)', function () {
         assert(box.prev.toString() === 'alfre');
     });
 
-    it('should NOT throw when NaN, Infinity, or -Infinity are given (but treat it as `0`)', function () {
+    it('should NOT throw when NaN, or -Infinity are given (but treat it as `0`)', function () {
         var parent = new Parent(),
             box = parent.append(new Text('alfred'));
 
@@ -1304,15 +1431,20 @@ describe('TextOM.Text#split(position)', function () {
         assert(box.toString() === 'alfred');
         assert(box.prev.toString() === '');
 
-        box.split(Infinity);
-
-        assert(box.toString() === 'alfred');
-        assert(box.prev.toString() === '');
-
         box.split(-Infinity);
 
         assert(box.toString() === 'alfred');
         assert(box.prev.toString() === '');
+    });
+
+    it('should NOT throw when Infinity is given (but treat it as `value.length`)', function () {
+        var parent = new Parent(),
+            box = parent.append(new Text('alfred'));
+
+        box.split(Infinity);
+
+        assert(box.toString() === '');
+        assert(box.prev.toString() === 'alfred');
     });
 
     it('should NOT throw when a position greater than the length of the box is given (but treat it as `this.value.length`)', function () {
@@ -1386,29 +1518,35 @@ describe('TextOM.Range#setStart(node, offset?)', function () {
 
     it('should throw when no node is given', function () {
         var range = new Range();
-        assert.throws(function () { range.setStart(); });
-        assert.throws(function () { range.setStart(false); });
+        assert.throws(function () { range.setStart(); }, /undefined/);
+        assert.throws(function () { range.setStart(false); }, /false/);
     });
 
-    it('should throw when an unattached node is given', function () {
+    it('should NOT throw when an unattached node is given', function () {
         var range = new Range();
-        assert.throws(function () { range.setStart(new Child()); });
-        assert.throws(function () { range.setStart(new Parent()); });
+        assert.doesNotThrow(function () { range.setStart(new Child()); });
+        assert.doesNotThrow(function () { range.setStart(new Parent()); });
     });
 
     it('should throw when a negative offset is given', function () {
         var child = (new Parent()).append(new Child());
-        assert.throws(function () { (new Range()).setStart(child, -1); });
-        assert.throws(function () { (new Range()).setStart(child, -Infinity); });
+        assert.throws(function () { (new Range()).setStart(child, -1); }, /-1/);
+        assert.throws(function () { (new Range()).setStart(child, -Infinity); }, /-Infinity/);
     });
 
-    it('should throw when NaN or something other than a number is given', function () {
+    it('should NOT throw when NaN is given, but treat it as `0`', function () {
         var child = (new Parent()).append(new Child());
-        assert.throws(function () { (new Range()).setStart(child, NaN); });
-        assert.throws(function () { (new Range()).setStart(child, 'failure'); });
+        var range = new Range();
+        assert.doesNotThrow(function () { range.setStart(child, NaN); });
+        assert(range.startOffset === 0);
     });
 
-    it('should throw when an offset greater than the length of the node is given', function () {
+    it('should throw when a value other than a number is given', function () {
+        var child = (new Parent()).append(new Child());
+        assert.throws(function () { (new Range()).setStart(child, 'failure'); }, /failure/);
+    });
+
+    it('should NOT throw when an offset greater than the length of the node is given', function () {
         var parent = new Parent(),
             parent_ = new Parent(),
             child = new Child(),
@@ -1421,8 +1559,8 @@ describe('TextOM.Range#setStart(node, offset?)', function () {
         parent_.append(child);
         parent_.append(child_);
 
-        assert.throws(function () { (new Range()).setStart(parent_, 3); });
-        assert.throws(function () { (new Range()).setStart(parent_, Infinity); });
+        assert.doesNotThrow(function () { (new Range()).setStart(parent_, 3); });
+        assert.doesNotThrow(function () { (new Range()).setStart(parent_, Infinity); });
     });
 
     it('should throw when `endContainer` does not share the same root as the given node', function () {
@@ -1433,7 +1571,7 @@ describe('TextOM.Range#setStart(node, offset?)', function () {
            child_ = parent_.append(new Text('bertrand'));
 
         range.setEnd(child_);
-        assert.throws(function () { range.setStart(child); });
+        assert.throws(function () { range.setStart(child); }, /WrongRootError/);
     });
 
     it('should not throw when an offset is given, but no length property exists on the given node', function () {
@@ -1493,7 +1631,7 @@ describe('TextOM.Range#setStart(node, offset?)', function () {
         parent.append(child);
 
         /*
-        Case: The intended startContainer is a child of the current 
+        Case: The intended startContainer is a child of the current
               endContainer.
         */
         range = new Range();
@@ -1621,29 +1759,35 @@ describe('TextOM.Range#setEnd(node, offset?)', function () {
 
     it('should throw when no node is given', function () {
         var range = new Range();
-        assert.throws(function () { range.setEnd(); });
-        assert.throws(function () { range.setEnd(false); });
+        assert.throws(function () { range.setEnd(); }, /undefined/);
+        assert.throws(function () { range.setEnd(false); }, /false/);
     });
 
-    it('should throw when an unattached node is given', function () {
+    it('should NOT throw when an unattached node is given', function () {
         var range = new Range();
-        assert.throws(function () { range.setEnd(new Child()); });
-        assert.throws(function () { range.setEnd(new Parent()); });
+        assert.doesNotThrow(function () { range.setEnd(new Child()); });
+        assert.doesNotThrow(function () { range.setEnd(new Parent()); });
     });
 
     it('should throw when a negative offset is given', function () {
         var child = (new Parent()).append(new Child());
-        assert.throws(function () { (new Range()).setEnd(child, -1); });
-        assert.throws(function () { (new Range()).setEnd(child, -Infinity); });
+        assert.throws(function () { (new Range()).setEnd(child, -1); }, /-1/);
+        assert.throws(function () { (new Range()).setEnd(child, -Infinity); }, /-Infinity/);
     });
 
-    it('should throw when NaN or something other than a number is given', function () {
+    it('should NOT throw when NaN is given, but treat it as `0`', function () {
         var child = (new Parent()).append(new Child());
-        assert.throws(function () { (new Range()).setEnd(child, NaN); });
-        assert.throws(function () { (new Range()).setEnd(child, 'failure'); });
+        var range = new Range();
+        assert.doesNotThrow(function () { range.setStart(child, NaN); });
+        assert(range.startOffset === 0);
     });
 
-    it('should throw when an offset greater than the length of the node is given', function () {
+    it('should throw when a value other than a number is given', function () {
+        var child = (new Parent()).append(new Child());
+        assert.throws(function () { (new Range()).setStart(child, 'failure'); }, /failure/);
+    });
+
+    it('should NOT throw when an offset greater than the length of the node is given', function () {
         var parent = new Parent(),
             parent_ = new Parent(),
             child = new Child(),
@@ -1656,8 +1800,8 @@ describe('TextOM.Range#setEnd(node, offset?)', function () {
         parent_.append(child);
         parent_.append(child_);
 
-        assert.throws(function () { (new Range()).setEnd(parent_, 3); });
-        assert.throws(function () { (new Range()).setEnd(parent_, Infinity); });
+        assert.doesNotThrow(function () { (new Range()).setEnd(parent_, 3); });
+        assert.doesNotThrow(function () { (new Range()).setEnd(parent_, Infinity); });
     });
 
     it('should throw when `startContainer` does not share the same root as the given node', function () {
@@ -1668,7 +1812,7 @@ describe('TextOM.Range#setEnd(node, offset?)', function () {
            child_ = parent_.append(new Text('bertrand'));
 
         range.setStart(child);
-        assert.throws(function () { range.setEnd(child_); });
+        assert.throws(function () { range.setEnd(child_); }, /WrongRootError/);
     });
 
     it('should not throw when an offset is given, but no length property exists on the given node', function () {
@@ -2137,6 +2281,102 @@ describe('TextOM.WhiteSpaceNode()', function () {
 
     it('should inherit from `Text`', function () {
         assert((new TextOM.WhiteSpaceNode()) instanceof Text);
+    });
+});
+
+describe('HierarchyError', function () {
+    it('should throw when appending a `RootNode` to a `RootNode`', function () {
+        assert.throws(function () {
+            (new TextOM.RootNode()).append(new TextOM.RootNode());
+        }, /HierarchyError/);
+    });
+    it('should NOT throw when appending a `ParagraphNode` to a `RootNode`', function () {
+        assert.doesNotThrow(function () {
+            (new TextOM.RootNode()).append(new TextOM.ParagraphNode());
+        }, /HierarchyError/);
+    });
+    it('should throw when appending a `SentenceNode` to a `RootNode`', function () {
+        assert.throws(function () {
+            (new TextOM.RootNode()).append(new TextOM.SentenceNode());
+        }, /HierarchyError/);
+    });
+    it('should throw when appending a `WordNode` to a `RootNode`', function () {
+        assert.throws(function () {
+            (new TextOM.RootNode()).append(new TextOM.WordNode());
+        }, /HierarchyError/);
+    });
+    it('should throw when appending a `PunctuationNode` to a `RootNode`', function () {
+        assert.throws(function () {
+            (new TextOM.RootNode()).append(new TextOM.PunctuationNode());
+        }, /HierarchyError/);
+    });
+    it('should NOT throw when appending a `WhiteSpaceNode` to a `RootNode`', function () {
+        assert.doesNotThrow(function () {
+            (new TextOM.RootNode()).append(new TextOM.WhiteSpaceNode());
+        }, /HierarchyError/);
+    });
+
+    it('should throw when appending a `RootNode` to a `ParagraphNode`', function () {
+        assert.throws(function () {
+            (new TextOM.ParagraphNode()).append(new TextOM.RootNode());
+        }, /HierarchyError/);
+    });
+    it('should throw when appending a `ParagraphNode` to a `ParagraphNode`', function () {
+        assert.throws(function () {
+            (new TextOM.ParagraphNode()).append(new TextOM.ParagraphNode());
+        }, /HierarchyError/);
+    });
+    it('should NOT throw when appending a `SentenceNode` to a `ParagraphNode`', function () {
+        assert.doesNotThrow(function () {
+            (new TextOM.ParagraphNode()).append(new TextOM.SentenceNode());
+        }, /HierarchyError/);
+    });
+    it('should throw when appending a `WordNode` to a `ParagraphNode`', function () {
+        assert.throws(function () {
+            (new TextOM.ParagraphNode()).append(new TextOM.WordNode());
+        }, /HierarchyError/);
+    });
+    it('should throw when appending a `PunctuationNode` to a `ParagraphNode`', function () {
+        assert.throws(function () {
+            (new TextOM.ParagraphNode()).append(new TextOM.PunctuationNode());
+        }, /HierarchyError/);
+    });
+    it('should NOT throw when appending a `WhiteSpaceNode` to a `ParagraphNode`', function () {
+        assert.doesNotThrow(function () {
+            (new TextOM.ParagraphNode()).append(new TextOM.WhiteSpaceNode());
+        }, /HierarchyError/);
+    });
+
+    it('should throw when appending a `RootNode` to a `SentenceNode`', function () {
+        assert.throws(function () {
+            (new TextOM.SentenceNode()).append(new TextOM.RootNode());
+        }, /HierarchyError/);
+    });
+    it('should throw when appending a `ParagraphNode` to a `SentenceNode`', function () {
+        assert.throws(function () {
+            (new TextOM.SentenceNode()).append(new TextOM.ParagraphNode());
+        }, /HierarchyError/);
+    });
+    it('should throw when appending a `SentenceNode` to a `SentenceNode`', function () {
+        assert.throws(function () {
+            (new TextOM.SentenceNode()).append(new TextOM.SentenceNode());
+        }, /HierarchyError/);
+    });
+
+    it('should NOT throw when appending a `PunctuationNode` to a `SentenceNode`', function () {
+        assert.doesNotThrow(function () {
+            (new TextOM.SentenceNode()).append(new TextOM.PunctuationNode());
+        }, /HierarchyError/);
+    });
+    it('should NOT throw when appending a `WordNode` to a `SentenceNode`', function () {
+        assert.doesNotThrow(function () {
+            (new TextOM.SentenceNode()).append(new TextOM.WordNode());
+        }, /HierarchyError/);
+    });
+    it('should NOT throw when appending a `WhiteSpaceNode` to a `SentenceNode`', function () {
+        assert.doesNotThrow(function () {
+            (new TextOM.SentenceNode()).append(new TextOM.WhiteSpaceNode());
+        }, /HierarchyError/);
     });
 });
 

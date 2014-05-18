@@ -40,43 +40,44 @@
          */
         function _insertAfter(item, appendee) {
 
-            // Cache the items parent and the next item.
+            /* Cache the items parent and the next item. */
             var parent = item.parent,
                 next = item.next,
                 position;
 
-            // Detach the appendee.
+            /* Detach the appendee. */
             appendee.remove();
 
-            // If item has a next node...
+            /* If item has a next node... */
             if (next) {
-                // ...link the appendees next node, to items next node.
+                /* ...link the appendees next node, to items next node. */
                 appendee.next = next;
 
-                // ...link the next nodes previous node, to the appendee.
+                /* ...link the next nodes previous node, to the appendee. */
                 next.prev = appendee;
             }
 
-            // Set the appendees previous node to item.
+            /* Set the appendees previous node to item. */
             appendee.prev = item;
 
-            // Set the appendees parent to items parent.
+            /* Set the appendees parent to items parent. */
             appendee.parent = parent;
 
-            // Set the next node of item to the appendee.
+            /* Set the next node of item to the appendee. */
             item.next = appendee;
 
-            // If the parent has no last node or if item is the parent last
-            // node, link the parents last node to the appendee.
+            /* If the parent has no last node or if item is the parent last
+             * node, link the parents last node to the appendee. */
             if (item === parent.tail || !parent.tail) {
                 parent.tail = appendee;
                 _arrayPush.call(parent, appendee);
-            // Else, insert the appendee into the parent after the items index.
+            /* Else, insert the appendee into the parent after the items
+             * index. */
             } else {
                 _arraySplice.call(parent, _at(parent, item) + 1, 0, appendee);
             }
 
-            // Return the appendee.
+            /* Return the appendee. */
             return appendee;
         }
 
@@ -90,34 +91,34 @@
          */
         function _insertBeforeHead(item, prependee) {
 
-            // Cache the items parent and the previous item.
+            /* Cache the items parent and the previous item. */
             var parent = item.parent;
 
-            // Detach the prependee.
+            /* Detach the prependee. */
             prependee.remove();
 
-            // Set the prependees next node to item.
+            /* Set the prependees next node to item. */
             prependee.next = item;
 
-            // Set the prependees parent parent to items parent parent.
+            /* Set the prependees parent parent to items parent parent. */
             prependee.parent = parent;
 
-            // Set the previous node of item to the prependee.
+            /* Set the previous node of item to the prependee. */
             item.prev = prependee;
 
-            // If item is the first node in the parent parent, link the parents
-            // first node to the prependee.
+            /* If item is the first node in the parent parent, link the
+             * parents first node to the prependee. */
             parent.head = prependee;
 
-            // If the the parent parent has no last node, link the parents last
-            // node to item.
+            /* If the the parent parent has no last node, link the parents
+             * last node to item. */
             if (!parent.tail) {
                 parent.tail = item;
             }
 
             _arrayUnshift.call(parent, prependee);
 
-            // Return the prependee.
+            /* Return the prependee. */
             return prependee;
         }
 
@@ -133,56 +134,63 @@
         function _append(parent, item, appendee) {
 
             if (!parent) {
-                throw new Error('No parent was provided to insert into');
+                throw new TypeError('Illegal invocation: \'' + parent +
+                    ' is not a valid argument for \'_append\'');
             }
 
             if (!appendee) {
-                throw new Error('No item was provided to insert');
+                throw new TypeError('\'' + appendee +
+                    ' is not a valid argument for \'_append\'');
             }
 
             if ('hierarchy' in appendee && 'hierarchy' in parent) {
                 if (parent.hierarchy + 1 !== appendee.hierarchy) {
-                    throw new Error('HierarchyError: A node was inserted in a wrong place');
+                    throw new Error('HierarchyError: The operation would ' +
+                        'yield an incorrect node tree');
                 }
             }
 
-            // Insert after...
+            /* Insert after... */
             if (item) {
 
                 /* istanbul ignore if: Wrong-useage */
                 if (item.parent !== parent) {
-                    throw new Error('The operated on node (the "pointer") was detached from the parent');
+                    throw new Error('The operated on node (the "pointer") ' +
+                        'was detached from the parent');
                 }
 
                 /* istanbul ignore if: Wrong-useage */
                 if (-1 === _at(parent, item)) {
-                    throw new Error('The operated on node (the "pointer") was attached to its parent, but the parent has no indice corresponding to the item');
+                    throw new Error('The operated on node (the "pointer") ' +
+                        'was attached to its parent, but the parent has no ' +
+                        'indice corresponding to the item');
                 }
 
                 /* istanbul ignore if: Wrong-useage */
                 if (typeof appendee.remove !== 'function') {
-                    throw new Error('The operated on node did not have a `remove` method');
+                    throw new Error('The operated on node did not have a ' +
+                        '`remove` method');
                 }
 
                 return _insertAfter(item, appendee);
             }
 
-            // If parent has a first node...
-            /*jshint boss:true */
+            /* If parent has a first node... */
+            /* jshint boss:true */
             if (item = parent.head) {
                 return _insertBeforeHead(item, appendee);
             }
 
-            // Prepend. There is no `head` (or `tail`) node yet.
+            /* Prepend. There is no `head` (or `tail`) node yet. */
 
-            // Detach the prependee.
+            /* Detach the prependee. */
             appendee.remove();
 
-            // Set the prependees parent to reference parent.
+            /* Set the prependees parent to reference parent. */
             appendee.parent = parent;
 
-            // Set parent's first node to the prependee and return the
-            // appendee.
+            /* Set parent's first node to the prependee and return the
+             * appendee. */
             parent.head = appendee;
             parent[0] = appendee;
             parent.length = 1;
@@ -204,58 +212,57 @@
                 return false;
             }
 
-            // Cache self, the parent list, and the previous and next items.
+            /* Cache self, the parent list, and the previous and next items. */
             var parent = node.parent,
                 prev = node.prev,
                 next = node.next,
                 indice;
 
-            // If the item is already detached, return node.
+            /* If the item is already detached, return node. */
             if (!parent) {
                 return node;
             }
 
-            // If node is the last item in the parent, link the parents last
-            // item to the previous item.
+            /* If node is the last item in the parent, link the parents last
+             * item to the previous item. */
             if (parent.tail === node) {
                 parent.tail = prev;
             }
 
-            // If node is the first item in the parent, link the parents first
-            // item to the next item.
+            /* If node is the first item in the parent, link the parents first
+             * item to the next item. */
             if (parent.head === node) {
                 parent.head = next;
             }
 
-            // If both the last and first items in the parent are the same,
-            // remove the link to the last item.
+            /* If both the last and first items in the parent are the same,
+             * remove the link to the last item. */
             if (parent.tail === parent.head) {
                 parent.tail = null;
             }
 
-            // If a previous item exists, link its next item to nodes next
-            // item.
+            /* If a previous item exists, link its next item to nodes next
+             * item. */
             if (prev) {
                 prev.next = next;
             }
 
-            // If a next item exists, link its previous item to nodes previous
-            // item.
+            /* If a next item exists, link its previous item to nodes previous
+             * item. */
             if (next) {
                 next.prev = prev;
             }
 
-            /*jshint boss:true */
             /* istanbul ignore else: Wrong-useage */
             if (-1 !== (indice = _at(parent, node))) {
                 _arraySplice.call(parent, indice, 1);
             }
 
-            // Remove links from node to both the next and previous items, and
-            // to the parent parent.
+            /* Remove links from node to both the next and previous items,
+             * and to the parent parent. */
             node.prev = node.next = node.parent = null;
 
-            // Return node.
+            /* Return node. */
             return node;
 
         }
@@ -325,7 +332,7 @@
             }
         }
 
-        // walkUpwards goes upwards.
+        /* walkUpwards goes upwards. */
         function _walkUpwards(start, callback) {
 
             var pointer = start.parent;
@@ -339,12 +346,11 @@
             }
         }
 
-        // _walkForwards tries to go deeper, otherwise forwards.
-        // When callback returns:
-        // -1 (RANGE_BREAK): Stop.
+        /* _walkForwards tries to go deeper, otherwise forwards. */
         function _walkForwards(start, callback) {
 
-            var pointer = start.next || _findNextParent(start);
+            var pointer = start.next || _findNextParent(start),
+                result;
 
             while (pointer) {
                 result = callback(pointer);
@@ -353,16 +359,16 @@
                     return;
                 }
 
-                pointer = pointer.head || pointer.next || _findNextParent(pointer);
+                pointer = pointer.head || pointer.next ||
+                    _findNextParent(pointer);
             }
         }
 
-        // _walkBackwards tries to go deeper, otherwise backwards.
-        // When callback returns:
-        // -1 (RANGE_BREAK): Stop.
+        /* _walkBackwards tries to go deeper, otherwise backwards. */
         function _walkBackwards(start, callback) {
 
-            var pointer = start.prev || _findPrevParent(start);
+            var pointer = start.prev || _findPrevParent(start),
+                result;
 
             while (pointer) {
                 result = callback(pointer);
@@ -371,7 +377,8 @@
                     return;
                 }
 
-                pointer = pointer.tail || pointer.prev || _findPrevParent(pointer);
+                pointer = pointer.tail || pointer.prev ||
+                    _findPrevParent(pointer);
             }
         }
 
@@ -418,18 +425,9 @@
      */
     function Node() {
         /** @member {Object} */
-        /*jshint expr:true */
+        /* jshint expr:true */
         this.data || (this.data = {});
     }
-
-    /**
-     * The type of an instance of Node.
-     *
-     * @api public
-     * @readonly
-     * @static
-     */
-    Node.prototype.type = 0;
 
     /**
      * Inherit the contexts' (Super) prototype into a given Constructor. E.g.,
@@ -513,13 +511,53 @@
      * @api public
      */
     prototype.item = function (index) {
-        /*jshint eqnull:true */
+        /* jshint eqnull:true */
         if (index != null && (typeof index !== 'number' || index !== index)) {
-            throw new Error('Parent#item expected its given argument to be ' +
-                'either a number, null, or undefined.');
+            throw new TypeError('\'' + index + ' is not a valid argument ' +
+                'for \'Parent.prototype.item\'');
         }
 
         return this[index || 0] || null;
+    };
+
+
+    /**
+     * Split the Parent into two, dividing the children from 0–position (NOT
+     * including the character at `position`), and position–length (including
+     * the character at `position`).
+     *
+     * @param {?number} [position=0] - the position to split at.
+     * @return {Parent} - the prepended parent.
+     * @api public
+     */
+    prototype.split = function (position) {
+        var self = this,
+            clone, cloneNode, iterator;
+
+        /* jshint eqnull:true */
+        if (position == null || position !== position ||
+            position === -Infinity) {
+                position = 0;
+        } else if (position === Infinity) {
+            position = self.length;
+        } else if (typeof position !== 'number') {
+            throw new TypeError('\'' + position + ' is not a valid argument ' +
+                'for \'Parent.prototype.split\'');
+        } else if (position < 0) {
+            position = Math.abs((self.length + position) % self.length);
+        }
+
+        /* This throws if we're not attached, thus preventing appending. */
+        cloneNode = append(self.parent, self.prev, new self.constructor());
+
+        clone = [].slice.call(self);
+        iterator = -1;
+
+        while (++iterator < position && clone[iterator]) {
+            cloneNode.append(clone[iterator]);
+        }
+
+        return cloneNode;
     };
 
     /**
@@ -706,13 +744,14 @@
      * @api public
      */
     prototype.fromString = function (value) {
-        /*jshint eqnull:true, -W093 */
+        /* jshint eqnull:true, -W093 */
         return this._value = (value == null) ? '' : '' + value;
     };
 
     /**
-     * Split the Text into two, dividing the internal value from 0–position,
-     * and position–length (both not including the character at `position`).
+     * Split the Text into two, dividing the internal value from 0–position
+     * (NOT including the character at `position`), and position–length
+     * (including the character at `position`).
      *
      * @param {?number} [position=0] - the position to split at.
      * @return {Child} - the prepended child.
@@ -723,17 +762,20 @@
             value = self._value,
             cloneNode;
 
-        /*jshint eqnull:true*/
-        if (position == null || position !== position || position === Infinity ||
+        /* jshint eqnull:true*/
+        if (position == null || position !== position ||
             position === -Infinity) {
                 position = 0;
+        } else if (position === Infinity) {
+            position = value.length;
         } else if (typeof position !== 'number') {
-            throw new Error('A `position` was given that was not a number');
+            throw new TypeError('\'' + position + ' is not a valid argument ' +
+                'for \'Text.prototype.split\'');
         } else if (position < 0) {
             position = Math.abs((value.length + position) % value.length);
         }
 
-        // This throws if we're not attached, thus preventing substringing.
+        /* This throws if we're not attached, thus preventing substringing. */
         cloneNode = append(self.parent, self.prev, new self.constructor());
 
         self.fromString(value.slice(position));
@@ -865,7 +907,6 @@
      * @static
      */
     WhiteSpaceNode.prototype.type = 5;
-    WhiteSpaceNode.prototype.hierarchy = 4;
 
     /**
      * Inherit from `Text.prototype`.
@@ -939,23 +980,19 @@
      */
     prototype.endOffset = null;
 
-    // prototype.commonAncestorContainer = null;
-
     /**
      * Set the start container and offset of a range.
      *
      * @param {Node} node - the start container to start the range at.
-     * @param {?number} offset - (integer) the start offset of the container to start the range at;
+     * @param {?number} offset - (integer) the start offset of the container 
+     *                           to start the range at;
      * @api public
      */
     prototype.setStart = function (node, offset) {
 
         if (!node) {
-            throw new Error('No `node` was given to `setStart`, but it is required');
-        }
-
-        if (!node.parent) {
-            throw new Error('A `node` was given to `setStart`, but it was not attached');
+            throw new TypeError('\'' + node + ' is not a valid argument ' +
+                'for \'Range.prototype.setStart\'');
         }
 
         var self = this,
@@ -964,28 +1001,24 @@
             endOffset = self.endOffset,
             switchContainers = false;
 
-        /*jshint eqnull:true*/
-        if (offset == null) {
+        /* jshint eqnull:true*/
+        if (offset == null || offset !== offset) {
             offset = 0;
-        } else if (offset !== offset || typeof offset !== 'number') {
-            throw new Error('An `offset` was given but it was either NaN, or not a number');
-        } else if (offset < 0) {
-            throw new Error('An `offset` was given, but it was a negative number');
-        // If offset is greater than node's length, throw an "IndexSizeError"
-        // exception.
-        } else if ('length' in node && offset > length) {
-            throw new Error('This should be an `IndexSizeError`');
+        } else if (typeof offset !== 'number' || offset < 0) {
+            throw new TypeError('\'' + offset + ' is not a valid argument ' +
+                'for \'Range.prototype.setStart\'');
         }
 
-        // If boundaryPoint is after the range's end, set range's end to
-        // boundaryPoint.
+        /* If boundaryPoint is after the range's end, set range's end to
+         * boundaryPoint. */
         if (endContainer) {
 
             if (findRoot(endContainer) !== findRoot(node)) {
-                throw new Error('A node was given that does not share the same root as the current `endContainer`');
+                throw new Error('WrongRootError: The given node is in the ' +
+                    'wrong document.');
             }
 
-            // When node is also the endContainer;
+            /* When node is also the endContainer; */
             if (endContainer === node) {
                 if (endOffset < offset) {
                     switchContainers = true;
@@ -1016,7 +1049,7 @@
             }
         }
 
-        // Set range's start to boundaryPoint.
+        /* Set range's start to boundaryPoint. */
         self.startContainer = node;
         self.startOffset = offset;
     };
@@ -1025,19 +1058,16 @@
      * Set the end container and offset of a range.
      *
      * @param {Node} node - the end container to start the range at.
-     * @param {?number} offset - (integer) the end offset of the container to end the range at;
+     * @param {?number} offset - (integer) the end offset of the container to 
+     *                           end the range at;
      * @api public
      */
     prototype.setEnd = function (node, offset) {
 
         if (!node) {
-            throw new Error('No `node` was given to `setEnd`, but it is required');
+            throw new TypeError('\'' + node + ' is not a valid argument ' +
+                'for \'Range.prototype.setEnd\'');
         }
-
-        if (!node.parent) {
-            throw new Error('A `node` was given to `setEnd`, but it was not attached');
-        }
-
 
         var self = this,
             length = node.length,
@@ -1045,28 +1075,24 @@
             startOffset = self.startOffset,
             switchContainers = false;
 
-        /*jshint eqnull:true*/
-        if (offset == null) {
-            offset = length;
-        } else if (offset !== offset || typeof offset !== 'number') {
-            throw new Error('An `offset` was given but it was either NaN, or not a number');
-        } else if (offset < 0) {
-            throw new Error('An `offset` was given, but it was a negative number');
-        // If offset is greater than node's length, throw an "IndexSizeError"
-        // exception.
-        } else if ('length' in node && offset > length) {
-            throw new Error('This should be an `IndexSizeError`');
+        /* jshint eqnull:true*/
+        if (offset == null || offset !== offset) {
+            offset = Infinity;
+        } else if (typeof offset !== 'number' || offset < 0) {
+            throw new TypeError('\'' + offset + ' is not a valid argument ' +
+                'for \'Range.prototype.setStart\'');
         }
 
-        // If boundaryPoint is before the range's start, set range's start to
-        // boundaryPoint.
+        /* If boundaryPoint is before the range's start, set range's start to
+         * boundaryPoint. */
         if (startContainer) {
 
             if (findRoot(startContainer) !== findRoot(node)) {
-                throw new Error('A node was given that does not share the same root as the current `startContainer`');
+                throw new Error('WrongRootError: The given node is in the ' +
+                    'wrong document.');
             }
 
-            // When node is also the startContainer;
+            /* When node is also the startContainer; */
             if (startContainer === node) {
                 if (startOffset > offset) {
                     switchContainers = true;
@@ -1088,15 +1114,10 @@
             offset = startOffset;
         }
 
-        // Set range's start to boundaryPoint.
+        /* Set range's start to boundaryPoint. */
         self.endContainer = node;
         self.endOffset = offset;
     };
-
-    // prototype.deleteContents = function () {
-    //     // http://dom.spec.whatwg.org/#dom-range-deletecontents;
-    //     throw new Error('Range#deleteContents() was not implemented yet.');
-    // }
 
     prototype.cloneRange = function () {
         var self = this,
@@ -1137,27 +1158,28 @@
             return value;
         }
 
-        // If start node equals end node, and it is a Text node, return the
-        // substring of that Text node's data beginning at start offset and
-        // ending at end offset.
+        /* If start node equals end node, and it is a Text node, return the
+         * substring of that Text node's data beginning at start offset and
+         * ending at end offset. */
         if (startContainer === endContainer) {
             if (!('length' in startContainer)) {
                 return startContainer.toString().slice(startOffset, endOffset);
             }
 
-            return arraySlice.call(startContainer, startOffset, endOffset).join('');
+            return arraySlice.call(startContainer, startOffset,
+                endOffset).join('');
         }
 
-        // If start node is a Text node, append to value the substring of that
-        // node's data from the start offset until the end.
+        /* If start node is a Text node, append to value the substring of that
+         * node's data from the start offset until the end. */
         if (!('length' in startContainer)) {
             value += startContainer.toString().slice(startOffset);
         } else {
             value += arraySlice.call(startContainer, startOffset);
         }
 
-        // Append to value the concatenation, in tree order, of the data of all
-        // Text nodes that are contained in the context object.
+        /* Append to value the concatenation, in tree order, of the data of all
+         * Text nodes that are contained in the context object. */
         walkForwards(startContainer, function (node) {
             if (node === endContainer) {
                 if (!('length' in node)) {
@@ -1194,12 +1216,17 @@
     /**
      * Export all node types to `exports` (i.e. `TextOM`), and `Node#`.
      */
-    exports.ROOT_NODE = NodeProtype.ROOT_NODE = RootNode.prototype.type;
-    exports.PARAGRAPH_NODE = NodeProtype.PARAGRAPH_NODE = ParagraphNode.prototype.type;
-    exports.SENTENCE_NODE = NodeProtype.SENTENCE_NODE = SentenceNode.prototype.type;
+    exports.ROOT_NODE = NodeProtype.ROOT_NODE =
+        RootNode.prototype.type;
+    exports.PARAGRAPH_NODE = NodeProtype.PARAGRAPH_NODE =
+        ParagraphNode.prototype.type;
+    exports.SENTENCE_NODE = NodeProtype.SENTENCE_NODE =
+        SentenceNode.prototype.type;
     exports.WORD_NODE = NodeProtype.WORD_NODE = WordNode.prototype.type;
-    exports.PUNCTUATION_NODE = NodeProtype.PUNCTUATION_NODE = PunctuationNode.prototype.type;
-    exports.WHITE_SPACE_NODE = NodeProtype.WHITE_SPACE_NODE = WhiteSpaceNode.prototype.type;
+    exports.PUNCTUATION_NODE = NodeProtype.PUNCTUATION_NODE =
+        PunctuationNode.prototype.type;
+    exports.WHITE_SPACE_NODE = NodeProtype.WHITE_SPACE_NODE =
+        WhiteSpaceNode.prototype.type;
 
     /**
      * Export all `Node`s and `Range` to `exports` (i.e. `TextOM`).
