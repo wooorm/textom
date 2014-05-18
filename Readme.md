@@ -71,14 +71,6 @@ Returns a new RootNode (the same as `new TextOM.RootNode()`);
 #### TextOM.Node
 Constructor. Creates a new Node.
 
-##### TextOM\.Node#type = 0
-```js
-var node = new TextOM.Node();
-node.type; // 0
-```
-
-Default unique identifier for all instances of `Node`, overwritten by subclassing.
-
 ##### TextOM\.Node#ROOT_NODE
 ```js
 root.type === root.ROOT_NODE === TextOM.ROOT_NODE; // true
