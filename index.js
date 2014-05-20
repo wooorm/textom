@@ -150,6 +150,11 @@
                 }
             }
 
+            if (typeof appendee.remove !== 'function') {
+                throw new Error('The operated on node did not have a ' +
+                    '`remove` method');
+            }
+
             /* Insert after... */
             if (item) {
 
@@ -164,12 +169,6 @@
                     throw new Error('The operated on node (the "pointer") ' +
                         'was attached to its parent, but the parent has no ' +
                         'indice corresponding to the item');
-                }
-
-                /* istanbul ignore if: Wrong-useage */
-                if (typeof appendee.remove !== 'function') {
-                    throw new Error('The operated on node did not have a ' +
-                        '`remove` method');
                 }
 
                 return _insertAfter(item, appendee);
