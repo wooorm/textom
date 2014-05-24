@@ -429,6 +429,11 @@
     }
 
     /**
+     * Expose `TextOM` on every instance of Node.
+     */
+    Node.prototype.TextOM = TextOM;
+
+    /**
      * Inherit the contexts' (Super) prototype into a given Constructor. E.g.,
      * Node is implemeted by Parent, Parent is implemeted by RootNode, &c.
      *
