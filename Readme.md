@@ -439,8 +439,9 @@ module textom
 
 ## Related
 
-  [parse-english](https://github.com/wooorm/parse-english "Parse English")
-  More to come.
+  * [parse-english](https://github.com/wooorm/parse-english "Parse English")
+
+More to come.
 
 ## License
 
