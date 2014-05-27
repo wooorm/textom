@@ -4,7 +4,7 @@ test:
 	@./node_modules/.bin/mocha --reporter spec --check-leaks -u exports spec/*.spec*.js
 
 watch:
-	@./node_modules/.bin/mocha --reporter min --watch spec/*.spec*.js
+	@./node_modules/.bin/mocha --reporter min --check-leaks --watch spec/*.spec*.js
 
 lint:
 	# Lint (passes when empty):
