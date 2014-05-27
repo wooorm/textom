@@ -23,7 +23,7 @@ npm install
 ## Usage
 
 ````js
-  var root = new TextOM();
+var root = new TextOM();
 ````
 
 ## API
