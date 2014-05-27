@@ -1600,8 +1600,6 @@ describe('TextOM.Range#setStart(node, offset?)', function () {
 
         parent.append(child);
 
-        /* parent[ child ]*/
-
         range.setEnd(child, 0);
         range.setStart(child, 1);
 
@@ -1933,8 +1931,8 @@ describe('TextOM.Range#setEnd(node, offset?)', function () {
 
         range.setStart(child7);
         range.setEnd(parent3);
-        assert(range.endContainer === parent3);
-        assert(range.startContainer === child7);
+        assert(range.endContainer === child7);
+        assert(range.startContainer === parent3);
 
         range = new Range();
 
@@ -2011,7 +2009,6 @@ describe('TextOM.Range#toString()', function () {
 
         range.setStart(child, 2);
         range.setEnd(child, 2);
-
         assert(range.toString() === '');
     });
 
@@ -2045,12 +2042,12 @@ describe('TextOM.Range#toString()', function () {
     it('should substring the endContainer from its start and ending at its `endOffset`', function () {
         var range = new Range(),
             parent = new Parent(),
-            child = parent.append(new Text('')),
+            child = parent.append(new Text('alfred')),
             child_ = parent.append(new Text('bertrand'));
 
         range.setStart(child);
         range.setEnd(child_, 6);
-        assert(range.toString() === 'bertra');
+        assert(range.toString() === 'alfredbertra');
     });
 
     it('should concatenate two siblings', function () {
@@ -2224,6 +2221,489 @@ describe('TextOM.Range#toString()', function () {
     });
 });
 
+describe('TextOM.Range#getContent()', function () {
+    it('should be of type `function`', function () {
+        assert(typeof (new Range()).getContent === 'function');
+    });
+
+    it('should return an empty array, when no start- or endpoints exist', function () {
+        var range = new Range(),
+            parent = new Parent(),
+            child = parent.append(new Text('alfred')),
+            result = range.getContent();
+
+        assert(result.length === 0);
+        assert(result instanceof Array);
+
+        range = new Range();
+        range.setStart(child);
+        result = range.getContent();
+        assert(result.length === 0);
+        assert(result instanceof Array);
+
+        range = new Range();
+        range.setEnd(child);
+        result = range.getContent();
+        assert(result.length === 0);
+        assert(result instanceof Array);
+    });
+
+    it('should return an empty array, when startContainer is not in the same root as endContainer', function () {
+        var range = new Range(),
+            grandparent = new TextOM.ParagraphNode(),
+            parent = grandparent.append(new TextOM.SentenceNode()),
+            parent_ = grandparent.append(new TextOM.SentenceNode()),
+            child = parent.append(new TextOM.WordNode('alfred')),
+            child_ = parent_.append(new TextOM.WordNode('bertrand')),
+            result = range.getContent();
+
+        range = new Range();
+        range.setStart(child);
+        range.setEnd(child_);
+
+        parent_.remove();
+
+        result = range.getContent();
+        assert(result.length === 0);
+        assert(result instanceof Array);
+    });
+
+    it('should return an array containg node, when startContainer equals endContainer, and startContainer is a Text node', function () {
+        var range = new Range(),
+            parent = new Parent(),
+            child = parent.append(new Text('alfred')),
+            result;
+
+        range.setStart(child);
+        range.setEnd(child);
+
+        result = range.getContent();
+        assert(result.length === 1);
+        assert(result[0] === child);
+    });
+
+    it('should return an array containg node, when startContainer equals endContainer, is a Text node, and startOffset equals endOffset', function () {
+        var range = new Range(),
+            parent = new Parent(),
+            child = parent.append(new Text('alfred')),
+            result;
+
+        range.setStart(child, 2);
+        range.setEnd(child, 2);
+
+        result = range.getContent();
+        assert(result.length === 1);
+        assert(result[0] === child);
+    });
+
+    it('should return an array containing two direct text siblings', function () {
+        var range = new Range(),
+            parent = new Parent(),
+            child = parent.append(new Text('alfred')),
+            child_ = parent.append(new Text('bertrand')),
+            result;
+
+        range.setStart(child);
+        range.setEnd(child_);
+        result = range.getContent();
+        assert(result.length === 2);
+        assert(result[0] === child);
+        assert(result[1] === child_);
+    });
+
+    it('should return an array containing multiple text siblings', function () {
+        var range = new Range(),
+            parent = new Parent(),
+            child = parent.append(new Text('alfred')),
+            child_ = parent.append(new Text('bertrand')),
+            child__ = parent.append(new Text('cees')),
+            child___ = parent.append(new Text('dick')),
+            child____ = parent.append(new Text('eric')),
+            child_____ = parent.append(new Text('ferdinand')),
+            result;
+
+        range.setStart(child);
+        range.setEnd(child_____);
+        result = range.getContent();
+        assert(result.length === 6);
+        assert(result.join('|') === 'alfred|bertrand|cees|dick|eric|ferdinand');
+
+        range.setStart(child, 3);
+        result = range.getContent();
+        assert(result.length === 6);
+        assert(result.join('|') === 'alfred|bertrand|cees|dick|eric|ferdinand');
+
+        range.setEnd(child_____, 7);
+        result = range.getContent();
+        assert(result.length === 6);
+        assert(result.join('|') === 'alfred|bertrand|cees|dick|eric|ferdinand');
+    });
+
+    it('should return an array containing text children of different parents', function () {
+        var range = new Range(),
+            grandparent = new TextOM.ParagraphNode(),
+            parent = grandparent.append(new TextOM.SentenceNode()),
+            parent_ = grandparent.append(new TextOM.SentenceNode()),
+            child = parent.append(new TextOM.WordNode('alfred')),
+            child_ = parent.append(new TextOM.WordNode('bertrand')),
+            child__ = parent_.append(new TextOM.WordNode('cees')),
+            child___ = parent_.append(new TextOM.WordNode('dick')),
+            result;
+
+        range.setStart(child_);
+        range.setEnd(child__);
+        result = range.getContent();
+        assert(result.length === 2);
+        assert(result[0] === child_);
+        assert(result[1] === child__);
+    });
+
+    it('should return an array containing text children of different grandparents', function () {
+        var range = new Range(),
+            greatGrandparent = new TextOM.RootNode(),
+            grandparent = greatGrandparent.append(new TextOM.ParagraphNode()),
+            grandparent_ = greatGrandparent.append(new TextOM.ParagraphNode()),
+            parent = grandparent.append(new TextOM.SentenceNode()),
+            parent_ = grandparent.append(new TextOM.SentenceNode()),
+            child = parent.append(new TextOM.WordNode('alfred')),
+            child_ = parent.append(new TextOM.WordNode('bertrand')),
+            child__ = parent_.append(new TextOM.WordNode('cees')),
+            child___ = parent_.append(new TextOM.WordNode('dick')),
+            result;
+
+        range.setStart(child_);
+        range.setEnd(child__);
+        result = range.getContent();
+        assert(result.length === 2);
+        assert(result[0] === child_);
+        assert(result[1] === child__);
+        assert(result.join('|') === 'bertrand|cees');
+    });
+
+    it('should return an empty array, when start- and endContainer no longer share the same root', function () {
+        var range = new Range(),
+           parent = new Parent(),
+           child = parent.append(new Text('alfred')),
+           child_ = parent.append(new Text('bertrand')),
+           child__ = parent.append(new Text('cees'));
+
+        range.setStart(child);
+        range.setEnd(child__);
+        assert(range.getContent().join('|') === 'alfred|bertrand|cees');
+
+        child__.remove();
+        assert(range.getContent().length === 0);
+    });
+
+    it('should return an array containing startContainer, when startContainer equals endContainer, is an Element node, startOffset is `0`, and endOffset is equal to or greater than the length of node', function () {
+        var range = new Range(),
+            grandparent = new TextOM.ParagraphNode(),
+            parent = grandparent.append(new TextOM.SentenceNode()),
+            result;
+
+        range.setStart(parent);
+        range.setEnd(parent);
+        result = range.getContent();
+        assert(result.length === 1);
+        assert(result[0] === parent);
+    });
+
+    it('should return an array containing two direct elements siblings', function () {
+        var range = new Range(),
+            grandparent = new TextOM.ParagraphNode(),
+            parent = grandparent.append(new TextOM.SentenceNode()),
+            parent_ = grandparent.append(new TextOM.SentenceNode()),
+            result;
+
+        range.setStart(parent);
+        range.setEnd(parent_);
+        result = range.getContent();
+
+        assert(result.length === 2);
+        assert(result[0] === parent);
+        assert(result[1] === parent_);
+    });
+
+    it('should return an array containing multiple elements siblings', function () {
+        var range = new Range(),
+            grandparent = new TextOM.ParagraphNode(),
+            parent = grandparent.append(new TextOM.SentenceNode()),
+            parent_ = grandparent.append(new TextOM.SentenceNode()),
+            parent__ = grandparent.append(new TextOM.SentenceNode()),
+            parent___ = grandparent.append(new TextOM.SentenceNode()),
+            parent____ = grandparent.append(new TextOM.SentenceNode()),
+            parent_____ = grandparent.append(new TextOM.SentenceNode()),
+            result;
+
+        range.setStart(parent);
+        range.setEnd(parent____);
+        result = range.getContent();
+        assert(result.length === 5);
+        assert(result[0] === parent);
+        assert(result[1] === parent_);
+        assert(result[2] === parent__);
+        assert(result[3] === parent___);
+        assert(result[4] === parent____);
+
+        range.setStart(parent_);
+        result = range.getContent();
+        assert(result.length === 4);
+        assert(result[0] === parent_);
+        assert(result[1] === parent__);
+        assert(result[2] === parent___);
+        assert(result[3] === parent____);
+
+        range.setEnd(parent___);
+        result = range.getContent();
+        assert(result.length === 3);
+        assert(result[0] === parent_);
+        assert(result[1] === parent__);
+        assert(result[2] === parent___);
+    });
+
+    it('should return an array containing elements of different grandparents', function () {
+        var range = new Range(),
+            greatGrandparent = new TextOM.RootNode(),
+            grandparent = greatGrandparent.append(new TextOM.ParagraphNode()),
+            grandparent_ = greatGrandparent.append(new TextOM.ParagraphNode()),
+            parent = grandparent.append(new TextOM.SentenceNode()),
+            parent_ = grandparent_.append(new TextOM.SentenceNode()),
+            result;
+
+        range.setStart(parent);
+        range.setEnd(parent_);
+        result = range.getContent();
+        assert(result.length === 2);
+        assert(result[0] === parent);
+        assert(result[1] === parent_);
+    });
+
+    it('should return an array containing children, when startContainer equals endContainer, is an Element node, and endOffset is NOT equal to or greater than the length of node', function () {
+        var range = new Range(),
+            grandparent = new TextOM.ParagraphNode(),
+            parent = grandparent.append(new TextOM.SentenceNode()),
+            child = parent.append(new TextOM.WordNode('alfred')),
+            child_ = parent.append(new TextOM.WordNode('bertrand')),
+            child__ = parent.append(new TextOM.WordNode('cees')),
+            child___ = parent.append(new TextOM.WordNode('dick')),
+            result;
+
+        range.setStart(parent);
+        range.setEnd(parent, 3);
+        result = range.getContent();
+        assert(result.length === 3);
+        assert(result[0] === child);
+        assert(result[1] === child_);
+        assert(result[2] === child__);
+
+        range.setStart(parent, 1);
+        result = range.getContent();
+        assert(result.length === 2);
+        assert(result[0] === child_);
+        assert(result[1] === child__);
+    });
+
+    it('should return an array containing children, when startContainer is an Element node, and endContainer is inside startContainer', function () {
+        var range = new Range(),
+            grandparent = new TextOM.ParagraphNode(),
+            parent = grandparent.append(new TextOM.SentenceNode()),
+            child = parent.append(new TextOM.WordNode('alfred')),
+            child_ = parent.append(new TextOM.WordNode('bertrand')),
+            child__ = parent.append(new TextOM.WordNode('cees')),
+            child___ = parent.append(new TextOM.WordNode('dick')),
+            result;
+
+        range.setStart(parent);
+        range.setEnd(child__);
+        result = range.getContent();
+        assert(result.length === 3);
+        assert(result[0] === child);
+        assert(result[1] === child_);
+        assert(result[2] === child__);
+
+        range.setStart(parent, 1);
+        result = range.getContent();
+        assert(result.length === 2);
+        assert(result[0] === child_);
+        assert(result[1] === child__);
+    });
+
+    it('should return an array containing children, when startContainer equals endContainer, is a grandparent, and endOffset is NOT equal to or greater than the length of node', function () {
+        var range = new Range(),
+            greatGrandparent = new TextOM.RootNode(),
+            grandparent = greatGrandparent.append(new TextOM.ParagraphNode()),
+            parent = grandparent.append(new TextOM.SentenceNode()),
+            parent_ = grandparent.append(new TextOM.SentenceNode()),
+            parent__ = grandparent.append(new TextOM.SentenceNode()),
+            parent___ = grandparent.append(new TextOM.SentenceNode()),
+            child = parent.append(new TextOM.WordNode('alfred')),
+            child_ = parent_.append(new TextOM.WordNode('bertrand')),
+            child__ = parent__.append(new TextOM.WordNode('cees')),
+            child___ = parent___.append(new TextOM.WordNode('dick')),
+            result;
+
+        range.setStart(grandparent);
+        range.setEnd(grandparent, 3);
+        result = range.getContent();
+        assert(result.length === 3);
+        assert(result[0] === parent);
+        assert(result[1] === parent_);
+        assert(result[2] === parent__);
+
+        range.setStart(grandparent, 1);
+        result = range.getContent();
+        assert(result.length === 2);
+        assert(result[0] === parent_);
+        assert(result[1] === parent__);
+    });
+
+    it('should return an array containing children, when startContainer is a Parent node, and endContainer is inside startContainer', function () {
+        var range = new Range(),
+            greatGrandparent = new TextOM.RootNode(),
+            grandparent = greatGrandparent.append(new TextOM.ParagraphNode()),
+            parent = grandparent.append(new TextOM.SentenceNode()),
+            parent_ = grandparent.append(new TextOM.SentenceNode()),
+            parent__ = grandparent.append(new TextOM.SentenceNode()),
+            parent___ = grandparent.append(new TextOM.SentenceNode()),
+            child = parent.append(new TextOM.WordNode('alfred')),
+            child_ = parent_.append(new TextOM.WordNode('bertrand')),
+            child__ = parent__.append(new TextOM.WordNode('cees')),
+            child___ = parent___.append(new TextOM.WordNode('dick')),
+            result;
+
+        range.setStart(grandparent);
+        range.setEnd(child___);
+        result = range.getContent();
+        assert(result.length === 4);
+        assert(result[0] === parent);
+        assert(result[1] === parent_);
+        assert(result[2] === parent__);
+        assert(result[3] === child___);
+
+        range.setStart(grandparent, 1);
+        result = range.getContent();
+        assert(result.length === 3);
+        assert(result[0] === parent_);
+        assert(result[1] === parent__);
+        assert(result[2] === child___);
+
+        range.setEnd(parent___);
+        result = range.getContent();
+        assert(result.length === 3);
+        assert(result[0] === parent_);
+        assert(result[1] === parent__);
+        assert(result[2] === parent___);
+    });
+
+    it('should return an array containing children but excluding startContainer, when startOffset is more than the length of startContainer', function () {
+        var range = new Range(),
+            greatGrandparent = new TextOM.RootNode(),
+            grandparent = greatGrandparent.append(new TextOM.ParagraphNode()),
+            grandparent_ = greatGrandparent.append(new TextOM.ParagraphNode()),
+            parent = grandparent.append(new TextOM.SentenceNode()),
+            parent_ = grandparent.append(new TextOM.SentenceNode()),
+            parent__ = grandparent_.append(new TextOM.SentenceNode()),
+            parent___ = grandparent_.append(new TextOM.SentenceNode()),
+            child = parent.append(new TextOM.WordNode('alfred')),
+            child_ = parent_.append(new TextOM.WordNode('bertrand')),
+            child__ = parent__.append(new TextOM.WordNode('cees')),
+            child___ = parent___.append(new TextOM.WordNode('dick')),
+            result;
+
+        range.setStart(grandparent, Infinity);
+        range.setEnd(child___);
+        result = range.getContent();
+        assert(result.length === 2);
+        assert(result[0] === parent__);
+        assert(result[1] === child___);
+
+        range.setStart(parent, Infinity);
+        result = range.getContent();
+        assert(result.length === 3);
+        assert(result[0] === parent_);
+        assert(result[1] === parent__);
+        assert(result[2] === child___);
+
+
+        range = new Range();
+        greatGrandparent = new TextOM.RootNode();
+        grandparent = greatGrandparent.append(new TextOM.ParagraphNode());
+        grandparent_ = greatGrandparent.append(new TextOM.ParagraphNode());
+        parent = grandparent.append(new TextOM.SentenceNode());
+        parent_ = grandparent_.append(new TextOM.SentenceNode());
+        parent__ = grandparent_.append(new TextOM.SentenceNode());
+
+        range.setStart(parent, Infinity);
+        range.setEnd(parent__);
+        result = range.getContent();
+        assert(result.length === 1);
+        assert(result[0] === grandparent_);
+    });
+
+    it('should return an array containing children, when endContainer is an element, and endOffset is equal to or greater than the length of node', function () {
+        var range = new Range(),
+            greatGrandparent = new TextOM.RootNode(),
+            grandparent = greatGrandparent.append(new TextOM.ParagraphNode()),
+            grandparent_ = greatGrandparent.append(new TextOM.ParagraphNode()),
+            parent = grandparent.append(new TextOM.SentenceNode()),
+            parent_ = grandparent.append(new TextOM.SentenceNode()),
+            parent__ = grandparent_.append(new TextOM.SentenceNode()),
+            parent___ = grandparent_.append(new TextOM.SentenceNode()),
+            child = parent.append(new TextOM.WordNode('alfred')),
+            child_ = parent_.append(new TextOM.WordNode('bertrand')),
+            child__ = parent__.append(new TextOM.WordNode('cees')),
+            child___ = parent___.append(new TextOM.WordNode('dick')),
+            result;
+
+        range.setStart(grandparent);
+        range.setEnd(parent___, Infinity);
+        result = range.getContent();
+        assert(result.length === 2);
+        assert(result[0] === grandparent);
+        assert(result[1] === grandparent_);
+
+        range.setEnd(grandparent_);
+        result = range.getContent();
+        assert(result.length === 2);
+        assert(result[0] === grandparent);
+        assert(result[1] === grandparent_);
+    });
+
+    it('should return an array containing children, when endContainer is an element, and endOffset is less than the length of node', function () {
+        var range = new Range(),
+            greatGrandparent = new TextOM.RootNode(),
+            grandparent = greatGrandparent.append(new TextOM.ParagraphNode()),
+            grandparent_ = greatGrandparent.append(new TextOM.ParagraphNode()),
+            parent = grandparent.append(new TextOM.SentenceNode()),
+            parent_ = grandparent.append(new TextOM.SentenceNode()),
+            parent__ = grandparent_.append(new TextOM.SentenceNode()),
+            parent___ = grandparent_.append(new TextOM.SentenceNode()),
+            child = parent.append(new TextOM.WordNode('alfred')),
+            child_ = parent.append(new TextOM.WordNode('bertrand')),
+            child__ = parent_.append(new TextOM.WordNode('cees')),
+            child___ = parent_.append(new TextOM.WordNode('dick')),
+            child____ = parent__.append(new TextOM.WordNode('eric')),
+            child_____ = parent__.append(new TextOM.WordNode('ferdinand')),
+            child______ = parent___.append(new TextOM.WordNode('gerard')),
+            child_______ = parent___.append(new TextOM.WordNode('hendrick')),
+            result;
+
+        range.setStart(grandparent);
+        range.setEnd(parent___, 1);
+        result = range.getContent();
+        assert(result.length === 3);
+        assert(result[0] === grandparent);
+        assert(result[1] === parent__);
+        assert(result[2] === child______);
+
+        range.setEnd(grandparent_, 1);
+        result = range.getContent();
+        assert(result.length === 2);
+        assert(result[0] === grandparent);
+        assert(result[1] === parent__);
+    });
+});
+
 describe('TextOM.RootNode()', function () {
     it('should be of type `function`', function () {
         assert(typeof TextOM.RootNode === 'function');
@@ -2379,4 +2859,3 @@ describe('HierarchyError', function () {
         }, /HierarchyError/);
     });
 });
-

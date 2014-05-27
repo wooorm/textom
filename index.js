@@ -3,411 +3,329 @@
     /**
      * Utilities.
      */
-    var util = (function () {
-        var _arrayPrototype = Array.prototype,
-            _arrayUnshift = _arrayPrototype.unshift,
-            _arrayPush = _arrayPrototype.push,
-            _arraySplice = _arrayPrototype.splice;
-
-        /**
-         * Return the index of a given node in a given parent, and -1
-         * otherwise.
-         *
-         * @param {Object} parent
-         * @param {Object} node
-         * @api private
-         */
-        function _at(parent, node) {
-            var iterator = -1,
-                length = parent.length;
-
-            while (++iterator < length) {
-                if (node === parent[iterator]) {
-                    return iterator;
-                }
-            }
-
-            /* istanbul ignore next: Wrong-useage */
-            return -1;
-        }
-
-        /**
-         * Inserts the given `appendee` after the given `item`.
-         *
-         * @param {Object} item
-         * @param {Object} appendee
-         * @api private
-         */
-        function _insertAfter(item, appendee) {
-
-            /* Cache the items parent and the next item. */
-            var parent = item.parent,
-                next = item.next,
-                position;
-
-            /* Detach the appendee. */
-            appendee.remove();
-
-            /* If item has a next node... */
-            if (next) {
-                /* ...link the appendees next node, to items next node. */
-                appendee.next = next;
-
-                /* ...link the next nodes previous node, to the appendee. */
-                next.prev = appendee;
-            }
-
-            /* Set the appendees previous node to item. */
-            appendee.prev = item;
-
-            /* Set the appendees parent to items parent. */
-            appendee.parent = parent;
-
-            /* Set the next node of item to the appendee. */
-            item.next = appendee;
-
-            /* If the parent has no last node or if item is the parent last
-             * node, link the parents last node to the appendee. */
-            if (item === parent.tail || !parent.tail) {
-                parent.tail = appendee;
-                _arrayPush.call(parent, appendee);
-            /* Else, insert the appendee into the parent after the items
-             * index. */
-            } else {
-                _arraySplice.call(parent, _at(parent, item) + 1, 0, appendee);
-            }
-
-            /* Return the appendee. */
-            return appendee;
-        }
-
-        /**
-         * Inserts the given `prependee` before the given `item` (which should
-         * always be its parents head).
-         *
-         * @param {Object} item
-         * @param {Object} prependee
-         * @api private
-         */
-        function _insertBeforeHead(item, prependee) {
-
-            /* Cache the items parent and the previous item. */
-            var parent = item.parent;
-
-            /* Detach the prependee. */
-            prependee.remove();
-
-            /* Set the prependees next node to item. */
-            prependee.next = item;
-
-            /* Set the prependees parent parent to items parent parent. */
-            prependee.parent = parent;
-
-            /* Set the previous node of item to the prependee. */
-            item.prev = prependee;
-
-            /* If item is the first node in the parent parent, link the
-             * parents first node to the prependee. */
-            parent.head = prependee;
-
-            /* If the the parent parent has no last node, link the parents
-             * last node to item. */
-            if (!parent.tail) {
-                parent.tail = item;
-            }
-
-            _arrayUnshift.call(parent, prependee);
-
-            /* Return the prependee. */
-            return prependee;
-        }
-
-        /**
-         * Inserts the given `appendee` after (when given), the `item`, and
-         * otherwise as the first item of the given parents.
-         *
-         * @param {Object} parent
-         * @param {Object} item
-         * @param {Object} appendee
-         * @api private
-         */
-        function _append(parent, item, appendee) {
-
-            if (!parent) {
-                throw new TypeError('Illegal invocation: \'' + parent +
-                    ' is not a valid argument for \'_append\'');
-            }
-
-            if (!appendee) {
-                throw new TypeError('\'' + appendee +
-                    ' is not a valid argument for \'_append\'');
-            }
-
-            if ('hierarchy' in appendee && 'hierarchy' in parent) {
-                if (parent.hierarchy + 1 !== appendee.hierarchy) {
-                    throw new Error('HierarchyError: The operation would ' +
-                        'yield an incorrect node tree');
-                }
-            }
-
-            if (typeof appendee.remove !== 'function') {
-                throw new Error('The operated on node did not have a ' +
-                    '`remove` method');
-            }
-
-            /* Insert after... */
-            if (item) {
-
-                /* istanbul ignore if: Wrong-useage */
-                if (item.parent !== parent) {
-                    throw new Error('The operated on node (the "pointer") ' +
-                        'was detached from the parent');
-                }
-
-                /* istanbul ignore if: Wrong-useage */
-                if (-1 === _at(parent, item)) {
-                    throw new Error('The operated on node (the "pointer") ' +
-                        'was attached to its parent, but the parent has no ' +
-                        'indice corresponding to the item');
-                }
-
-                return _insertAfter(item, appendee);
-            }
-
-            /* If parent has a first node... */
-            /* jshint boss:true */
-            if (item = parent.head) {
-                return _insertBeforeHead(item, appendee);
-            }
-
-            /* Prepend. There is no `head` (or `tail`) node yet. */
-
-            /* Detach the prependee. */
-            appendee.remove();
-
-            /* Set the prependees parent to reference parent. */
-            appendee.parent = parent;
-
-            /* Set parent's first node to the prependee and return the
-             * appendee. */
-            parent.head = appendee;
-            parent[0] = appendee;
-            parent.length = 1;
-
-            return appendee;
-        }
-
-        /**
-         * Detach a node from its (when applicable) parent, links its (when
-         * existing) previous and next items to eachother.
-         *
-         * @param {Object} node
-         * @api private
-         */
-        function _remove(node) {
-
-            /* istanbul ignore if: Wrong-useage */
-            if (!node) {
-                return false;
-            }
-
-            /* Cache self, the parent list, and the previous and next items. */
-            var parent = node.parent,
-                prev = node.prev,
-                next = node.next,
-                indice;
-
-            /* If the item is already detached, return node. */
-            if (!parent) {
-                return node;
-            }
-
-            /* If node is the last item in the parent, link the parents last
-             * item to the previous item. */
-            if (parent.tail === node) {
-                parent.tail = prev;
-            }
-
-            /* If node is the first item in the parent, link the parents first
-             * item to the next item. */
-            if (parent.head === node) {
-                parent.head = next;
-            }
-
-            /* If both the last and first items in the parent are the same,
-             * remove the link to the last item. */
-            if (parent.tail === parent.head) {
-                parent.tail = null;
-            }
-
-            /* If a previous item exists, link its next item to nodes next
-             * item. */
-            if (prev) {
-                prev.next = next;
-            }
-
-            /* If a next item exists, link its previous item to nodes previous
-             * item. */
-            if (next) {
-                next.prev = prev;
-            }
-
-            /* istanbul ignore else: Wrong-useage */
-            if (-1 !== (indice = _at(parent, node))) {
-                _arraySplice.call(parent, indice, 1);
-            }
-
-            /* Remove links from node to both the next and previous items,
-             * and to the parent parent. */
-            node.prev = node.next = node.parent = null;
-
-            /* Return node. */
-            return node;
-
-        }
-
-        /**
-         * Let the given `Constructor` inherit from `Super`s prototype.
-         *
-         * @param {function} Constructor
-         * @param {function} Super
-         * @api private
-         */
-        function _implements(Constructor, Super) {
-
-            var prototype, key, prototype_, constructors;
-
-            prototype = Constructor.prototype;
-
-            function Constructor_ () {}
-            Constructor_.prototype = Super.prototype;
-            prototype_ = new Constructor_();
-
-            for (key in prototype) {
-                prototype_[key] = prototype[key];
-            }
-
-            for (key in Super) {
-                /* istanbul ignore else */
-                if (Super.hasOwnProperty(key)) {
-                    Constructor[key] = Super[key];
-                }
-            }
-
-            prototype_.constructor = Constructor;
-            Constructor.prototype = prototype_;
-        }
-
-        var RANGE_BREAK = -1;
-        var RANGE_CONTINUE = 1;
-
-        function _findNextParent(node) {
-            while (node) {
-                if ((node = node.parent) && node.next) {
-                    return node.next;
-                }
-            }
-
-            return null;
-        }
-
-        function _findPrevParent(node) {
-            while (node) {
-                if ((node = node.parent) && node.prev) {
-                    return node.prev;
-                }
-            }
-
-            return null;
-        }
-
-        function _findRoot(node) {
-            while (node) {
-                if (!node.parent) {
-                    return node;
-                }
-
-                node = node.parent;
-            }
-        }
-
-        /* walkUpwards goes upwards. */
-        function _walkUpwards(start, callback) {
-
-            var pointer = start.parent;
-
-            while (pointer) {
-                if (callback(pointer) === RANGE_BREAK) {
-                    return;
-                }
-
-                pointer = pointer.parent;
-            }
-        }
-
-        /* _walkForwards tries to go deeper, otherwise forwards. */
-        function _walkForwards(start, callback) {
-
-            var pointer = start.next || _findNextParent(start),
-                result;
-
-            while (pointer) {
-                result = callback(pointer);
-
-                if (result === RANGE_BREAK) {
-                    return;
-                }
-
-                pointer = pointer.head || pointer.next ||
-                    _findNextParent(pointer);
-            }
-        }
-
-        /* _walkBackwards tries to go deeper, otherwise backwards. */
-        function _walkBackwards(start, callback) {
-
-            var pointer = start.prev || _findPrevParent(start),
-                result;
-
-            while (pointer) {
-                result = callback(pointer);
-
-                if (result === RANGE_BREAK) {
-                    return;
-                }
-
-                pointer = pointer.tail || pointer.prev ||
-                    _findPrevParent(pointer);
-            }
-        }
-
-        return {
-            'RANGE_BREAK' : RANGE_BREAK,
-            'RANGE_CONTINUE' : RANGE_CONTINUE,
-            'implements' : _implements,
-            'append' : _append,
-            'remove' : _remove,
-            'findRoot' : _findRoot,
-            'walkUpwards' : _walkUpwards,
-            'walkBackwards' : _walkBackwards,
-            'walkForwards' : _walkForwards
-        };
-    })();
-
+    var arrayPrototype = Array.prototype,
+        arrayUnshift = arrayPrototype.unshift,
+        arrayPush = arrayPrototype.push,
+        arraySlice = arrayPrototype.slice,
+        arraySplice = arrayPrototype.splice;
 
     /**
-     * Cache much-used functions.
+     * Return the index of a given node in a given parent, and -1
+     * otherwise.
+     *
+     * @param {Object} parent
+     * @param {Object} node
+     * @api private
      */
-    var append = util.append,
-        remove = util.remove,
-        implements = util.implements,
-        findRoot = util.findRoot,
-        walkUpwards = util.walkUpwards,
-        walkForwards = util.walkForwards,
-        walkBackwards = util.walkBackwards,
-        RANGE_BREAK = util.RANGE_BREAK,
-        RANGE_CONTINUE = util.RANGE_CONTINUE,
-        arraySlice = Array.prototype.slice;
+    function at(parent, node) {
+        var iterator = -1,
+            length = parent.length;
+
+        while (++iterator < length) {
+            if (node === parent[iterator]) {
+                return iterator;
+            }
+        }
+
+        /* istanbul ignore next: Wrong-usage */
+        return -1;
+    }
+
+    /**
+     * Inserts the given `appendee` after the given `item`.
+     *
+     * @param {Object} item
+     * @param {Object} appendee
+     * @api private
+     */
+    function _insertAfter(item, appendee) {
+
+        /* Cache the items parent and the next item. */
+        var parent = item.parent,
+            next = item.next,
+            position;
+
+        /* Detach the appendee. */
+        appendee.remove();
+
+        /* If item has a next node... */
+        if (next) {
+            /* ...link the appendees next node, to items next node. */
+            appendee.next = next;
+
+            /* ...link the next nodes previous node, to the appendee. */
+            next.prev = appendee;
+        }
+
+        /* Set the appendees previous node to item. */
+        appendee.prev = item;
+
+        /* Set the appendees parent to items parent. */
+        appendee.parent = parent;
+
+        /* Set the next node of item to the appendee. */
+        item.next = appendee;
+
+        /* If the parent has no last node or if item is the parent last
+         * node, link the parents last node to the appendee. */
+        if (item === parent.tail || !parent.tail) {
+            parent.tail = appendee;
+            arrayPush.call(parent, appendee);
+        /* Else, insert the appendee into the parent after the items
+         * index. */
+        } else {
+            arraySplice.call(parent, at(parent, item) + 1, 0, appendee);
+        }
+
+        /* Return the appendee. */
+        return appendee;
+    }
+
+    /**
+     * Inserts the given `prependee` before the given `item` (which should
+     * always be its parents head).
+     *
+     * @param {Object} item
+     * @param {Object} prependee
+     * @api private
+     */
+    function _insertBeforeHead(item, prependee) {
+
+        /* Cache the items parent and the previous item. */
+        var parent = item.parent;
+
+        /* Detach the prependee. */
+        prependee.remove();
+
+        /* Set the prependees next node to item. */
+        prependee.next = item;
+
+        /* Set the prependees parent parent to items parent parent. */
+        prependee.parent = parent;
+
+        /* Set the previous node of item to the prependee. */
+        item.prev = prependee;
+
+        /* If item is the first node in the parent parent, link the
+         * parents first node to the prependee. */
+        parent.head = prependee;
+
+        /* If the the parent parent has no last node, link the parents
+         * last node to item. */
+        if (!parent.tail) {
+            parent.tail = item;
+        }
+
+        arrayUnshift.call(parent, prependee);
+
+        /* Return the prependee. */
+        return prependee;
+    }
+
+    /**
+     * Inserts the given `appendee` after (when given), the `item`, and
+     * otherwise as the first item of the given parents.
+     *
+     * @param {Object} parent
+     * @param {Object} item
+     * @param {Object} appendee
+     * @api private
+     */
+    function append(parent, item, appendee) {
+
+        if (!parent) {
+            throw new TypeError('Illegal invocation: \'' + parent +
+                ' is not a valid argument for \'append\'');
+        }
+
+        if (!appendee) {
+            throw new TypeError('\'' + appendee +
+                ' is not a valid argument for \'append\'');
+        }
+
+        if ('hierarchy' in appendee && 'hierarchy' in parent) {
+            if (parent.hierarchy + 1 !== appendee.hierarchy) {
+                throw new Error('HierarchyError: The operation would ' +
+                    'yield an incorrect node tree');
+            }
+        }
+
+        if (typeof appendee.remove !== 'function') {
+            throw new Error('The operated on node did not have a ' +
+                '`remove` method');
+        }
+
+        /* Insert after... */
+        if (item) {
+
+            /* istanbul ignore if: Wrong-usage */
+            if (item.parent !== parent) {
+                throw new Error('The operated on node (the "pointer") ' +
+                    'was detached from the parent');
+            }
+
+            /* istanbul ignore if: Wrong-usage */
+            if (-1 === at(parent, item)) {
+                throw new Error('The operated on node (the "pointer") ' +
+                    'was attached to its parent, but the parent has no ' +
+                    'indice corresponding to the item');
+            }
+
+            return _insertAfter(item, appendee);
+        }
+
+        /* If parent has a first node... */
+        /* jshint boss:true */
+        if (item = parent.head) {
+            return _insertBeforeHead(item, appendee);
+        }
+
+        /* Prepend. There is no `head` (or `tail`) node yet. */
+
+        /* Detach the prependee. */
+        appendee.remove();
+
+        /* Set the prependees parent to reference parent. */
+        appendee.parent = parent;
+
+        /* Set parent's first node to the prependee and return the
+         * appendee. */
+        parent.head = appendee;
+        parent[0] = appendee;
+        parent.length = 1;
+
+        return appendee;
+    }
+
+    /**
+     * Detach a node from its (when applicable) parent, links its (when
+     * existing) previous and next items to eachother.
+     *
+     * @param {Object} node
+     * @api private
+     */
+    function remove(node) {
+
+        /* istanbul ignore if: Wrong-usage */
+        if (!node) {
+            return false;
+        }
+
+        /* Cache self, the parent list, and the previous and next items. */
+        var parent = node.parent,
+            prev = node.prev,
+            next = node.next,
+            indice;
+
+        /* If the item is already detached, return node. */
+        if (!parent) {
+            return node;
+        }
+
+        /* If node is the last item in the parent, link the parents last
+         * item to the previous item. */
+        if (parent.tail === node) {
+            parent.tail = prev;
+        }
+
+        /* If node is the first item in the parent, link the parents first
+         * item to the next item. */
+        if (parent.head === node) {
+            parent.head = next;
+        }
+
+        /* If both the last and first items in the parent are the same,
+         * remove the link to the last item. */
+        if (parent.tail === parent.head) {
+            parent.tail = null;
+        }
+
+        /* If a previous item exists, link its next item to nodes next
+         * item. */
+        if (prev) {
+            prev.next = next;
+        }
+
+        /* If a next item exists, link its previous item to nodes previous
+         * item. */
+        if (next) {
+            next.prev = prev;
+        }
+
+        /* istanbul ignore else: Wrong-usage */
+        if (-1 !== (indice = at(parent, node))) {
+            arraySplice.call(parent, indice, 1);
+        }
+
+        /* Remove links from node to both the next and previous items,
+         * and to the parent parent. */
+        node.prev = node.next = node.parent = null;
+
+        /* Return node. */
+        return node;
+
+    }
+
+    /**
+     * Let the given `Constructor` inherit from `Super`s prototype.
+     *
+     * @param {function} Constructor
+     * @param {function} Super
+     * @api private
+     */
+    function implements(Constructor, Super) {
+
+        var prototype, key, prototype_, constructors;
+
+        prototype = Constructor.prototype;
+
+        function Constructor_ () {}
+        Constructor_.prototype = Super.prototype;
+        prototype_ = new Constructor_();
+
+        for (key in prototype) {
+            prototype_[key] = prototype[key];
+        }
+
+        for (key in Super) {
+            /* istanbul ignore else */
+            if (Super.hasOwnProperty(key)) {
+                Constructor[key] = Super[key];
+            }
+        }
+
+        prototype_.constructor = Constructor;
+        Constructor.prototype = prototype_;
+    }
+
+    function findRoot(node) {
+        var result = findAncestors(node);
+        return result[result.length - 1].parent;
+    }
+
+    function findAncestors(node) {
+        var result = [];
+
+        while (node) {
+            if (!node.parent) {
+                return result;
+            }
+
+            result.push(node);
+
+            node = node.parent;
+        }
+    }
+
+    function findNextAncestor(node) {
+        while (node) {
+            if ((node = node.parent) && node.next) {
+                return node.next;
+            }
+        }
+
+        return null;
+    }
 
 
     /**
@@ -988,7 +906,7 @@
      * Set the start container and offset of a range.
      *
      * @param {Node} node - the start container to start the range at.
-     * @param {?number} offset - (integer) the start offset of the container 
+     * @param {?number} offset - (integer) the start offset of the container
      *                           to start the range at;
      * @api public
      */
@@ -1000,23 +918,25 @@
         }
 
         var self = this,
-            length = node.length,
             endContainer = self.endContainer,
             endOffset = self.endOffset,
-            switchContainers = false;
+            offsetIsDefault = false,
+            wouldBeValid = false,
+            endAncestors, node_;
 
         /* jshint eqnull:true*/
         if (offset == null || offset !== offset) {
             offset = 0;
+            offsetIsDefault = true;
         } else if (typeof offset !== 'number' || offset < 0) {
             throw new TypeError('\'' + offset + ' is not a valid argument ' +
                 'for \'Range.prototype.setStart\'');
         }
 
-        /* If boundaryPoint is after the range's end, set range's end to
-         * boundaryPoint. */
-        if (endContainer) {
 
+        if (!endContainer) {
+            wouldBeValid = true;
+        } else {
             if (findRoot(endContainer) !== findRoot(node)) {
                 throw new Error('WrongRootError: The given node is in the ' +
                     'wrong document.');
@@ -1024,45 +944,42 @@
 
             /* When node is also the endContainer; */
             if (endContainer === node) {
-                if (endOffset < offset) {
-                    switchContainers = true;
-                }
+                wouldBeValid = endOffset >= offset;
             } else {
-                walkUpwards(node, function (node_) {
+                endAncestors = findAncestors(endContainer);
+                node_ = node;
+
+                while (node_) {
                     if (node_ === endContainer) {
-                        switchContainers = true;
-                        return RANGE_BREAK;
+                        wouldBeValid = true;
+                        break;
                     }
-                });
 
-                if (!switchContainers) {
-                    walkBackwards(node, function (node_) {
-                        if (node_ === endContainer) {
-                            switchContainers = true;
-                            return RANGE_BREAK;
-                        }
-                    });
+                    if (-1 === endAncestors.indexOf(node_)) {
+                        node_ = node_.next || findNextAncestor(node_);
+                    } else {
+                        node_ = node_.head;
+                    }
                 }
-            }
-
-            if (switchContainers) {
-                self.endContainer = node;
-                self.endOffset = offset;
-                node = endContainer;
-                offset = endOffset;
             }
         }
 
-        /* Set range's start to boundaryPoint. */
-        self.startContainer = node;
-        self.startOffset = offset;
+        if (wouldBeValid) {
+            self.startContainer = node;
+            self.startOffset = offset;
+        } else {
+            self.endContainer = node;
+            self.endOffset = offsetIsDefault ? Infinity : offset;
+            self.startContainer = endContainer;
+            self.startOffset = endOffset;
+        }
     };
 
     /**
      * Set the end container and offset of a range.
      *
      * @param {Node} node - the end container to start the range at.
-     * @param {?number} offset - (integer) the end offset of the container to 
+     * @param {?number} offset - (integer) the end offset of the container to
      *                           end the range at;
      * @api public
      */
@@ -1074,23 +991,24 @@
         }
 
         var self = this,
-            length = node.length,
             startContainer = self.startContainer,
             startOffset = self.startOffset,
-            switchContainers = false;
+            offsetIsDefault = false,
+            wouldBeValid = false,
+            nodeAncestors, node_;
 
         /* jshint eqnull:true*/
         if (offset == null || offset !== offset) {
             offset = Infinity;
+            offsetIsDefault = true;
         } else if (typeof offset !== 'number' || offset < 0) {
             throw new TypeError('\'' + offset + ' is not a valid argument ' +
-                'for \'Range.prototype.setStart\'');
+                'for \'Range.prototype.setEnd\'');
         }
 
-        /* If boundaryPoint is before the range's start, set range's start to
-         * boundaryPoint. */
-        if (startContainer) {
-
+        if (!startContainer) {
+            wouldBeValid = true;
+        } else {
             if (findRoot(startContainer) !== findRoot(node)) {
                 throw new Error('WrongRootError: The given node is in the ' +
                     'wrong document.');
@@ -1098,29 +1016,35 @@
 
             /* When node is also the startContainer; */
             if (startContainer === node) {
-                if (startOffset > offset) {
-                    switchContainers = true;
-                }
+                wouldBeValid = startOffset <= offset;
             } else {
-                walkForwards(node, function (node_) {
-                    if (node_ === startContainer) {
-                        switchContainers = true;
-                        return RANGE_BREAK;
+                nodeAncestors = findAncestors(node);
+                node_ = startContainer;
+
+                while (node_) {
+                    if (node_ === node) {
+                        wouldBeValid = true;
+                        break;
                     }
-                });
+
+                    if (-1 === nodeAncestors.indexOf(node_)) {
+                        node_ = node_.next || findNextAncestor(node_);
+                    } else {
+                        node_ = node_.head;
+                    }
+                }
             }
         }
 
-        if (switchContainers) {
+        if (wouldBeValid) {
+            self.endContainer = node;
+            self.endOffset = offset;
+        } else {
             self.startContainer = node;
-            self.startOffset = offset;
-            node = startContainer;
-            offset = startOffset;
+            self.startOffset = offsetIsDefault ? 0 : offset;
+            self.endContainer = startContainer;
+            self.endOffset = startOffset;
         }
-
-        /* Set range's start to boundaryPoint. */
-        self.endContainer = node;
-        self.endOffset = offset;
     };
 
     prototype.cloneRange = function () {
@@ -1143,66 +1067,162 @@
      * @api public
      */
     prototype.toString = function () {
-        var value = '',
+
+        var content = this.getContent(),
+            startOffset = this.startOffset,
+            endOffset = this.endOffset,
+            startContainer = this.startContainer,
+            endContainer = this.endContainer,
+            startIsText, index;
+
+        if (content.length === 0) {
+            return '';
+        }
+
+        startIsText = !('length' in startContainer);
+
+        if (startContainer === endContainer && startIsText) {
+            return startContainer.toString().slice(startOffset, endOffset);
+        }
+
+        if (startIsText) {
+            content[0] = content[0].toString().slice(startOffset);
+        }
+
+        if (!('length' in endContainer)) {
+            index = content.length - 1;
+            content[index] = content[index].toString().slice(0, endOffset);
+        }
+
+        return content.join('');
+    };
+
+    /**
+     * Return the nodes in a range as an array. If a nodes parent is
+     * completely encapsulated by the range, returns that parent. Ignores
+     * startOffset (i.e., treats as `0`) when startContainer is a text node.
+     * Ignores endOffset (i.e., treats as `Infinity`) when endContainer is a
+     * text node.
+     *
+     * @return {Node|Node[]} content - The nodes completely encapsulated by
+     *                                 the range.
+     * @api public
+     */
+    prototype.getContent = function () {
+        var content = [],
             self = this,
             startContainer = self.startContainer,
             startOffset = self.startOffset,
             endContainer = self.endContainer,
-            endOffset = self.endOffset;
+            endOffset = self.endOffset,
+            endAncestors, node;
 
-        if (!startContainer || !endContainer) {
-            return value;
+        /*
+         * Return an empty array when either:
+         * - startContainer or endContainer are not set;
+         * - startContainer or endContainer are not attached;
+         * - startContainer does not share a root with endContainer.
+         */
+        if (!startContainer || !endContainer || !startContainer.parent ||
+            !endContainer.parent || findRoot(startContainer) !==
+            findRoot(endContainer)) {
+                return content;
         }
 
-        if (startContainer === endContainer && startOffset === endOffset) {
-            return value;
-        }
-
-        if (findRoot(startContainer) !== findRoot(endContainer)) {
-            return value;
-        }
-
-        /* If start node equals end node, and it is a Text node, return the
-         * substring of that Text node's data beginning at start offset and
-         * ending at end offset. */
+        /* If startContainer equals endContainer... */
         if (startContainer === endContainer) {
-            if (!('length' in startContainer)) {
-                return startContainer.toString().slice(startOffset, endOffset);
+            /* Return an array containg startContainer when startContainer
+             * either:
+             * - does not accept children;
+             * - starts and ends so range contains all its children.
+             */
+            if (!('length' in startContainer) ||
+                (startOffset === 0 && endOffset >= startContainer.length)) {
+                    return [startContainer];
             }
 
-            return arraySlice.call(startContainer, startOffset,
-                endOffset).join('');
+            /* Return an array containg the children of startContainer between
+             * startOffset and endOffset. */
+            return arraySlice.call(startContainer, startOffset, endOffset);
         }
 
-        /* If start node is a Text node, append to value the substring of that
-         * node's data from the start offset until the end. */
-        if (!('length' in startContainer)) {
-            value += startContainer.toString().slice(startOffset);
-        } else {
-            value += arraySlice.call(startContainer, startOffset);
+        /* If startOffset isnt `0` and startContainer accepts children... */
+        if (startOffset && ('length' in startContainer)) {
+            /* If a child exists at startOffset, let startContainer be that
+             * child. */
+            if (startOffset in startContainer) {
+                startContainer = startContainer[startOffset];
+            /* Otherwise, let startContainer be a following node of
+             * startContainer. */
+            } else {
+                startContainer = startContainer.next || findNextAncestor(startContainer);
+            }
         }
 
-        /* Append to value the concatenation, in tree order, of the data of all
-         * Text nodes that are contained in the context object. */
-        walkForwards(startContainer, function (node) {
+        /* If the whole endNode is in the range... */
+        if (endOffset >= endContainer.length) {
+            /* While endContainer is the last child of its parent... */
+            while (endContainer.parent.tail === endContainer) {
+
+                /* Let endContainer be its parent. */
+                endContainer = endContainer.parent;
+
+                /* Break when the new endContainer has no parent. */
+                if (!endContainer.parent) {
+                    break;
+                }
+            }
+        }
+
+        /* Find all ancestors of endContainer. */
+        endAncestors = findAncestors(endContainer);
+
+        /* While node is truthy... */
+        node = startContainer;
+
+        while (node) {
+            /* If node equals endContainer... */
             if (node === endContainer) {
-                if (!('length' in node)) {
-                    value += endContainer.toString().slice(0, endOffset);
+                /* Add endContainer to content, if either:
+                 * - endContainer does not accept children;
+                 * - ends so range contains all its children.
+                 */
+                if (!('length' in endContainer) ||
+                    endOffset >= endContainer.length) {
+                        content.push(node);
+                /* Add the children of endContainer to content from its start
+                 * untill its endOffset. */
                 } else {
-                    value += arraySlice.call(endContainer, 0, endOffset);
+                    content = content.concat(
+                        arraySlice.call(endContainer, 0, endOffset)
+                    );
                 }
 
-                return RANGE_BREAK;
+                /* Stop iterating. */
+                break;
             }
 
-            if (!('length' in node)) {
-                value += node.toString();
-            }
-        });
+            /* If node is not an ancestor of endContainer... */
+            if (-1 === endAncestors.indexOf(node)) {
+                /* Add node to content */
+                content.push(node);
 
-        return value;
+                /* Let the next node to iterate over be either its next
+                 * sibling, or a following ancestor. */
+                node = node.next || findNextAncestor(node);
+            /* Otherwise, let the next node to iterate over be either its
+             * first child, its next sibling, or a following ancestor. */
+            } else {
+                /* Note that a `head` always exists on a parent of
+                 * `endContainer`, thus we do not check for `next`, or a next
+                 * ancestor. */
+                node = node.head;
+            }
+        }
+
+        /* Return content. */
+        return content;
     };
-
 
     /**
      * Define `TextOM`. Exported above, and used to instantiate a new
