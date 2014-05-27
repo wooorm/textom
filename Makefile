@@ -1,7 +1,7 @@
 make: lint cover
 
 test:
-	@./node_modules/.bin/mocha --reporter spec spec/*.spec*.js
+	@./node_modules/.bin/mocha --reporter spec --check-leaks -u exports spec/*.spec*.js
 
 watch:
 	@./node_modules/.bin/mocha --reporter min --watch spec/*.spec*.js
