@@ -14,6 +14,7 @@
   "devDependencies": {
     "mocha": "~1.19.0",
     "jshint": "~2.5.1",
+    "jscs": "^1.4.5",
     "istanbul": "~0.2.10"
   },
   "repository": {

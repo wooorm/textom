@@ -1,5 +1,4 @@
 (function () {
-
     /**
      * Utilities.
      */
@@ -38,8 +37,7 @@
      * @param {Object} appendee
      * @api private
      */
-    function _insertAfter(item, appendee) {
-
+    function insertAfter(item, appendee) {
         /* Cache the items parent and the next item. */
         var parent = item.parent,
             next = item.next,
@@ -89,8 +87,7 @@
      * @param {Object} prependee
      * @api private
      */
-    function _insertBeforeHead(item, prependee) {
-
+    function insertBeforeHead(item, prependee) {
         /* Cache the items parent and the previous item. */
         var parent = item.parent;
 
@@ -132,7 +129,6 @@
      * @api private
      */
     function append(parent, item, appendee) {
-
         if (!parent) {
             throw new TypeError('Illegal invocation: \'' + parent +
                 ' is not a valid argument for \'append\'');
@@ -157,7 +153,6 @@
 
         /* Insert after... */
         if (item) {
-
             /* istanbul ignore if: Wrong-usage */
             if (item.parent !== parent) {
                 throw new Error('The operated on node (the "pointer") ' +
@@ -165,19 +160,19 @@
             }
 
             /* istanbul ignore if: Wrong-usage */
-            if (-1 === at(parent, item)) {
+            if (at(parent, item) === -1) {
                 throw new Error('The operated on node (the "pointer") ' +
                     'was attached to its parent, but the parent has no ' +
                     'indice corresponding to the item');
             }
 
-            return _insertAfter(item, appendee);
+            return insertAfter(item, appendee);
         }
 
         /* If parent has a first node... */
         /* jshint boss:true */
         if (item = parent.head) {
-            return _insertBeforeHead(item, appendee);
+            return insertBeforeHead(item, appendee);
         }
 
         /* Prepend. There is no `head` (or `tail`) node yet. */
@@ -205,7 +200,6 @@
      * @api private
      */
     function remove(node) {
-
         /* istanbul ignore if: Wrong-usage */
         if (!node) {
             return false;
@@ -253,7 +247,7 @@
         }
 
         /* istanbul ignore else: Wrong-usage */
-        if (-1 !== (indice = at(parent, node))) {
+        if ((indice = at(parent, node)) !== -1) {
             arraySplice.call(parent, indice, 1);
         }
 
@@ -263,7 +257,6 @@
 
         /* Return node. */
         return node;
-
     }
 
     /**
@@ -274,17 +267,16 @@
      * @api private
      */
     function implements(Constructor, Super) {
-
-        var prototype, key, prototype_, constructors;
+        var prototype, key, newPrototype, constructors;
 
         prototype = Constructor.prototype;
 
-        function Constructor_ () {}
-        Constructor_.prototype = Super.prototype;
-        prototype_ = new Constructor_();
+        function AltConstructor () {}
+        AltConstructor.prototype = Super.prototype;
+        newPrototype = new AltConstructor();
 
         for (key in prototype) {
-            prototype_[key] = prototype[key];
+            newPrototype[key] = prototype[key];
         }
 
         for (key in Super) {
@@ -294,8 +286,8 @@
             }
         }
 
-        prototype_.constructor = Constructor;
-        Constructor.prototype = prototype_;
+        newPrototype.constructor = Constructor;
+        Constructor.prototype = newPrototype;
     }
 
     function findRoot(node) {
@@ -326,7 +318,6 @@
 
         return null;
     }
-
 
     /**
      * Expose `TextOM`. Defined below, and used to instantiate a new
@@ -360,7 +351,6 @@
     Node.isImplementedBy = function (Constructor) {
         implements(Constructor, this);
     };
-
 
     /**
      * Expose Parent. Constructs a new Parent node;
@@ -442,7 +432,6 @@
         return this[index || 0] || null;
     };
 
-
     /**
      * Split the Parent into two, dividing the children from 0–position (NOT
      * including the character at `position`), and position–length (including
@@ -463,8 +452,8 @@
         } else if (position === Infinity) {
             position = self.length;
         } else if (typeof position !== 'number') {
-            throw new TypeError('\'' + position + ' is not a valid argument ' +
-                'for \'Parent.prototype.split\'');
+            throw new TypeError('\'' + position + ' is not a valid ' +
+                'argument for \'Parent.prototype.split\'');
         } else if (position < 0) {
             position = Math.abs((self.length + position) % self.length);
         }
@@ -511,7 +500,6 @@
      */
     Node.isImplementedBy(Parent);
 
-
     /**
      * Expose Child. Constructs a new Child node;
      *
@@ -556,7 +544,8 @@
     /**
      * Insert a given child before the operated on child in the parent.
      *
-     * @param {Child} child - the child to insert before the operated on child.
+     * @param {Child} child - the child to insert before the operated on
+     *                        child.
      * @return {Child} - the given child.
      * @api public
      */
@@ -606,7 +595,6 @@
      */
     Node.isImplementedBy(Child);
 
-
     /**
      * Expose Element. Constructs a new Element node;
      *
@@ -624,7 +612,6 @@
     Parent.isImplementedBy(Element);
     Child.isImplementedBy(Element);
 
-
     /**
      * Expose Text. Constructs a new Text node;
      *
@@ -632,7 +619,6 @@
      * @constructor
      */
     function Text(value) {
-
         Child.apply(this, arguments);
 
         this.fromString(value);
@@ -645,7 +631,7 @@
      *
      * @api private
      */
-    prototype._value = '';
+    prototype.internalValue = '';
 
     /**
      * Return the internal value of a Text;
@@ -654,7 +640,7 @@
      * @api public
      */
     prototype.toString = function () {
-        return this._value;
+        return this.internalValue;
     };
 
     /**
@@ -667,7 +653,7 @@
      */
     prototype.fromString = function (value) {
         /* jshint eqnull:true, -W093 */
-        return this._value = (value == null) ? '' : '' + value;
+        return this.internalValue = (value == null) ? '' : value.toString();
     };
 
     /**
@@ -681,7 +667,7 @@
      */
     prototype.split = function (position) {
         var self = this,
-            value = self._value,
+            value = self.internalValue,
             cloneNode;
 
         /* jshint eqnull:true*/
@@ -691,8 +677,8 @@
         } else if (position === Infinity) {
             position = value.length;
         } else if (typeof position !== 'number') {
-            throw new TypeError('\'' + position + ' is not a valid argument ' +
-                'for \'Text.prototype.split\'');
+            throw new TypeError('\'' + position + ' is not a valid ' +
+                'argument for \'Text.prototype.split\'');
         } else if (position < 0) {
             position = Math.abs((value.length + position) % value.length);
         }
@@ -710,7 +696,6 @@
      * Inherit from `Child.prototype`.
      */
     Child.isImplementedBy(Text);
-
 
     /**
      * Expose RootNode. Constructs a new RootNode (inheriting from Parent);
@@ -737,7 +722,6 @@
      */
     Parent.isImplementedBy(RootNode);
 
-
     /**
      * Expose ParagraphNode. Constructs a new ParagraphNode (inheriting from
      * both Parent and Child);
@@ -763,7 +747,6 @@
      * Inherit from `Parent.prototype` and `Child.prototype`.
      */
     Element.isImplementedBy(ParagraphNode);
-
 
     /**
      * Expose SentenceNode. Constructs a new SentenceNode (inheriting from
@@ -813,7 +796,6 @@
      */
     Text.isImplementedBy(WordNode);
 
-
     /**
      * Expose WhiteSpaceNode.
      */
@@ -834,7 +816,6 @@
      * Inherit from `Text.prototype`.
      */
     Text.isImplementedBy(WhiteSpaceNode);
-
 
     /**
      * Expose PunctuationNode.
@@ -857,7 +838,6 @@
      * Inherit from `Text.prototype`.
      */
     Text.isImplementedBy(PunctuationNode);
-
 
     /**
      * Expose Range.
@@ -905,16 +885,16 @@
     /**
      * Set the start container and offset of a range.
      *
-     * @param {Node} node - the start container to start the range at.
+     * @param {Node} startContainer - the start container to start the range
+     *                                at.
      * @param {?number} offset - (integer) the start offset of the container
      *                           to start the range at;
      * @api public
      */
-    prototype.setStart = function (node, offset) {
-
-        if (!node) {
-            throw new TypeError('\'' + node + ' is not a valid argument ' +
-                'for \'Range.prototype.setStart\'');
+    prototype.setStart = function (startContainer, offset) {
+        if (!startContainer) {
+            throw new TypeError('\'' + startContainer + ' is not a valid ' +
+                'argument for \'Range.prototype.setStart\'');
         }
 
         var self = this,
@@ -922,7 +902,7 @@
             endOffset = self.endOffset,
             offsetIsDefault = false,
             wouldBeValid = false,
-            endAncestors, node_;
+            endAncestors, node;
 
         /* jshint eqnull:true*/
         if (offset == null || offset !== offset) {
@@ -933,42 +913,41 @@
                 'for \'Range.prototype.setStart\'');
         }
 
-
         if (!endContainer) {
             wouldBeValid = true;
         } else {
-            if (findRoot(endContainer) !== findRoot(node)) {
-                throw new Error('WrongRootError: The given node is in the ' +
-                    'wrong document.');
+            if (findRoot(endContainer) !== findRoot(startContainer)) {
+                throw new Error('WrongRootError: The given startContainer ' +
+                    'is in the wrong document.');
             }
 
-            /* When node is also the endContainer; */
-            if (endContainer === node) {
+            /* When startContainer is also the endContainer; */
+            if (endContainer === startContainer) {
                 wouldBeValid = endOffset >= offset;
             } else {
                 endAncestors = findAncestors(endContainer);
-                node_ = node;
+                node = startContainer;
 
-                while (node_) {
-                    if (node_ === endContainer) {
+                while (node) {
+                    if (node === endContainer) {
                         wouldBeValid = true;
                         break;
                     }
 
-                    if (-1 === endAncestors.indexOf(node_)) {
-                        node_ = node_.next || findNextAncestor(node_);
+                    if (endAncestors.indexOf(node) === -1) {
+                        node = node.next || findNextAncestor(node);
                     } else {
-                        node_ = node_.head;
+                        node = node.head;
                     }
                 }
             }
         }
 
         if (wouldBeValid) {
-            self.startContainer = node;
+            self.startContainer = startContainer;
             self.startOffset = offset;
         } else {
-            self.endContainer = node;
+            self.endContainer = startContainer;
             self.endOffset = offsetIsDefault ? Infinity : offset;
             self.startContainer = endContainer;
             self.startOffset = endOffset;
@@ -978,16 +957,15 @@
     /**
      * Set the end container and offset of a range.
      *
-     * @param {Node} node - the end container to start the range at.
+     * @param {Node} endContainer - the end container to start the range at.
      * @param {?number} offset - (integer) the end offset of the container to
      *                           end the range at;
      * @api public
      */
-    prototype.setEnd = function (node, offset) {
-
-        if (!node) {
-            throw new TypeError('\'' + node + ' is not a valid argument ' +
-                'for \'Range.prototype.setEnd\'');
+    prototype.setEnd = function (endContainer, offset) {
+        if (!endContainer) {
+            throw new TypeError('\'' + endContainer + ' is not a valid ' +
+                'argument for \'Range.prototype.setEnd\'');
         }
 
         var self = this,
@@ -995,7 +973,7 @@
             startOffset = self.startOffset,
             offsetIsDefault = false,
             wouldBeValid = false,
-            nodeAncestors, node_;
+            endAncestors, node;
 
         /* jshint eqnull:true*/
         if (offset == null || offset !== offset) {
@@ -1009,38 +987,38 @@
         if (!startContainer) {
             wouldBeValid = true;
         } else {
-            if (findRoot(startContainer) !== findRoot(node)) {
-                throw new Error('WrongRootError: The given node is in the ' +
-                    'wrong document.');
+            if (findRoot(startContainer) !== findRoot(endContainer)) {
+                throw new Error('WrongRootError: The given endContainer ' +
+                    'is in the wrong document.');
             }
 
-            /* When node is also the startContainer; */
-            if (startContainer === node) {
+            /* When endContainer is also the startContainer; */
+            if (startContainer === endContainer) {
                 wouldBeValid = startOffset <= offset;
             } else {
-                nodeAncestors = findAncestors(node);
-                node_ = startContainer;
+                endAncestors = findAncestors(endContainer);
+                node = startContainer;
 
-                while (node_) {
-                    if (node_ === node) {
+                while (node) {
+                    if (node === endContainer) {
                         wouldBeValid = true;
                         break;
                     }
 
-                    if (-1 === nodeAncestors.indexOf(node_)) {
-                        node_ = node_.next || findNextAncestor(node_);
+                    if (endAncestors.indexOf(node) === -1) {
+                        node = node.next || findNextAncestor(node);
                     } else {
-                        node_ = node_.head;
+                        node = node.head;
                     }
                 }
             }
         }
 
         if (wouldBeValid) {
-            self.endContainer = node;
+            self.endContainer = endContainer;
             self.endOffset = offset;
         } else {
-            self.startContainer = node;
+            self.startContainer = endContainer;
             self.startOffset = offsetIsDefault ? 0 : offset;
             self.endContainer = startContainer;
             self.endOffset = startOffset;
@@ -1067,7 +1045,6 @@
      * @api public
      */
     prototype.toString = function () {
-
         var content = this.getContent(),
             startOffset = this.startOffset,
             endOffset = this.endOffset,
@@ -1155,7 +1132,9 @@
             /* Otherwise, let startContainer be a following node of
              * startContainer. */
             } else {
-                startContainer = startContainer.next || findNextAncestor(startContainer);
+                startContainer = startContainer.next || findNextAncestor(
+                    startContainer
+                );
             }
         }
 
@@ -1163,7 +1142,6 @@
         if (endOffset >= endContainer.length) {
             /* While endContainer is the last child of its parent... */
             while (endContainer.parent.tail === endContainer) {
-
                 /* Let endContainer be its parent. */
                 endContainer = endContainer.parent;
 
@@ -1203,7 +1181,7 @@
             }
 
             /* If node is not an ancestor of endContainer... */
-            if (-1 === endAncestors.indexOf(node)) {
+            if (endAncestors.indexOf(node) === -1) {
                 /* Add node to content */
                 content.push(node);
 
