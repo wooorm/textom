@@ -1,4 +1,5 @@
 (function () {
+    /* jshint expr:true, boss:true, eqnull:true */
     /**
      * Utilities.
      */
@@ -129,6 +130,8 @@
      * @api private
      */
     function append(parent, item, appendee) {
+        var result, next;
+
         if (!parent) {
             throw new TypeError('Illegal invocation: \'' + parent +
                 ' is not a valid argument for \'append\'');
@@ -166,30 +169,42 @@
                     'indice corresponding to the item');
             }
 
-            return insertAfter(item, appendee);
-        }
-
+            result = insertAfter(item, appendee);
         /* If parent has a first node... */
-        /* jshint boss:true */
-        if (item = parent.head) {
-            return insertBeforeHead(item, appendee);
+        } else if (item = parent.head) {
+            result = insertBeforeHead(item, appendee);
+        /* Prepend. There is no `head` (or `tail`) node yet. */
+        } else {
+            /* Detach the prependee. */
+            appendee.remove();
+
+            /* Set the prependees parent to reference parent. */
+            appendee.parent = parent;
+
+            /* Set parent's first node to the prependee and return the
+             * appendee. */
+            parent.head = appendee;
+            parent[0] = appendee;
+            parent.length = 1;
+
+            result = appendee;
         }
 
-        /* Prepend. There is no `head` (or `tail`) node yet. */
+        next = appendee.next;
 
-        /* Detach the prependee. */
-        appendee.remove();
+        emit(appendee, 'insert');
 
-        /* Set the prependees parent to reference parent. */
-        appendee.parent = parent;
+        if (item) {
+            emit(item, 'insertAfter', appendee, next || null);
+        }
 
-        /* Set parent's first node to the prependee and return the
-         * appendee. */
-        parent.head = appendee;
-        parent[0] = appendee;
-        parent.length = 1;
+        if (next) {
+            emit(next, 'insertBefore', appendee, item);
+        }
 
-        return appendee;
+        trigger(parent, 'insertInside', appendee);
+
+        return result;
     }
 
     /**
@@ -255,6 +270,18 @@
          * and to the parent parent. */
         node.prev = node.next = node.parent = null;
 
+        emit(node, 'remove');
+
+        if (next) {
+            emit(next, 'removeBefore', node, prev);
+        }
+
+        if (prev) {
+            emit(prev, 'removeAfter', node, next);
+        }
+
+        trigger(parent, 'removeInside', node);
+
         /* Return node. */
         return node;
     }
@@ -267,7 +294,11 @@
      * @api private
      */
     function implements(Constructor, Super) {
-        var prototype, key, newPrototype, constructors;
+        var iterator = -1,
+            constructors = Super.constructors || [Super],
+            prototype, key, newPrototype;
+
+        constructors = [Constructor].concat(constructors);
 
         prototype = Constructor.prototype;
 
@@ -287,6 +318,7 @@
         }
 
         newPrototype.constructor = Constructor;
+        Constructor.constructors = constructors;
         Constructor.prototype = newPrototype;
     }
 
@@ -319,6 +351,113 @@
         return null;
     }
 
+    function listen(name, callback) {
+        var self = this,
+            callbacks;
+
+        if (callback == null) {
+            callback = name;
+            name = '*';
+        }
+
+        if (typeof callback === 'function') {
+            callbacks = self.callbacks || (self.callbacks = {});
+            callbacks = callbacks[name] || (callbacks[name] = []);
+            callbacks.unshift(callback);
+        }
+
+        return self;
+    }
+
+    function ignore(name, callback) {
+        var self = this,
+            callbacks, indice;
+
+        if (typeof name === 'function') {
+            callback = name;
+            name = '*';
+        }
+
+        if (name == null) {
+            name = '*';
+        }
+
+        // Nothing to remove.
+        if (!(callbacks = self.callbacks) || !(callbacks = callbacks[name])) {
+            return self;
+        }
+
+        // Remove all callbacks.
+        if (!callback) {
+            callbacks.length = 0;
+            return self;
+        }
+
+        // Remove a callback.
+        if ((indice = callbacks.indexOf(callback)) !== -1) {
+            callbacks.splice(indice, 1);
+        }
+
+        return self;
+    }
+
+    function fire(context, callbacks, args) {
+        var iterator = -1,
+            callback;
+
+        if (!callbacks || !callbacks.length) {
+            return;
+        }
+
+        callbacks = callbacks.concat();
+
+        while (callback = callbacks[++iterator]) {
+            callback.apply(context, args);
+        }
+
+        return;
+    }
+
+    function triggerOnce(context, callbacks, name, args) {
+        if (!callbacks) {
+            return;
+        }
+
+        fire(context, callbacks[name], args.concat());
+        fire(context, callbacks['*'], [name].concat(args));
+    }
+
+    function trigger(context, name) {
+        var args = arraySlice.call(arguments, 2),
+            callbacks, namedCallbacks;
+
+        while (context) {
+            triggerOnce(context, context.callbacks, name, args);
+            triggerOnce(context, context.constructor.callbacks, name, args);
+
+            context = context.parent;
+        }
+    }
+
+    function emit(context, name) {
+        var args = arraySlice.call(arguments, 2),
+            constructors = context.constructor.constructors,
+            iterator = -1,
+            callbacks, namedCallbacks, constructor;
+
+        // Events on the node.
+        triggerOnce(context, context.callbacks, name, args);
+
+        /* istanbul ignore if: Wrong-usage */
+        if (!constructors) {
+            return;
+        }
+
+        while (constructor = constructors[++iterator]) {
+            triggerOnce(context, constructor.callbacks, name, args);
+        }
+    }
+
     /**
      * Expose `TextOM`. Defined below, and used to instantiate a new
      * `RootNode`.
@@ -333,14 +472,19 @@
      */
     function Node() {
         /** @member {Object} */
-        /* jshint expr:true */
         this.data || (this.data = {});
     }
+
+    var prototype = Node.prototype;
+
+    prototype.on = Node.on = listen;
+
+    prototype.off = Node.off = ignore;
 
     /**
      * Expose `TextOM` on every instance of Node.
      */
-    Node.prototype.TextOM = TextOM;
+    prototype.TextOM = TextOM;
 
     /**
      * Inherit the contexts' (Super) prototype into a given Constructor. E.g.,
@@ -362,7 +506,7 @@
         Node.apply(this, arguments);
     }
 
-    var prototype = Parent.prototype;
+    prototype = Parent.prototype;
 
     /**
      * The first child of a parent, null otherwise.
@@ -445,7 +589,6 @@
         var self = this,
             clone, cloneNode, iterator;
 
-        /* jshint eqnull:true */
         if (position == null || position !== position ||
             position === -Infinity) {
                 position = 0;
@@ -612,6 +755,9 @@
     Parent.isImplementedBy(Element);
     Child.isImplementedBy(Element);
 
+    /* Add Parent as a constructor (which it is) */
+    Element.constructors.splice(2, 0, Parent);
+
     /**
      * Expose Text. Constructs a new Text node;
      *
@@ -652,8 +798,19 @@
      * @api public
      */
     prototype.fromString = function (value) {
-        /* jshint eqnull:true, -W093 */
-        return this.internalValue = (value == null) ? '' : value.toString();
+        var self = this,
+            previousValue = self.toString(),
+            parent = self.parent;
+
+        self.internalValue = value = value == null ? '' : value.toString();
+
+        emit(self, 'change', value, previousValue);
+
+        if (parent) {
+            trigger(parent, 'changeInside', self, previousValue);
+        }
+
+        return value;
     };
 
     /**

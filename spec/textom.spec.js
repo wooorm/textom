@@ -2,6 +2,12 @@
 var TextOM = require('..'),
     assert = require('assert');
 
+/* istanbul ignore next: noop */
+function noop() {}
+
+/* istanbul ignore next: noop */
+function altNoop() {}
+
 describe('TextOM', function () {
 
     it('should have a `ROOT_NODE` property, equal to the `type` property on an instance of `RootNode`', function () {
@@ -50,39 +56,157 @@ describe('TextOM.Node', function () {
     });
 });
 
+describe('TextOM.Node.on', function () {
+    it('should be of type `function`', function () {
+        assert(typeof Node.on === 'function');
+    });
+});
+
+describe('TextOM.Node.off', function () {
+    it('should be of type `function`', function () {
+        assert(typeof Node.off === 'function');
+    });
+});
+
 describe('TextOM.Node#ROOT_NODE', function () {
     it('should be equal to the `type` property on an instance of `RootNode`', function () {
-        assert(TextOM.Node.prototype.ROOT_NODE === (new TextOM.RootNode()).type);
+        assert(nodePrototype.ROOT_NODE === (new TextOM.RootNode()).type);
     });
 });
 
 describe('TextOM.Node#PARAGRAPH_NODE', function () {
     it('should be equal to the `type` property on an instance of `ParagraphNode`', function () {
-        assert(TextOM.Node.prototype.PARAGRAPH_NODE === (new TextOM.ParagraphNode()).type);
+        assert(nodePrototype.PARAGRAPH_NODE === (new TextOM.ParagraphNode()).type);
     });
 });
 
 describe('TextOM.Node#SENTENCE_NODE', function () {
     it('should be equal to the `type` property on an instance of `SentenceNode`', function () {
-        assert(TextOM.Node.prototype.SENTENCE_NODE === (new TextOM.SentenceNode()).type);
+        assert(nodePrototype.SENTENCE_NODE === (new TextOM.SentenceNode()).type);
     });
 });
 
 describe('TextOM.Node#WORD_NODE', function () {
     it('should be equal to the `type` property on an instance of `WordNode`', function () {
-        assert(TextOM.Node.prototype.WORD_NODE === (new TextOM.WordNode()).type);
+        assert(nodePrototype.WORD_NODE === (new TextOM.WordNode()).type);
     });
 });
 
 describe('TextOM.Node#PUNCTUATION_NODE', function () {
     it('should be equal to the `type` property on an instance of `PunctuationNode`', function () {
-        assert(TextOM.Node.prototype.PUNCTUATION_NODE === (new TextOM.PunctuationNode()).type);
+        assert(nodePrototype.PUNCTUATION_NODE === (new TextOM.PunctuationNode()).type);
     });
 });
 
 describe('TextOM.Node#WHITE_SPACE_NODE', function () {
     it('should be equal to the `type` property on an instance of `WhiteSpaceNode`', function () {
-        assert(TextOM.Node.prototype.WHITE_SPACE_NODE === (new TextOM.WhiteSpaceNode()).type);
+        assert(nodePrototype.WHITE_SPACE_NODE === (new TextOM.WhiteSpaceNode()).type);
+    });
+});
+
+describe('TextOM.Node#on(name?, callback)', function () {
+    it('should be of type `function`', function () {
+        assert(typeof nodePrototype.on === 'function');
+    });
+
+    it('should NOT throw, when no arguments are given, but return the current contex', function () {
+        assert.doesNotThrow(function () { (new Node()).on(); });
+        var node = new Node();
+        assert(node.on() === node);
+    });
+
+    it('should set a `callbacks` attribute on the instance, when a callback is given', function () {
+        var node = new Node();
+        assert(!('callbacks' in node));
+        node.on(noop);
+        assert('callbacks' in node);
+    });
+
+    it('should add the callback, when a callback without type is given', function () {
+        var node = new Node();
+        assert(!('callbacks' in node));
+        node.on(noop);
+        assert('callbacks' in node);
+        assert('*' in node.callbacks);
+        assert(node.callbacks['*'][0] === noop);
+    });
+
+    it('should add the callback, when a callback with type is given', function () {
+        var node = new Node();
+        assert(!('callbacks' in node));
+        node.on('test', noop);
+        assert('callbacks' in node);
+        assert('test' in node.callbacks);
+        assert(node.callbacks.test[0] === noop);
+    });
+});
+
+describe('TextOM.Node#off(name?, callback?)', function () {
+    it('should be of type `function`', function () {
+        assert(typeof nodePrototype.off === 'function');
+    });
+
+    it('should NOT throw, when no arguments are given, but return the current contex', function () {
+        assert.doesNotThrow(function () { (new Node()).off(); });
+        var node = new Node();
+        assert(node.off() === node);
+    });
+
+    it('should NOT throw, when listeners to the given type do not exist, but return the current contex', function () {
+        var node = new Node();
+        node.on(noop);
+        assert.doesNotThrow(function () {
+            assert(node.off('test') === node);
+        });
+
+        node = new Node();
+        node.on('test', noop);
+        assert.doesNotThrow(function () {
+            assert(node.off('test', altNoop) === node);
+        });
+    });
+
+    it('should remove a callback, when a callback is given', function () {
+        var node = new Node();
+        node.on(noop);
+        assert(node.callbacks['*'][0] === noop);
+        node.off(noop);
+        assert(node.callbacks['*'].length === 0);
+    });
+
+    it('should remove the callback, when a callback without type is given', function () {
+        var node = new Node();
+        node.on(noop);
+        assert(node.callbacks['*'][0] === noop);
+        node.off(noop);
+        assert(node.callbacks['*'].length === 0);
+    });
+
+    it('should remove the callback, when a callback with type is given', function () {
+        var node = new Node();
+        node.on('test', noop);
+        assert(node.callbacks.test[0] === noop);
+        node.off('test', noop);
+        assert(node.callbacks.test.length === 0);
+    });
+
+    it('should remove all callbacks of the given type, when only a type is given', function () {
+        var node = new Node();
+        node.on('test', noop);
+        node.on('test', noop);
+        assert(node.callbacks.test[0] === noop);
+        assert(node.callbacks.test[1] === noop);
+        node.off('test');
+        assert(node.callbacks.test.length === 0);
+    });
+
+    it('should remove all callbacks added without a type argument, when nothing is given', function () {
+        var node = new Node();
+        node.on('test', noop);
+        node.on(noop);
+        node.off();
+        assert(node.callbacks.test.length === 1);
+        assert(node.callbacks['*'].length === 0);
     });
 });
 
@@ -2857,5 +2981,440 @@ describe('HierarchyError', function () {
         assert.doesNotThrow(function () {
             (new TextOM.SentenceNode()).append(new TextOM.WhiteSpaceNode());
         }, /HierarchyError/);
+    });
+});
+
+describe('Events on TextOM.Parent', function () {
+    describe('[insertInside]', function () {
+        it('emits on all `Child`s ancestors, with the current ancestor as the context, and the inserted child as an argument, when a Child is inserted', function () {
+            var rootNode = new TextOM.RootNode(),
+                paragraphNode = rootNode.append(new TextOM.ParagraphNode()),
+                sentenceNode = paragraphNode.append(new TextOM.SentenceNode()),
+                wordNode = new TextOM.WordNode('alfred'),
+                whiteSpaceNode = new TextOM.WhiteSpaceNode('\n\n'),
+                iterator = 0,
+                shouldBeChild = null;
+
+            function oninsertInsideFactory(context) {
+                return function (child) {
+                    iterator++;
+                    assert(child === shouldBeChild);
+                    assert(this === context);
+                };
+            }
+
+            rootNode.on('insertInside', oninsertInsideFactory(rootNode));
+            paragraphNode.on('insertInside', oninsertInsideFactory(paragraphNode));
+            sentenceNode.on('insertInside', oninsertInsideFactory(sentenceNode));
+            shouldBeChild = wordNode;
+
+            sentenceNode.append(wordNode);
+            assert(iterator === 3);
+
+            iterator = 0;
+            shouldBeChild = whiteSpaceNode;
+
+            rootNode.append(whiteSpaceNode);
+            assert(iterator === 1);
+        });
+
+        it('emits on all `Child`s ancestors constructors, with the current ancestor as the context, and the inserted child as an argument, when a Child is inserted', function () {
+            var rootNode = new TextOM.RootNode(),
+                paragraphNode = rootNode.append(new TextOM.ParagraphNode()),
+                sentenceNode = paragraphNode.append(new TextOM.SentenceNode()),
+                wordNode = new TextOM.WordNode('alfred'),
+                whiteSpaceNode = new TextOM.WhiteSpaceNode('\n\n'),
+                iterator = 0,
+                shouldBeChild = null;
+
+            function oninsertInsideFactory(context) {
+                return function (child) {
+                    iterator++;
+                    assert(child === shouldBeChild);
+                    assert(this === context);
+                };
+            }
+
+            TextOM.RootNode.on('insertInside', oninsertInsideFactory(rootNode));
+            TextOM.ParagraphNode.on('insertInside', oninsertInsideFactory(paragraphNode));
+            TextOM.SentenceNode.on('insertInside', oninsertInsideFactory(sentenceNode));
+            shouldBeChild = wordNode;
+
+            sentenceNode.append(wordNode);
+            assert(iterator === 3);
+
+            iterator = 0;
+            shouldBeChild = whiteSpaceNode;
+
+            rootNode.append(whiteSpaceNode);
+            assert(iterator === 1);
+
+            // Clean.
+            TextOM.RootNode.off('insertInside');
+            TextOM.ParagraphNode.off('insertInside');
+            TextOM.SentenceNode.off('insertInside');
+        });
+    });
+
+    describe('[insertInside]', function () {
+        it('emits on all `Child`s ancestors, with the current ancestor as the context, and the removed child as an argument, when a Child is removed', function () {
+            var rootNode = new TextOM.RootNode(),
+                paragraphNode = rootNode.append(new TextOM.ParagraphNode()),
+                sentenceNode = paragraphNode.append(new TextOM.SentenceNode()),
+                wordNode = sentenceNode.append(new TextOM.WordNode('alfred')),
+                whiteSpaceNode = rootNode.append(new TextOM.WhiteSpaceNode('\n\n')),
+                iterator = 0,
+                shouldBeChild = null;
+
+            function onremoveInsideFactory(context) {
+                return function (child) {
+                    iterator++;
+                    assert(child === shouldBeChild);
+                    assert(this === context);
+                };
+            }
+
+            rootNode.on('removeInside', onremoveInsideFactory(rootNode));
+            paragraphNode.on('removeInside', onremoveInsideFactory(paragraphNode));
+            sentenceNode.on('removeInside', onremoveInsideFactory(sentenceNode));
+            shouldBeChild = wordNode;
+
+            wordNode.remove();
+            assert(iterator === 3);
+
+            iterator = 0;
+            shouldBeChild = whiteSpaceNode;
+
+            whiteSpaceNode.remove();
+            assert(iterator === 1);
+        });
+
+        it('emits on all `Child`s ancestors constructors, with the current ancestor as the context, and the removed child as an argument, when a Child is removed', function () {
+            var rootNode = new TextOM.RootNode(),
+                paragraphNode = rootNode.append(new TextOM.ParagraphNode()),
+                sentenceNode = paragraphNode.append(new TextOM.SentenceNode()),
+                wordNode = sentenceNode.append(new TextOM.WordNode('alfred')),
+                whiteSpaceNode = rootNode.append(new TextOM.WhiteSpaceNode('\n\n')),
+                iterator = 0,
+                shouldBeChild = null;
+
+            function onremoveInsideFactory(context) {
+                return function (child) {
+                    iterator++;
+                    assert(child === shouldBeChild);
+                    assert(this === context);
+                };
+            }
+
+            TextOM.RootNode.on('removeInside', onremoveInsideFactory(rootNode));
+            TextOM.ParagraphNode.on('removeInside', onremoveInsideFactory(paragraphNode));
+            TextOM.SentenceNode.on('removeInside', onremoveInsideFactory(sentenceNode));
+            shouldBeChild = wordNode;
+
+            wordNode.remove();
+            assert(iterator === 3);
+
+            iterator = 0;
+            shouldBeChild = whiteSpaceNode;
+
+            whiteSpaceNode.remove();
+            assert(iterator === 1);
+
+            // Clean.
+            TextOM.RootNode.off('removeInside');
+            TextOM.ParagraphNode.off('removeInside');
+            TextOM.SentenceNode.off('removeInside');
+        });
+    });
+
+    describe('[changeInside]', function () {
+        it('emits on all `Text`s ancestors, with the current ancestor as the context, and the changed child and the previous value as arguments, when a Text is changed', function () {
+            var rootNode = new TextOM.RootNode(),
+                paragraphNode = rootNode.append(new TextOM.ParagraphNode()),
+                sentenceNode = paragraphNode.append(new TextOM.SentenceNode()),
+                wordNode = sentenceNode.append(new TextOM.WordNode('alfred')),
+                whiteSpaceNode = rootNode.append(new TextOM.WhiteSpaceNode('\n\n')),
+                iterator = 0,
+                shouldBeChild = null,
+                shouldBePreviousValue = null;
+
+            function onchangeInsideFactory(context) {
+                return function (child, previousValue) {
+                    iterator++;
+                    assert(child === shouldBeChild);
+                    assert(previousValue === shouldBePreviousValue);
+                    assert(this === context);
+                };
+            }
+
+            rootNode.on('changeInside', onchangeInsideFactory(rootNode));
+            paragraphNode.on('changeInside', onchangeInsideFactory(paragraphNode));
+            sentenceNode.on('changeInside', onchangeInsideFactory(sentenceNode));
+            shouldBeChild = wordNode;
+            shouldBePreviousValue = wordNode.toString();
+
+            wordNode.fromString('bertrand');
+            assert(iterator === 3);
+
+            iterator = 0;
+            shouldBeChild = whiteSpaceNode;
+            shouldBePreviousValue = whiteSpaceNode.toString();
+
+            whiteSpaceNode.fromString('\n');
+            assert(iterator === 1);
+        });
+
+        it('emits on all `Text`s ancestors, with the current ancestor as the context, and the changed child and the previous value as arguments, when a Text is changed', function () {
+            var rootNode = new TextOM.RootNode(),
+                paragraphNode = rootNode.append(new TextOM.ParagraphNode()),
+                sentenceNode = paragraphNode.append(new TextOM.SentenceNode()),
+                wordNode = sentenceNode.append(new TextOM.WordNode('alfred')),
+                whiteSpaceNode = rootNode.append(new TextOM.WhiteSpaceNode('\n\n')),
+                iterator = 0,
+                shouldBeChild = null,
+                shouldBePreviousValue = null;
+
+            function onchangeInsideFactory(context) {
+                return function (child, previousValue) {
+                    iterator++;
+                    assert(child === shouldBeChild);
+                    assert(previousValue === shouldBePreviousValue);
+                    assert(this === context);
+                };
+            }
+
+            TextOM.RootNode.on('changeInside', onchangeInsideFactory(rootNode));
+            TextOM.ParagraphNode.on('changeInside', onchangeInsideFactory(paragraphNode));
+            TextOM.SentenceNode.on('changeInside', onchangeInsideFactory(sentenceNode));
+            shouldBeChild = wordNode;
+            shouldBePreviousValue = wordNode.toString();
+
+            wordNode.fromString('bertrand');
+            assert(iterator === 3);
+
+            iterator = 0;
+            shouldBeChild = whiteSpaceNode;
+            shouldBePreviousValue = whiteSpaceNode.toString();
+
+            whiteSpaceNode.fromString('\n');
+            assert(iterator === 1);
+
+            TextOM.RootNode.off('changeInside');
+            TextOM.ParagraphNode.off('changeInside');
+            TextOM.SentenceNode.off('changeInside');
+        });
+    });
+});
+
+describe('Events on TextOM.Child', function () {
+    describe('[insert]', function () {
+        it('emits on child and all `child`s constructors, with `child` as the context, when `child` is inserted', function () {
+            var paragraphNode = new TextOM.ParagraphNode(),
+                sentenceNode = new TextOM.SentenceNode(),
+                wordNode = sentenceNode.append(new TextOM.WordNode('alfred')),
+                iterator = 0;
+
+            function oninsert() {
+                iterator++;
+                assert(this === sentenceNode);
+            }
+
+            sentenceNode.on('insert', oninsert);
+            TextOM.SentenceNode.on('insert', oninsert);
+            TextOM.Element.on('insert', oninsert);
+            TextOM.Child.on('insert', oninsert);
+            TextOM.Parent.on('insert', oninsert);
+            TextOM.Node.on('insert', oninsert);
+
+            paragraphNode.append(sentenceNode);
+            assert(iterator === 6);
+
+            TextOM.SentenceNode.off('insert');
+            TextOM.Element.off('insert');
+            TextOM.Child.off('insert');
+            TextOM.Parent.off('insert');
+            TextOM.Node.off('insert');
+        });
+    });
+
+    describe('[insertAfter]', function () {
+        it('emits on child and all `child`s constructors, with `child` as the context, and the appendee and the previous value as arguments, when a new child is inserted after `child`', function () {
+            var sentenceNode = new TextOM.SentenceNode(),
+                wordNode = sentenceNode.append(new TextOM.WordNode('alfred')),
+                whiteSpaceNode = sentenceNode.append(new TextOM.WhiteSpaceNode(' ')),
+                punctuationNode = new TextOM.PunctuationNode(','),
+                iterator = 0;
+
+            function oninsertAfter(appendee, previousValue) {
+                iterator++;
+                assert(this === wordNode);
+                assert(appendee === punctuationNode);
+                assert(previousValue === whiteSpaceNode);
+            }
+
+            wordNode.on('insertAfter', oninsertAfter);
+            TextOM.WordNode.on('insertAfter', oninsertAfter);
+            TextOM.Child.on('insertAfter', oninsertAfter);
+            TextOM.Node.on('insertAfter', oninsertAfter);
+
+            wordNode.after(punctuationNode);
+            assert(iterator === 4);
+
+            wordNode.off('insertAfter');
+            TextOM.WordNode.off('insertAfter');
+            TextOM.Child.off('insertAfter');
+            TextOM.Node.off('insertAfter');
+        });
+    });
+
+    describe('[insertBefore]', function () {
+        it('emits on child and all `child`s constructors, with `child` as the context, and the prependee and the previous value as arguments, when a new child is inserted before `child`', function () {
+            var sentenceNode = new TextOM.SentenceNode(),
+                wordNode = sentenceNode.append(new TextOM.WordNode('alfred')),
+                whiteSpaceNode = sentenceNode.append(new TextOM.WhiteSpaceNode(' ')),
+                punctuationNode = new TextOM.PunctuationNode(','),
+                iterator = 0;
+
+            function oninsertBefore(prependee, previousValue) {
+                iterator++;
+                assert(this === whiteSpaceNode);
+                assert(prependee === punctuationNode);
+                assert(previousValue === wordNode);
+            }
+
+            whiteSpaceNode.on('insertBefore', oninsertBefore);
+            TextOM.WhiteSpaceNode.on('insertBefore', oninsertBefore);
+            TextOM.Child.on('insertBefore', oninsertBefore);
+            TextOM.Node.on('insertBefore', oninsertBefore);
+
+            whiteSpaceNode.before(punctuationNode);
+            assert(iterator === 4);
+
+            whiteSpaceNode.off('insertBefore');
+            TextOM.WhiteSpaceNode.off('insertBefore');
+            TextOM.Child.off('insertBefore');
+            TextOM.Node.off('insertBefore');
+        });
+    });
+
+    describe('[remove]', function () {
+        it('emits on child and all `child`s constructors, with `child` as the context, when `child` is removed', function () {
+            var paragraphNode = new TextOM.ParagraphNode(),
+                sentenceNode = paragraphNode.append(new TextOM.SentenceNode()),
+                iterator = 0;
+
+            function onremove() {
+                iterator++;
+                assert(this === sentenceNode);
+            }
+
+            sentenceNode.on('remove', onremove);
+            TextOM.SentenceNode.on('remove', onremove);
+            TextOM.Element.on('remove', onremove);
+            TextOM.Child.on('remove', onremove);
+            TextOM.Parent.on('remove', onremove);
+            TextOM.Node.on('remove', onremove);
+
+            sentenceNode.remove();
+            assert(iterator === 6);
+
+            TextOM.SentenceNode.off('remove');
+            TextOM.Element.off('remove');
+            TextOM.Child.off('remove');
+            TextOM.Parent.off('remove');
+            TextOM.Node.off('remove');
+        });
+    });
+
+    describe('[removeAfter]', function () {
+        it('emits on child and all `child`s constructors, with `child` as the context, and the removee and the current value as arguments, when a child is removed after `child`', function () {
+            var sentenceNode = new TextOM.SentenceNode(),
+                wordNode = sentenceNode.append(new TextOM.WordNode('alfred')),
+                punctuationNode = sentenceNode.append(new TextOM.PunctuationNode(',')),
+                whiteSpaceNode = sentenceNode.append(new TextOM.WhiteSpaceNode(' ')),
+                iterator = 0;
+
+            function onremoveAfter(removee, currentValue) {
+                iterator++;
+                assert(this === wordNode);
+                assert(removee === punctuationNode);
+                assert(currentValue === whiteSpaceNode);
+            }
+
+            wordNode.on('removeAfter', onremoveAfter);
+            TextOM.WordNode.on('removeAfter', onremoveAfter);
+            TextOM.Child.on('removeAfter', onremoveAfter);
+            TextOM.Node.on('removeAfter', onremoveAfter);
+
+            punctuationNode.remove();
+            assert(iterator === 4);
+
+            wordNode.off('removeAfter');
+            TextOM.WordNode.off('removeAfter');
+            TextOM.Child.off('removeAfter');
+            TextOM.Node.off('removeAfter');
+        });
+    });
+
+    describe('[removeBefore]', function () {
+        it('emits on child and all `child`s constructors, with `child` as the context, and the removee and the current value as arguments, when a child is removed before `child`', function () {
+            var sentenceNode = new TextOM.SentenceNode(),
+                wordNode = sentenceNode.append(new TextOM.WordNode('alfred')),
+                punctuationNode = sentenceNode.append(new TextOM.PunctuationNode(',')),
+                whiteSpaceNode = sentenceNode.append(new TextOM.WhiteSpaceNode(' ')),
+                iterator = 0;
+
+            function onremoveBefore(removee, currentValue) {
+                iterator++;
+                assert(this === whiteSpaceNode);
+                assert(removee === punctuationNode);
+                assert(currentValue === wordNode);
+            }
+
+            whiteSpaceNode.on('removeBefore', onremoveBefore);
+            TextOM.WhiteSpaceNode.on('removeBefore', onremoveBefore);
+            TextOM.Child.on('removeBefore', onremoveBefore);
+            TextOM.Node.on('removeBefore', onremoveBefore);
+
+            punctuationNode.remove();
+            assert(iterator === 4);
+
+            whiteSpaceNode.off('removeBefore');
+            TextOM.WhiteSpaceNode.off('removeBefore');
+            TextOM.Child.off('removeBefore');
+            TextOM.Node.off('removeBefore');
+        });
+    });
+});
+
+describe('Events on TextOM.Text', function () {
+    describe('[change]', function () {
+        it('emits on text and all `text`s constructors, with `text` as the context, and the current and previous values as arguments, when a `text` is changed', function () {
+            var sentenceNode = new TextOM.SentenceNode(),
+                wordNode = sentenceNode.append(new TextOM.WordNode('alfred')),
+                iterator = 0,
+                shouldBeValue = 'bertrand',
+                shouldBePreviousValue = wordNode.toString();
+
+            function onchange(value, previousValue) {
+                iterator++;
+                assert(this === wordNode);
+                assert(value === shouldBeValue);
+                assert(previousValue === shouldBePreviousValue);
+            }
+
+            wordNode.on('change', onchange);
+            TextOM.WordNode.on('change', onchange);
+            TextOM.Child.on('change', onchange);
+            TextOM.Node.on('change', onchange);
+
+            wordNode.fromString(shouldBeValue);
+            assert(iterator === 4);
+
+            wordNode.off('change');
+            TextOM.WordNode.off('change');
+            TextOM.Child.off('change');
+            TextOM.Node.off('change');
+        });
     });
 });
