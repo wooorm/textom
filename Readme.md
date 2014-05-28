@@ -22,9 +22,9 @@ npm install
 
 ## Usage
 
-````js
+```js
 var root = new TextOM();
-````
+```
 
 ## API
 See below for an abbreviated IDL definition.
