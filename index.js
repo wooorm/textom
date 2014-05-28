@@ -84,34 +84,33 @@
      * Inserts the given `prependee` before the given `item` (which should
      * always be its parents head).
      *
-     * @param {Object} item
+     * @param {Object} head
      * @param {Object} prependee
      * @api private
      */
-    function insertBeforeHead(item, prependee) {
-        /* Cache the items parent and the previous item. */
-        var parent = item.parent;
+    function insertBeforeHead(head, prependee) {
+        /* Cache the heads parent. */
+        var parent = head.parent;
 
         /* Detach the prependee. */
         prependee.remove();
 
-        /* Set the prependees next node to item. */
-        prependee.next = item;
+        /* Set the prependees next node to head. */
+        prependee.next = head;
 
-        /* Set the prependees parent parent to items parent parent. */
+        /* Set the prependees parent to heads parent. */
         prependee.parent = parent;
 
-        /* Set the previous node of item to the prependee. */
-        item.prev = prependee;
+        /* Set the previous node of head to the prependee. */
+        head.prev = prependee;
 
-        /* If item is the first node in the parent parent, link the
-         * parents first node to the prependee. */
+        /* Set the parents heads to the prependee. */
         parent.head = prependee;
 
-        /* If the the parent parent has no last node, link the parents
-         * last node to item. */
+        /* If the the parent has no last node, link the parents
+         * last node to head. */
         if (!parent.tail) {
-            parent.tail = item;
+            parent.tail = head;
         }
 
         arrayUnshift.call(parent, prependee);
@@ -267,7 +266,7 @@
         }
 
         /* Remove links from node to both the next and previous items,
-         * and to the parent parent. */
+         * and to the parent. */
         node.prev = node.next = node.parent = null;
 
         emit(node, 'remove');
