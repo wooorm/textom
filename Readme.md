@@ -456,6 +456,159 @@ module textom
 }
 ```
 
+## Events
+TextOM provides a few handy events, listened to through the `on`—and its opposite silencing functionality, `off`—methods. These `on` and `off` methods exist on every instance of Node, and on every constructor (e.g., Node, Element, and WhiteSpaceNode). When used on an instance, only events on that specific instance will be exposed to the listener. When however used on a constructor, all events on all instances will be exposed to the listener.
+
+TextOM provides two different types of events: Bubbling, and non-bubbling. In API terms, bubbling event names end with `"Inside"`.
+
+### Non-bubbling (“normal”) events
+Normal events fire on instances of Child (and thus also on Element, or Text—which both subclass Child), and do not continue firing on through ancestors. They do however, fire on all constructors of the instance.
+
+Lets say, for example, we have the example in [API](#api), and add the following code to it:
+
+```js
+dogs.fromString('Poodles');
+```
+
+A `"changetext"` event will fire on dogs, and because dogs is an instance of WordNode, the event will also fire on WordNode. Because a WordNode also inherits from Text, the event will also fire on Text, continuing with Child, and finally on Node.
+
+### Bubbling events
+Bubbling events start at a parent, and continue up through its ancestors, until no higher ancestor exists. These events also fire on the (single) parents constructor.
+
+Lets say, for example, we have the example in [API](#api), and add the following code to it:
+
+```js
+dogs.fromString('Poodles');
+```
+
+A `"changetextinside"` event will fire on the parent of dogs (sentence), and because sentence is an instance of SentenceNode, this event will also fire on SentenceNode. The same would happen through sentences ancestors: paragraph and ParagraphNode, root and RootNode.
+
+### List of events
+#### remove
+```js
+dogs.on('remove', function () {
+  this === dogs; // true
+})
+dogs.remove();
+```
+
+Fired when a node is removed from its parents.
+
+- this: the removed node;
+
+#### insert
+```js
+dogs.on('insert', function () {
+  this === dogs; // true
+})
+sentence.append(dogs);
+```
+
+Fired when a node is inserted into a parent.
+
+- this: the inserted node;
+
+#### changetext
+```js
+dogs.on('changetext', function (value, previousValue) {
+  this === dogs; // true
+  value === 'Poodles'; // true
+  previousValue === 'Dogs'; // true
+})
+dogs.fromString('Poodles');
+```
+
+Fired when the internal value of an instance of Text (i.e., WhiteSpaceNode, PunctuationNode, or WordNode) changes.
+
+- this: the node which text changed;
+- arguments:
+  - value: the current value;
+  - previousValue: the previous value;
+
+#### changeprev
+```js
+cats.on('changeprev', function (node, previousNode) {
+  this === cats; // true
+  node === ampersand; // true
+  previousNode === space1; // true
+})
+space1.remove();
+```
+
+Fired when the `prev` attribute on a child is changed (i.e., by removing the previous node, or inserting a node before the child).
+
+- this: the node succeeding the changed node;
+- arguments:
+  - node: the current `prev` attribute, null otherwise;
+  - previousNode: the previous `prev` node, null otherwise;
+
+#### changenext
+```js
+cats.on("changenext", function (node, nextNode) {
+  this === cats; // true
+  node === null; // true
+  previousNode === fullStop; // true
+})
+fullStop.remove();
+```
+
+Fired when the `next` attribute on a child is changed (i.e., by removing the next node, or inserting a node after the child).
+
+- this: the node succeeding the changed node;
+- arguments:
+  - node: the current `next` attribute, null otherwise;
+  - nextNode: the previous `next` node, null otherwise;
+
+### List of Bubbling events
+#### changetextinside
+```js
+root.on('changetextinside', function (node, value, previousValue) {
+  this === root; // true
+  node === cats; // true
+  value === 'lions'; // true
+  previousValue === 'cats'; // true
+})
+cats.fromString('lions');
+```
+
+Fired when a childs internal value changes inside an ancestor.
+
+- this: an ancestor in which the change happened;
+- arguments:
+  - node: the changed node;
+  - value: the current value;
+  - previousValue: the previous value;
+
+#### insertinside
+```js
+sentence.on('insertinside', function (node) {
+  this === sentence; // true
+  node === ampersand; // true
+})
+sentence.append(ampersand);
+```
+
+Fired when a node is inserted inside an ancestor.
+
+- this: an ancestor in which the change happened;
+- arguments:
+  - node: the inserted node;
+
+#### removeinside
+```js
+root.on('removeinside', function (node) {
+  this === root; // true
+  node === dogs; // true
+})
+dogs.remove();
+```
+
+Fired when a node is removed from an ancestor.
+
+- this: an ancestor in which the change happened;
+- arguments:
+  - node: the removed node;
+
 ## Related
 
   * [parse-english](https://github.com/wooorm/parse-english "Parse English")
