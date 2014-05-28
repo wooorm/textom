@@ -129,7 +129,7 @@
      * @api private
      */
     function append(parent, item, appendee) {
-        var result, next;
+        var result, next, head;
 
         if (!parent) {
             throw new TypeError('Illegal invocation: \'' + parent +
@@ -170,8 +170,8 @@
 
             result = insertAfter(item, appendee);
         /* If parent has a first node... */
-        } else if (item = parent.head) {
-            result = insertBeforeHead(item, appendee);
+        } else if (head = parent.head) {
+            result = insertBeforeHead(head, appendee);
         /* Prepend. There is no `head` (or `tail`) node yet. */
         } else {
             /* Detach the prependee. */
@@ -192,16 +192,18 @@
         next = appendee.next;
 
         emit(appendee, 'insert');
+        emit(appendee, 'changeprev', item || null, null);
+        emit(appendee, 'changenext', next, null);
 
         if (item) {
-            emit(item, 'insertAfter', appendee, next || null);
+            emit(item, 'changenext', appendee, next);
         }
 
         if (next) {
-            emit(next, 'insertBefore', appendee, item);
+            emit(next, 'changeprev', appendee, item);
         }
 
-        trigger(parent, 'insertInside', appendee);
+        trigger(parent, 'insertinside', appendee);
 
         return result;
     }
@@ -270,16 +272,18 @@
         node.prev = node.next = node.parent = null;
 
         emit(node, 'remove');
+        emit(node, 'changeprev', null, prev || null);
+        emit(node, 'changenext', null, next || null);
 
         if (next) {
-            emit(next, 'removeBefore', node, prev);
+            emit(next, 'changeprev', prev || null, node);
         }
 
         if (prev) {
-            emit(prev, 'removeAfter', node, next);
+            emit(prev, 'changenext', next || null, node);
         }
 
-        trigger(parent, 'removeInside', node);
+        trigger(parent, 'removeinside', node);
 
         /* Return node. */
         return node;
@@ -803,10 +807,10 @@
 
         self.internalValue = value = value == null ? '' : value.toString();
 
-        emit(self, 'change', value, previousValue);
+        emit(self, 'changetext', value, previousValue);
 
         if (parent) {
-            trigger(parent, 'changeInside', self, previousValue);
+            trigger(parent, 'changetextinside', self, value, previousValue);
         }
 
         return value;

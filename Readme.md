@@ -544,7 +544,7 @@ Fired when the `prev` attribute on a child is changed (i.e., by removing the pre
 
 #### changenext
 ```js
-cats.on("changenext", function (node, nextNode) {
+cats.on("changenext", function (node, previousNode) {
   this === cats; // true
   node === null; // true
   previousNode === fullStop; // true
@@ -557,7 +557,7 @@ Fired when the `next` attribute on a child is changed (i.e., by removing the nex
 - this: the node succeeding the changed node;
 - arguments:
   - node: the current `next` attribute, null otherwise;
-  - nextNode: the previous `next` node, null otherwise;
+  - previousNode: the previous `next` node, null otherwise;
 
 ### List of Bubbling events
 #### changetextinside

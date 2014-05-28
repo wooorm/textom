@@ -2985,7 +2985,7 @@ describe('HierarchyError', function () {
 });
 
 describe('Events on TextOM.Parent', function () {
-    describe('[insertInside]', function () {
+    describe('[insertinside]', function () {
         it('emits on all `Child`s ancestors, with the current ancestor as the context, and the inserted child as an argument, when a Child is inserted', function () {
             var rootNode = new TextOM.RootNode(),
                 paragraphNode = rootNode.append(new TextOM.ParagraphNode()),
@@ -2995,17 +2995,17 @@ describe('Events on TextOM.Parent', function () {
                 iterator = 0,
                 shouldBeChild = null;
 
-            function oninsertInsideFactory(context) {
+            function oninsertinsideFactory(context) {
                 return function (child) {
                     iterator++;
-                    assert(child === shouldBeChild);
                     assert(this === context);
+                    assert(child === shouldBeChild);
                 };
             }
 
-            rootNode.on('insertInside', oninsertInsideFactory(rootNode));
-            paragraphNode.on('insertInside', oninsertInsideFactory(paragraphNode));
-            sentenceNode.on('insertInside', oninsertInsideFactory(sentenceNode));
+            rootNode.on('insertinside', oninsertinsideFactory(rootNode));
+            paragraphNode.on('insertinside', oninsertinsideFactory(paragraphNode));
+            sentenceNode.on('insertinside', oninsertinsideFactory(sentenceNode));
             shouldBeChild = wordNode;
 
             sentenceNode.append(wordNode);
@@ -3027,7 +3027,7 @@ describe('Events on TextOM.Parent', function () {
                 iterator = 0,
                 shouldBeChild = null;
 
-            function oninsertInsideFactory(context) {
+            function oninsertinsideFactory(context) {
                 return function (child) {
                     iterator++;
                     assert(child === shouldBeChild);
@@ -3035,9 +3035,9 @@ describe('Events on TextOM.Parent', function () {
                 };
             }
 
-            TextOM.RootNode.on('insertInside', oninsertInsideFactory(rootNode));
-            TextOM.ParagraphNode.on('insertInside', oninsertInsideFactory(paragraphNode));
-            TextOM.SentenceNode.on('insertInside', oninsertInsideFactory(sentenceNode));
+            TextOM.RootNode.on('insertinside', oninsertinsideFactory(rootNode));
+            TextOM.ParagraphNode.on('insertinside', oninsertinsideFactory(paragraphNode));
+            TextOM.SentenceNode.on('insertinside', oninsertinsideFactory(sentenceNode));
             shouldBeChild = wordNode;
 
             sentenceNode.append(wordNode);
@@ -3050,13 +3050,13 @@ describe('Events on TextOM.Parent', function () {
             assert(iterator === 1);
 
             // Clean.
-            TextOM.RootNode.off('insertInside');
-            TextOM.ParagraphNode.off('insertInside');
-            TextOM.SentenceNode.off('insertInside');
+            TextOM.RootNode.off('insertinside');
+            TextOM.ParagraphNode.off('insertinside');
+            TextOM.SentenceNode.off('insertinside');
         });
     });
 
-    describe('[insertInside]', function () {
+    describe('[removeinside]', function () {
         it('emits on all `Child`s ancestors, with the current ancestor as the context, and the removed child as an argument, when a Child is removed', function () {
             var rootNode = new TextOM.RootNode(),
                 paragraphNode = rootNode.append(new TextOM.ParagraphNode()),
@@ -3066,7 +3066,7 @@ describe('Events on TextOM.Parent', function () {
                 iterator = 0,
                 shouldBeChild = null;
 
-            function onremoveInsideFactory(context) {
+            function onremoveinsideFactory(context) {
                 return function (child) {
                     iterator++;
                     assert(child === shouldBeChild);
@@ -3074,9 +3074,9 @@ describe('Events on TextOM.Parent', function () {
                 };
             }
 
-            rootNode.on('removeInside', onremoveInsideFactory(rootNode));
-            paragraphNode.on('removeInside', onremoveInsideFactory(paragraphNode));
-            sentenceNode.on('removeInside', onremoveInsideFactory(sentenceNode));
+            rootNode.on('removeinside', onremoveinsideFactory(rootNode));
+            paragraphNode.on('removeinside', onremoveinsideFactory(paragraphNode));
+            sentenceNode.on('removeinside', onremoveinsideFactory(sentenceNode));
             shouldBeChild = wordNode;
 
             wordNode.remove();
@@ -3098,7 +3098,7 @@ describe('Events on TextOM.Parent', function () {
                 iterator = 0,
                 shouldBeChild = null;
 
-            function onremoveInsideFactory(context) {
+            function onremoveinsideFactory(context) {
                 return function (child) {
                     iterator++;
                     assert(child === shouldBeChild);
@@ -3106,9 +3106,9 @@ describe('Events on TextOM.Parent', function () {
                 };
             }
 
-            TextOM.RootNode.on('removeInside', onremoveInsideFactory(rootNode));
-            TextOM.ParagraphNode.on('removeInside', onremoveInsideFactory(paragraphNode));
-            TextOM.SentenceNode.on('removeInside', onremoveInsideFactory(sentenceNode));
+            TextOM.RootNode.on('removeinside', onremoveinsideFactory(rootNode));
+            TextOM.ParagraphNode.on('removeinside', onremoveinsideFactory(paragraphNode));
+            TextOM.SentenceNode.on('removeinside', onremoveinsideFactory(sentenceNode));
             shouldBeChild = wordNode;
 
             wordNode.remove();
@@ -3121,13 +3121,13 @@ describe('Events on TextOM.Parent', function () {
             assert(iterator === 1);
 
             // Clean.
-            TextOM.RootNode.off('removeInside');
-            TextOM.ParagraphNode.off('removeInside');
-            TextOM.SentenceNode.off('removeInside');
+            TextOM.RootNode.off('removeinside');
+            TextOM.ParagraphNode.off('removeinside');
+            TextOM.SentenceNode.off('removeinside');
         });
     });
 
-    describe('[changeInside]', function () {
+    describe('[changetextinside]', function () {
         it('emits on all `Text`s ancestors, with the current ancestor as the context, and the changed child and the previous value as arguments, when a Text is changed', function () {
             var rootNode = new TextOM.RootNode(),
                 paragraphNode = rootNode.append(new TextOM.ParagraphNode()),
@@ -3135,32 +3135,33 @@ describe('Events on TextOM.Parent', function () {
                 wordNode = sentenceNode.append(new TextOM.WordNode('alfred')),
                 whiteSpaceNode = rootNode.append(new TextOM.WhiteSpaceNode('\n\n')),
                 iterator = 0,
-                shouldBeChild = null,
-                shouldBePreviousValue = null;
+                shouldBePreviousValue = null,
+                shouldBeChild = null;
 
-            function onchangeInsideFactory(context) {
-                return function (child, previousValue) {
+            function onchangetextinsideFactory(context) {
+                return function (child, value, previousValue) {
                     iterator++;
-                    assert(child === shouldBeChild);
-                    assert(previousValue === shouldBePreviousValue);
                     assert(this === context);
+                    assert(child === shouldBeChild);
+                    assert(value === child.toString());
+                    assert(previousValue === shouldBePreviousValue);
                 };
             }
 
-            rootNode.on('changeInside', onchangeInsideFactory(rootNode));
-            paragraphNode.on('changeInside', onchangeInsideFactory(paragraphNode));
-            sentenceNode.on('changeInside', onchangeInsideFactory(sentenceNode));
+            rootNode.on('changetextinside', onchangetextinsideFactory(rootNode));
+            paragraphNode.on('changetextinside', onchangetextinsideFactory(paragraphNode));
+            sentenceNode.on('changetextinside', onchangetextinsideFactory(sentenceNode));
             shouldBeChild = wordNode;
             shouldBePreviousValue = wordNode.toString();
 
-            wordNode.fromString('bertrand');
+            shouldBeChild.fromString('bertrand');
             assert(iterator === 3);
 
             iterator = 0;
             shouldBeChild = whiteSpaceNode;
             shouldBePreviousValue = whiteSpaceNode.toString();
 
-            whiteSpaceNode.fromString('\n');
+            shouldBeChild.fromString('\n');
             assert(iterator === 1);
         });
 
@@ -3174,18 +3175,19 @@ describe('Events on TextOM.Parent', function () {
                 shouldBeChild = null,
                 shouldBePreviousValue = null;
 
-            function onchangeInsideFactory(context) {
-                return function (child, previousValue) {
+            function onchangetextinsideFactory(context) {
+                return function (child, value, previousValue) {
                     iterator++;
-                    assert(child === shouldBeChild);
-                    assert(previousValue === shouldBePreviousValue);
                     assert(this === context);
+                    assert(child === shouldBeChild);
+                    assert(value === child.toString());
+                    assert(previousValue === shouldBePreviousValue);
                 };
             }
 
-            TextOM.RootNode.on('changeInside', onchangeInsideFactory(rootNode));
-            TextOM.ParagraphNode.on('changeInside', onchangeInsideFactory(paragraphNode));
-            TextOM.SentenceNode.on('changeInside', onchangeInsideFactory(sentenceNode));
+            TextOM.RootNode.on('changetextinside', onchangetextinsideFactory(rootNode));
+            TextOM.ParagraphNode.on('changetextinside', onchangetextinsideFactory(paragraphNode));
+            TextOM.SentenceNode.on('changetextinside', onchangetextinsideFactory(sentenceNode));
             shouldBeChild = wordNode;
             shouldBePreviousValue = wordNode.toString();
 
@@ -3199,9 +3201,9 @@ describe('Events on TextOM.Parent', function () {
             whiteSpaceNode.fromString('\n');
             assert(iterator === 1);
 
-            TextOM.RootNode.off('changeInside');
-            TextOM.ParagraphNode.off('changeInside');
-            TextOM.SentenceNode.off('changeInside');
+            TextOM.RootNode.off('changetextinside');
+            TextOM.ParagraphNode.off('changetextinside');
+            TextOM.SentenceNode.off('changetextinside');
         });
     });
 });
@@ -3237,63 +3239,55 @@ describe('Events on TextOM.Child', function () {
         });
     });
 
-    describe('[insertAfter]', function () {
-        it('emits on child and all `child`s constructors, with `child` as the context, and the appendee and the previous value as arguments, when a new child is inserted after `child`', function () {
+    describe('[changenext]', function () {
+        it('emits on child and all childs constructors, with child as the context, and the new and the old next nodes as arguments, when the `next` attribute on child changes', function () {
             var sentenceNode = new TextOM.SentenceNode(),
                 wordNode = sentenceNode.append(new TextOM.WordNode('alfred')),
                 whiteSpaceNode = sentenceNode.append(new TextOM.WhiteSpaceNode(' ')),
                 punctuationNode = new TextOM.PunctuationNode(','),
                 iterator = 0;
 
-            function oninsertAfter(appendee, previousValue) {
+            function onchangenext(node, previousNode) {
                 iterator++;
                 assert(this === wordNode);
-                assert(appendee === punctuationNode);
-                assert(previousValue === whiteSpaceNode);
+                assert(node === punctuationNode);
+                assert(previousNode === whiteSpaceNode);
             }
 
-            wordNode.on('insertAfter', oninsertAfter);
-            TextOM.WordNode.on('insertAfter', oninsertAfter);
-            TextOM.Child.on('insertAfter', oninsertAfter);
-            TextOM.Node.on('insertAfter', oninsertAfter);
+            wordNode.on('changenext', onchangenext);
+            TextOM.WordNode.on('changenext', onchangenext);
 
             wordNode.after(punctuationNode);
-            assert(iterator === 4);
+            assert(iterator === 2);
 
-            wordNode.off('insertAfter');
-            TextOM.WordNode.off('insertAfter');
-            TextOM.Child.off('insertAfter');
-            TextOM.Node.off('insertAfter');
+            wordNode.off('changenext');
+            TextOM.WordNode.off('changenext');
         });
     });
 
-    describe('[insertBefore]', function () {
-        it('emits on child and all `child`s constructors, with `child` as the context, and the prependee and the previous value as arguments, when a new child is inserted before `child`', function () {
+    describe('[changeprev]', function () {
+        it('emits on child and all childs constructors, with child as the context, and the new and the old prev nodes as arguments, when the `prev` attribute on child changes', function () {
             var sentenceNode = new TextOM.SentenceNode(),
                 wordNode = sentenceNode.append(new TextOM.WordNode('alfred')),
                 whiteSpaceNode = sentenceNode.append(new TextOM.WhiteSpaceNode(' ')),
                 punctuationNode = new TextOM.PunctuationNode(','),
                 iterator = 0;
 
-            function oninsertBefore(prependee, previousValue) {
+            function onchangeprev(node, previousValue) {
                 iterator++;
                 assert(this === whiteSpaceNode);
-                assert(prependee === punctuationNode);
+                assert(node === punctuationNode);
                 assert(previousValue === wordNode);
             }
 
-            whiteSpaceNode.on('insertBefore', oninsertBefore);
-            TextOM.WhiteSpaceNode.on('insertBefore', oninsertBefore);
-            TextOM.Child.on('insertBefore', oninsertBefore);
-            TextOM.Node.on('insertBefore', oninsertBefore);
+            whiteSpaceNode.on('changeprev', onchangeprev);
+            TextOM.WhiteSpaceNode.on('changeprev', onchangeprev);
 
             whiteSpaceNode.before(punctuationNode);
-            assert(iterator === 4);
+            assert(iterator === 2);
 
-            whiteSpaceNode.off('insertBefore');
-            TextOM.WhiteSpaceNode.off('insertBefore');
-            TextOM.Child.off('insertBefore');
-            TextOM.Node.off('insertBefore');
+            whiteSpaceNode.off('changeprev');
+            TextOM.WhiteSpaceNode.off('changeprev');
         });
     });
 
@@ -3325,70 +3319,10 @@ describe('Events on TextOM.Child', function () {
             TextOM.Node.off('remove');
         });
     });
-
-    describe('[removeAfter]', function () {
-        it('emits on child and all `child`s constructors, with `child` as the context, and the removee and the current value as arguments, when a child is removed after `child`', function () {
-            var sentenceNode = new TextOM.SentenceNode(),
-                wordNode = sentenceNode.append(new TextOM.WordNode('alfred')),
-                punctuationNode = sentenceNode.append(new TextOM.PunctuationNode(',')),
-                whiteSpaceNode = sentenceNode.append(new TextOM.WhiteSpaceNode(' ')),
-                iterator = 0;
-
-            function onremoveAfter(removee, currentValue) {
-                iterator++;
-                assert(this === wordNode);
-                assert(removee === punctuationNode);
-                assert(currentValue === whiteSpaceNode);
-            }
-
-            wordNode.on('removeAfter', onremoveAfter);
-            TextOM.WordNode.on('removeAfter', onremoveAfter);
-            TextOM.Child.on('removeAfter', onremoveAfter);
-            TextOM.Node.on('removeAfter', onremoveAfter);
-
-            punctuationNode.remove();
-            assert(iterator === 4);
-
-            wordNode.off('removeAfter');
-            TextOM.WordNode.off('removeAfter');
-            TextOM.Child.off('removeAfter');
-            TextOM.Node.off('removeAfter');
-        });
-    });
-
-    describe('[removeBefore]', function () {
-        it('emits on child and all `child`s constructors, with `child` as the context, and the removee and the current value as arguments, when a child is removed before `child`', function () {
-            var sentenceNode = new TextOM.SentenceNode(),
-                wordNode = sentenceNode.append(new TextOM.WordNode('alfred')),
-                punctuationNode = sentenceNode.append(new TextOM.PunctuationNode(',')),
-                whiteSpaceNode = sentenceNode.append(new TextOM.WhiteSpaceNode(' ')),
-                iterator = 0;
-
-            function onremoveBefore(removee, currentValue) {
-                iterator++;
-                assert(this === whiteSpaceNode);
-                assert(removee === punctuationNode);
-                assert(currentValue === wordNode);
-            }
-
-            whiteSpaceNode.on('removeBefore', onremoveBefore);
-            TextOM.WhiteSpaceNode.on('removeBefore', onremoveBefore);
-            TextOM.Child.on('removeBefore', onremoveBefore);
-            TextOM.Node.on('removeBefore', onremoveBefore);
-
-            punctuationNode.remove();
-            assert(iterator === 4);
-
-            whiteSpaceNode.off('removeBefore');
-            TextOM.WhiteSpaceNode.off('removeBefore');
-            TextOM.Child.off('removeBefore');
-            TextOM.Node.off('removeBefore');
-        });
-    });
 });
 
 describe('Events on TextOM.Text', function () {
-    describe('[change]', function () {
+    describe('[changetext]', function () {
         it('emits on text and all `text`s constructors, with `text` as the context, and the current and previous values as arguments, when a `text` is changed', function () {
             var sentenceNode = new TextOM.SentenceNode(),
                 wordNode = sentenceNode.append(new TextOM.WordNode('alfred')),
@@ -3396,25 +3330,25 @@ describe('Events on TextOM.Text', function () {
                 shouldBeValue = 'bertrand',
                 shouldBePreviousValue = wordNode.toString();
 
-            function onchange(value, previousValue) {
+            function onchangetext(value, previousValue) {
                 iterator++;
                 assert(this === wordNode);
                 assert(value === shouldBeValue);
                 assert(previousValue === shouldBePreviousValue);
             }
 
-            wordNode.on('change', onchange);
-            TextOM.WordNode.on('change', onchange);
-            TextOM.Child.on('change', onchange);
-            TextOM.Node.on('change', onchange);
+            wordNode.on('changetext', onchangetext);
+            TextOM.WordNode.on('changetext', onchangetext);
+            TextOM.Child.on('changetext', onchangetext);
+            TextOM.Node.on('changetext', onchangetext);
 
             wordNode.fromString(shouldBeValue);
             assert(iterator === 4);
 
-            wordNode.off('change');
-            TextOM.WordNode.off('change');
-            TextOM.Child.off('change');
-            TextOM.Node.off('change');
+            wordNode.off('changetext');
+            TextOM.WordNode.off('changetext');
+            TextOM.Child.off('changetext');
+            TextOM.Node.off('changetext');
         });
     });
 });
