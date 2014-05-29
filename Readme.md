@@ -71,6 +71,46 @@ Returns a new RootNode (the same as `new TextOM.RootNode()`);
 #### TextOM.Node
 Constructor. Creates a new Node.
 
+##### TextOM\.Node.on(name, listener)
+```js
+TextOM.WordNode.on('changetext', function (value, previousValue) {
+  this; // the node which text changed
+  value; // the current value
+  previousValue; // the previous value
+});
+```
+
+Registers the specified listener on any instance of constructor, to events of the given name. Returns self.
+
+##### TextOM\.Node.off(name?, listener?)
+```js
+TextOM.WordNode.off('changetext');
+```
+
+Removes the specified listener on all instances of constructor, to events of the given name.
+If no listener is given, removes all listeners to events of the given type.
+If no name and node listener are given, removes all listeners to all events.
+Returns self.
+
+##### TextOM\.Node#on(name, listener)
+```js
+root.on('insertinside', function (node) {
+  node; // the inserted node
+});
+```
+
+Registers the specified listener on the node it's called on, to events of the given name. Returns self.
+
+##### TextOM\.Node#off(name?, listener?)
+```js
+root.off('insertinside');
+```
+
+Removes the specified listener on the node it's called on, to events of the given name.
+If no listener is given, removes all listeners to events of the given type.
+If no name and node listener are given, removes all listeners to all events.
+Returns self.
+
 ##### TextOM\.Node#TextOM
 ```js
 root.TextOM === TextOM; // true
