@@ -115,23 +115,34 @@ describe('TextOM.Node#on(name?, callback)', function () {
         assert(node.on() === node);
     });
 
-    it('should set a `callbacks` attribute on the instance, when a callback is given', function () {
+    it('should NOT throw, when an name but no callback is given, but return the current contex', function () {
+        assert.doesNotThrow(function () { (new Node()).on('test'); });
+        var node = new Node();
+        assert(node.on('test') === node);
+    });
+
+    it('should NOT set a `callbacks` attribute on the instance, when no callback is given', function () {
+        var node = new Node();
+        assert(!('callbacks' in node));
+        node.on('test');
+        assert(!('callbacks' in node));
+    });
+
+    it('should NOT set a `callbacks` attribute on the instance, when no name is given', function () {
         var node = new Node();
         assert(!('callbacks' in node));
         node.on(noop);
-        assert('callbacks' in node);
+        assert(!('callbacks' in node));
     });
 
-    it('should add the callback, when a callback without type is given', function () {
+    it('should set a `callbacks` attribute on the instance, when a name and callback is given', function () {
         var node = new Node();
         assert(!('callbacks' in node));
-        node.on(noop);
+        node.on('test', noop);
         assert('callbacks' in node);
-        assert('*' in node.callbacks);
-        assert(node.callbacks['*'][0] === noop);
     });
 
-    it('should add the callback, when a callback with type is given', function () {
+    it('should add the callback, when a name and a callback are given', function () {
         var node = new Node();
         assert(!('callbacks' in node));
         node.on('test', noop);
@@ -152,11 +163,11 @@ describe('TextOM.Node#off(name?, callback?)', function () {
         assert(node.off() === node);
     });
 
-    it('should NOT throw, when listeners to the given type do not exist, but return the current contex', function () {
+    it('should NOT throw, when listeners to the given name do not exist, but return the current contex', function () {
         var node = new Node();
-        node.on(noop);
+        node.on('test', noop);
         assert.doesNotThrow(function () {
-            assert(node.off('test') === node);
+            assert(node.off('test2') === node);
         });
 
         node = new Node();
@@ -166,47 +177,45 @@ describe('TextOM.Node#off(name?, callback?)', function () {
         });
     });
 
-    it('should remove a callback, when a callback is given', function () {
-        var node = new Node();
-        node.on(noop);
-        assert(node.callbacks['*'][0] === noop);
-        node.off(noop);
-        assert(node.callbacks['*'].length === 0);
-    });
-
-    it('should remove the callback, when a callback without type is given', function () {
-        var node = new Node();
-        node.on(noop);
-        assert(node.callbacks['*'][0] === noop);
-        node.off(noop);
-        assert(node.callbacks['*'].length === 0);
-    });
-
-    it('should remove the callback, when a callback with type is given', function () {
+    it('should NOT throw, when a listener but no name is given, but return the current contex', function () {
         var node = new Node();
         node.on('test', noop);
-        assert(node.callbacks.test[0] === noop);
-        node.off('test', noop);
-        assert(node.callbacks.test.length === 0);
+        assert.doesNotThrow(function () {
+            assert(node.off(null, noop) === node);
+        });
     });
 
-    it('should remove all callbacks of the given type, when only a type is given', function () {
+    it('should remove all callbacks, when no name and no callback is given', function () {
         var node = new Node();
         node.on('test', noop);
-        node.on('test', noop);
-        assert(node.callbacks.test[0] === noop);
-        assert(node.callbacks.test[1] === noop);
-        node.off('test');
-        assert(node.callbacks.test.length === 0);
-    });
-
-    it('should remove all callbacks added without a type argument, when nothing is given', function () {
-        var node = new Node();
-        node.on('test', noop);
-        node.on(noop);
+        node.on('test2', altNoop);
+        assert('test' in node.callbacks);
+        assert('test2' in node.callbacks);
         node.off();
-        assert(node.callbacks.test.length === 1);
-        assert(node.callbacks['*'].length === 0);
+        assert(!('test' in node.callbacks));
+        assert(!('test2' in node.callbacks));
+    });
+
+    it('should remove all listeners to a given name, when a name but no callback are given', function () {
+        var node = new Node();
+        node.on('test', noop);
+        node.on('test', altNoop);
+        assert(node.callbacks.test.indexOf(noop) > -1);
+        assert(node.callbacks.test.indexOf(altNoop) > -1);
+        node.off('test');
+        assert(node.callbacks.test.indexOf(noop) === -1);
+        assert(node.callbacks.test.indexOf(altNoop) === -1);
+    });
+
+    it('should remove a listener, when a name and a callback are given', function () {
+        var node = new Node();
+        node.on('test', noop);
+        node.on('test', altNoop);
+        assert(node.callbacks.test.indexOf(noop) > -1);
+        assert(node.callbacks.test.indexOf(altNoop) > -1);
+        node.off('test', noop);
+        assert(node.callbacks.test.indexOf(noop) === -1);
+        assert(node.callbacks.test.indexOf(altNoop) > -1);
     });
 });
 

@@ -358,16 +358,13 @@
         var self = this,
             callbacks;
 
-        if (callback == null) {
-            callback = name;
-            name = '*';
+        if (name == null || callback == null) {
+            return self;
         }
 
-        if (typeof callback === 'function') {
-            callbacks = self.callbacks || (self.callbacks = {});
-            callbacks = callbacks[name] || (callbacks[name] = []);
-            callbacks.unshift(callback);
-        }
+        callbacks = self.callbacks || (self.callbacks = {});
+        callbacks = callbacks[name] || (callbacks[name] = []);
+        callbacks.unshift(callback);
 
         return self;
     }
@@ -376,27 +373,28 @@
         var self = this,
             callbacks, indice;
 
-        if (typeof name === 'function') {
-            callback = name;
-            name = '*';
-        }
-
-        if (name == null) {
-            name = '*';
-        }
-
-        // Nothing to remove.
-        if (!(callbacks = self.callbacks) || !(callbacks = callbacks[name])) {
+        if (!(callbacks = self.callbacks)) {
             return self;
         }
 
-        // Remove all callbacks.
-        if (!callback) {
+        if (name == null && callback == null) {
+            self.callbacks = {};
+            return self;
+        }
+
+        if (name == null) {
+            return self;
+        }
+
+        if (!(callbacks = callbacks[name])) {
+            return self;
+        }
+
+        if (callback == null) {
             callbacks.length = 0;
             return self;
         }
 
-        // Remove a callback.
         if ((indice = callbacks.indexOf(callback)) !== -1) {
             callbacks.splice(indice, 1);
         }
@@ -421,22 +419,17 @@
         return;
     }
 
-    function triggerOnce(context, callbacks, name, args) {
-        if (!callbacks) {
-            return;
-        }
-
-        fire(context, callbacks[name], args.concat());
-        fire(context, callbacks['*'], [name].concat(args));
-    }
-
     function trigger(context, name) {
         var args = arraySlice.call(arguments, 2),
             callbacks, namedCallbacks;
 
         while (context) {
-            triggerOnce(context, context.callbacks, name, args);
-            triggerOnce(context, context.constructor.callbacks, name, args);
+            if (callbacks = context.callbacks) {
+                fire(context, callbacks[name], args);
+            }
+            if (callbacks = context.constructor.callbacks) {
+                fire(context, callbacks[name], args);
+            }
 
             context = context.parent;
         }
@@ -448,8 +441,9 @@
             iterator = -1,
             callbacks, namedCallbacks, constructor;
 
-        // Events on the node.
-        triggerOnce(context, context.callbacks, name, args);
+        if (callbacks = context.callbacks) {
+            fire(context, callbacks[name], args);
+        }
 
         /* istanbul ignore if: Wrong-usage */
         if (!constructors) {
@@ -457,7 +451,9 @@
         }
 
         while (constructor = constructors[++iterator]) {
-            triggerOnce(context, constructor.callbacks, name, args);
+            if (callbacks = constructor.callbacks) {
+                fire(context, callbacks[name], args);
+            }
         }
     }
 
