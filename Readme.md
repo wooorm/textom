@@ -544,7 +544,7 @@ Fired when the `prev` attribute on a child is changed (i.e., by removing the pre
 
 #### changenext
 ```js
-cats.on("changenext", function (node, previousNode) {
+cats.on('changenext', function (node, previousNode) {
   this === cats; // true
   node === null; // true
   previousNode === fullStop; // true
