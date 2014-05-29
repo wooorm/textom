@@ -49,17 +49,17 @@
 
         /* If item has a next node... */
         if (next) {
-            /* ...link the appendees next node, to items next node. */
+            /* ...link the appendee's next node, to items next node. */
             appendee.next = next;
 
             /* ...link the next nodes previous node, to the appendee. */
             next.prev = appendee;
         }
 
-        /* Set the appendees previous node to item. */
+        /* Set the appendee's previous node to item. */
         appendee.prev = item;
 
-        /* Set the appendees parent to items parent. */
+        /* Set the appendee's parent to items parent. */
         appendee.parent = parent;
 
         /* Set the next node of item to the appendee. */
@@ -95,10 +95,10 @@
         /* Detach the prependee. */
         prependee.remove();
 
-        /* Set the prependees next node to head. */
+        /* Set the prependee's next node to head. */
         prependee.next = head;
 
-        /* Set the prependees parent to heads parent. */
+        /* Set the prependee's parent to heads parent. */
         prependee.parent = parent;
 
         /* Set the previous node of head to the prependee. */
@@ -177,7 +177,7 @@
             /* Detach the prependee. */
             appendee.remove();
 
-            /* Set the prependees parent to reference parent. */
+            /* Set the prependee's parent to reference parent. */
             appendee.parent = parent;
 
             /* Set parent's first node to the prependee and return the
@@ -210,7 +210,7 @@
 
     /**
      * Detach a node from its (when applicable) parent, links its (when
-     * existing) previous and next items to eachother.
+     * existing) previous and next items to each other.
      *
      * @param {Object} node
      * @api private
@@ -464,7 +464,7 @@
     exports = module.exports = TextOM;
 
     /**
-     * Expose `Node`. Initializes a new `Node` object.
+     * Expose `Node`. Initialises a new `Node` object.
      *
      * @api public
      * @constructor
@@ -487,7 +487,7 @@
 
     /**
      * Inherit the contexts' (Super) prototype into a given Constructor. E.g.,
-     * Node is implemeted by Parent, Parent is implemeted by RootNode, &c.
+     * Node is implemented by Parent, Parent is implemented by RootNode, &c.
      *
      * @api public
      */
@@ -566,7 +566,6 @@
      * @api public
      */
     prototype.item = function (index) {
-        /* jshint eqnull:true */
         if (index != null && (typeof index !== 'number' || index !== index)) {
             throw new TypeError('\'' + index + ' is not a valid argument ' +
                 'for \'Parent.prototype.item\'');
@@ -826,7 +825,6 @@
             value = self.internalValue,
             cloneNode;
 
-        /* jshint eqnull:true*/
         if (position == null || position !== position ||
             position === -Infinity) {
                 position = 0;
@@ -1060,7 +1058,6 @@
             wouldBeValid = false,
             endAncestors, node;
 
-        /* jshint eqnull:true*/
         if (offset == null || offset !== offset) {
             offset = 0;
             offsetIsDefault = true;
@@ -1131,7 +1128,6 @@
             wouldBeValid = false,
             endAncestors, node;
 
-        /* jshint eqnull:true*/
         if (offset == null || offset !== offset) {
             offset = Infinity;
             offsetIsDefault = true;
@@ -1264,7 +1260,7 @@
 
         /* If startContainer equals endContainer... */
         if (startContainer === endContainer) {
-            /* Return an array containg startContainer when startContainer
+            /* Return an array containing startContainer when startContainer
              * either:
              * - does not accept children;
              * - starts and ends so range contains all its children.
@@ -1274,12 +1270,12 @@
                     return [startContainer];
             }
 
-            /* Return an array containg the children of startContainer between
-             * startOffset and endOffset. */
+            /* Return an array containing the children of startContainer
+             * between startOffset and endOffset. */
             return arraySlice.call(startContainer, startOffset, endOffset);
         }
 
-        /* If startOffset isnt `0` and startContainer accepts children... */
+        /* If startOffset isn't `0` and startContainer accepts children... */
         if (startOffset && ('length' in startContainer)) {
             /* If a child exists at startOffset, let startContainer be that
              * child. */
@@ -1325,7 +1321,7 @@
                     endOffset >= endContainer.length) {
                         content.push(node);
                 /* Add the children of endContainer to content from its start
-                 * untill its endOffset. */
+                 * until its endOffset. */
                 } else {
                     content = content.concat(
                         arraySlice.call(endContainer, 0, endOffset)
@@ -1369,21 +1365,21 @@
         return new RootNode();
     }
 
-    var NodeProtype = Node.prototype;
+    var nodePrototype = Node.prototype;
 
     /**
      * Export all node types to `exports` (i.e. `TextOM`), and `Node#`.
      */
-    exports.ROOT_NODE = NodeProtype.ROOT_NODE =
+    exports.ROOT_NODE = nodePrototype.ROOT_NODE =
         RootNode.prototype.type;
-    exports.PARAGRAPH_NODE = NodeProtype.PARAGRAPH_NODE =
+    exports.PARAGRAPH_NODE = nodePrototype.PARAGRAPH_NODE =
         ParagraphNode.prototype.type;
-    exports.SENTENCE_NODE = NodeProtype.SENTENCE_NODE =
+    exports.SENTENCE_NODE = nodePrototype.SENTENCE_NODE =
         SentenceNode.prototype.type;
-    exports.WORD_NODE = NodeProtype.WORD_NODE = WordNode.prototype.type;
-    exports.PUNCTUATION_NODE = NodeProtype.PUNCTUATION_NODE =
+    exports.WORD_NODE = nodePrototype.WORD_NODE = WordNode.prototype.type;
+    exports.PUNCTUATION_NODE = nodePrototype.PUNCTUATION_NODE =
         PunctuationNode.prototype.type;
-    exports.WHITE_SPACE_NODE = NodeProtype.WHITE_SPACE_NODE =
+    exports.WHITE_SPACE_NODE = nodePrototype.WHITE_SPACE_NODE =
         WhiteSpaceNode.prototype.type;
 
     /**
