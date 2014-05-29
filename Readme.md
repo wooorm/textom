@@ -29,7 +29,7 @@ var root = new TextOM();
 ## API
 See below for an abbreviated IDL definition.
 
-Lets say all the following examples start with this code. Any changes made by below examples are discarded uppong their ending.
+Lets say all the following examples start with this code. Any changes made by below examples are discarded upon their ending.
 ```js
 // Import TextOM.
 var TextOM = require('textom');
@@ -492,7 +492,7 @@ dogs.on('remove', function () {
 dogs.remove();
 ```
 
-Fired when a node is removed from its parents.
+Fired when a node is removed from its parent.
 
 - this: the removed node;
 
@@ -571,7 +571,7 @@ root.on('changetextinside', function (node, value, previousValue) {
 cats.fromString('lions');
 ```
 
-Fired when a childs internal value changes inside an ancestor.
+Fired when a child’s internal value changes inside an ancestor.
 
 - this: an ancestor in which the change happened;
 - arguments:
