@@ -394,6 +394,7 @@ The following IDL document gives a short view of the defined interfaces by TextO
 ```idl
 module textom
 {
+  [Constructor]
   interface Node {
     const unsigned long ROOT_NODE = 1
     const unsigned long PARAGRAPH_NODE = 2
@@ -401,9 +402,13 @@ module textom
     const unsigned long WORD_NODE = 4
     const unsigned long PUNCTUATION_NODE = 5
     const unsigned long WHITE_SPACE_NODE = 6
+
+    void on(String type, Function callback);
+    void off(optional String type = null, optional Function callback = null);
   };
 
-  [ArrayClass]
+  [Constructor,
+   ArrayClass]
   interface Parent {
     getter Child? item(unsigned long index);
     readonly attribute unsigned long length;
@@ -420,6 +425,7 @@ module textom
   };
   Parent implements Node;
 
+  [Constructor]
   interface Child {
     readonly attribute Parent? parent;
     readonly attribute Child? prev;
@@ -432,6 +438,7 @@ module textom
   };
   Child implements Node;
 
+  [Constructor]
   interface Element {
   };
   Element implements Child;
@@ -445,41 +452,48 @@ module textom
   };
   Text implements Child;
 
+  [Constructor]
   interface RootNode {
     readonly attribute unsigned long type = 1;
     readonly attribute unsigned long hierarchy = 1;
   };
   RootNode implements Parent;
 
+  [Constructor]
   interface ParagraphNode {
     readonly attribute unsigned long type = 2;
     readonly attribute unsigned long hierarchy = 2;
   };
   ParagraphNode implements Element;
 
+  [Constructor]
   interface SentenceNode {
     readonly attribute unsigned long type = 3;
     readonly attribute unsigned long hierarchy = 3;
   };
   SentenceNode implements Element;
 
+  [Constructor(optional String value = "")]
   interface WordNode {
     readonly attribute unsigned long type = 4;
     readonly attribute unsigned long hierarchy = 4;
   };
   WordNode implements Text;
 
+  [Constructor(optional String value = "")]
   interface WhiteSpaceNode {
     readonly attribute unsigned long type = 5;
   };
   WhiteSpaceNode implements Text;
 
+  [Constructor(optional String value = "")]
   interface PunctuationNode {
     readonly attribute unsigned long type = 6;
     readonly attribute unsigned long hierarchy = 4;
   };
   PunctuationNode implements Text;
 
+  [Constructor]
   interface Range {
     readonly attribute Node? startContainer;
     readonly attribute unsigned long? startOffset;
