@@ -499,7 +499,7 @@ module textom
 ## Events
 TextOM provides a few handy events, listened to through the `on`—and its opposite silencing functionality, `off`—methods. These `on` and `off` methods exist on every instance of Node, and on every constructor (e.g., Node, Element, and WhiteSpaceNode). When used on an instance, only events on that specific instance will be exposed to the listener. When however used on a constructor, all events on all instances will be exposed to the listener.
 
-TextOM provides two different types of events: Bubbling, and non-bubbling. In API terms, bubbling event names end with `"Inside"`.
+TextOM provides two different types of events: Bubbling, and non-bubbling. In API terms, bubbling event names end with `"inside"`.
 
 ### Non-bubbling (“normal”) events
 Normal events fire on instances of Child (and thus also on Element, or Text—which both subclass Child), and do not continue firing on through ancestors. They do however, fire on all constructors of the instance.
