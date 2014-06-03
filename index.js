@@ -192,15 +192,15 @@
         next = appendee.next;
 
         emit(appendee, 'insert');
-        emit(appendee, 'changeprev', item || null, null);
-        emit(appendee, 'changenext', next, null);
 
         if (item) {
             emit(item, 'changenext', appendee, next);
+            emit(appendee, 'changeprev', item, null);
         }
 
         if (next) {
             emit(next, 'changeprev', appendee, item);
+            emit(appendee, 'changenext', next, null);
         }
 
         trigger(parent, 'insertinside', appendee);
@@ -272,14 +272,14 @@
         node.prev = node.next = node.parent = null;
 
         emit(node, 'remove');
-        emit(node, 'changeprev', null, prev || null);
-        emit(node, 'changenext', null, next || null);
 
         if (next) {
             emit(next, 'changeprev', prev || null, node);
+            emit(node, 'changenext', null, next);
         }
 
         if (prev) {
+            emit(node, 'changeprev', null, prev);
             emit(prev, 'changenext', next || null, node);
         }
 
@@ -798,14 +798,16 @@
     prototype.fromString = function (value) {
         var self = this,
             previousValue = self.toString(),
-            parent = self.parent;
+            parent;
 
         self.internalValue = value = value == null ? '' : value.toString();
 
-        emit(self, 'changetext', value, previousValue);
+        if (value !== previousValue) {
+            emit(self, 'changetext', value, previousValue);
 
-        if (parent) {
-            trigger(parent, 'changetextinside', self, value, previousValue);
+            if (parent = self.parent) {
+                trigger(parent, 'changetextinside', self, value, previousValue);
+            }
         }
 
         return value;
