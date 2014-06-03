@@ -806,7 +806,9 @@
             emit(self, 'changetext', value, previousValue);
 
             if (parent = self.parent) {
-                trigger(parent, 'changetextinside', self, value, previousValue);
+                trigger(
+                    parent, 'changetextinside', self, value, previousValue
+                );
             }
         }
 
