@@ -1298,8 +1298,8 @@
      * Ignores endOffset (i.e., treats as `Infinity`) when endContainer is a
      * text node.
      *
-     * @return {Node|Node[]} content - The nodes completely encapsulated by
-     *                                 the range.
+     * @return {Node[]} content - The nodes completely encapsulated by
+     *                            the range.
      * @api public
      */
     prototype.getContent = function () {
