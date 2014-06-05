@@ -1231,6 +1231,67 @@
     };
 
     /**
+     * Removes all nodes completely covered by `range` and removes the parts
+     * covered by `range in partial covered nodes.
+     *
+     * @return {Node[]} content - The removed nodes.
+     * @api public
+     */
+    prototype.removeContent = function () {
+        var content = this.getContent(),
+            startOffset = this.startOffset,
+            endOffset = this.endOffset,
+            startContainer = this.startContainer,
+            endContainer = this.endContainer,
+            iterator = -1,
+            node, startIsText, middle;
+
+        if (content.length === 0) {
+            return content;
+        }
+
+        startIsText = !('length' in startContainer);
+
+        if (startContainer === endContainer && startIsText) {
+            if (startOffset === endOffset) {
+                return [];
+            }
+
+            if (startOffset === 0 && endOffset >=
+                startContainer.toString().length) {
+                    return content;
+            }
+
+            if (startOffset !== 0) {
+                startContainer.split(startOffset);
+                endOffset -= startOffset;
+            }
+
+            if (endOffset < startContainer.toString().length) {
+                middle = startContainer.split(endOffset);
+            }
+
+            return [middle || startContainer];
+        }
+
+        if (startIsText) {
+            startContainer.split(startOffset);
+            content[0] = startContainer;
+        }
+
+        if (!('length' in endContainer)) {
+            content[content.length - 1] =
+                endContainer.split(endOffset);
+        }
+
+        while (node = content[++iterator]) {
+            node.remove();
+        }
+
+        return content;
+    };
+
+    /**
      * Return the nodes in a range as an array. If a nodes parent is
      * completely encapsulated by the range, returns that parent. Ignores
      * startOffset (i.e., treats as `0`) when startContainer is a text node.
