@@ -3301,14 +3301,15 @@ describe('Events on TextOM.Child', function () {
     });
 
     describe('[remove]', function () {
-        it('emits on child and all `child`s constructors, with `child` as the context, when `child` is removed', function () {
+        it('emits on child and all `child`s constructors, with `child` as the context, and the previous parent as an argument, when `child` is removed', function () {
             var paragraphNode = new TextOM.ParagraphNode(),
                 sentenceNode = paragraphNode.append(new TextOM.SentenceNode()),
                 iterator = 0;
 
-            function onremove() {
+            function onremove(parent) {
                 iterator++;
                 assert(this === sentenceNode);
+                assert(parent === paragraphNode);
             }
 
             sentenceNode.on('remove', onremove);
