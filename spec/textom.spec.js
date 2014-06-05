@@ -2354,6 +2354,379 @@ describe('TextOM.Range#toString()', function () {
     });
 });
 
+describe('TextOM.Range#removeContent()', function () {
+    it('should be of type `function`', function () {
+        assert(typeof (new Range()).removeContent === 'function');
+    });
+
+    it('should return an empty array when no start- or endpoints exist', function () {
+        var range = new Range(),
+            parent = new Parent(),
+            child = parent.append(new Text('alfred'));
+
+        assert(range.removeContent().length === 0);
+
+        range = new Range();
+        range.setStart(child);
+        assert(range.removeContent().length === 0);
+
+        range = new Range();
+        range.setEnd(child);
+        assert(range.removeContent().length === 0);
+    });
+
+    it('should return an empty array when startContainer equals endContainer and startOffset equals endOffset', function () {
+        var range = new Range(),
+            parent = new Parent(),
+            child = parent.append(new Text('alfred'));
+
+        range.setStart(child, 2);
+        range.setEnd(child, 2);
+        assert(range.removeContent().length === 0);
+    });
+
+    it('should return the substring of the `startContainer`, starting at `startOffset` and ending at `endOffset`, when `startContainer` equals `endContainer` and `startContainer` has no `length` property', function () {
+        var range = new Range(),
+            parent = new Parent(),
+            child = parent.append(new Text('alfred'));
+
+        range.setStart(child, 2);
+        range.setEnd(child, 4);
+
+        assert(range.removeContent().toString() === 'fr');
+
+        child = parent.append(new Text('alfred'));
+        range = new Range();
+        range.setStart(child, 2);
+        range.setEnd(child);
+        assert(range.removeContent().toString() === 'fred');
+
+        child = parent.append(new Text('alfred'));
+        range = new Range();
+        range.setStart(child);
+        range.setEnd(child);
+        assert(range.removeContent().toString() === 'alfred');
+    });
+
+    it('should return the substring of the `startContainer`, starting at `startOffset` and ending at the last possible character, when `startContainer` equals `endContainer`, `startContainer` has no `length`property, and `endOffset` is larger than the result of calling the `toString` method on `startContainer`', function () {
+        var range = new Range(),
+            parent = new Parent(),
+            child = parent.append(new Text('alfred'));
+
+        range.setStart(child);
+        range.setEnd(child);
+        child.fromString('bert');
+        assert(range.removeContent().toString() === 'bert');
+    });
+
+    it('should substring the endContainer, when `startContainer` equals `endContainer`, from its start and ending at its `endOffset`', function () {
+        var range = new Range(),
+            parent = new Parent(),
+            child = parent.append(new Text('alfred'));
+
+        range.setStart(child);
+        range.setEnd(child, 4);
+        assert(range.removeContent().toString() === 'alfr');
+    });
+
+    it('should substring the endContainer from its start and ending at its `endOffset`', function () {
+        var range = new Range(),
+            parent = new Parent(),
+            child = parent.append(new Text('alfred')),
+            child_ = parent.append(new Text('bertrand'));
+
+        range.setStart(child);
+        range.setEnd(child_, 6);
+        assert(range.removeContent().toString() === 'alfred,bertra');
+    });
+
+    it('should concatenate two siblings', function () {
+        var range = new Range(),
+            parent = new Parent(),
+            child = parent.append(new Text('alfred')),
+            child_ = parent.append(new Text('bertrand'));
+
+        range.setStart(child);
+        range.setEnd(child_);
+        assert(range.removeContent().toString() === 'alfred,bertrand');
+
+        range = new Range();
+        child = parent.append(new Text('alfred'));
+        child_ = parent.append(new Text('bertrand'));
+        range.setStart(child, 2);
+        range.setEnd(child_);
+        assert(range.removeContent().toString() === 'fred,bertrand');
+
+        range = new Range();
+        child = parent.append(new Text('alfred'));
+        child_ = parent.append(new Text('bertrand'));
+        range.setStart(child, 2);
+        range.setEnd(child_, 6);
+        assert(range.removeContent().toString() === 'fred,bertra');
+    });
+
+    it('should concatenate multiple siblings', function () {
+        var range = new Range(),
+            parent = new Parent(),
+            child = parent.append(new Text('alfred')),
+            child_ = parent.append(new Text('bertrand')),
+            child__ = parent.append(new Text('cees')),
+            child___ = parent.append(new Text('dick')),
+            child____ = parent.append(new Text('eric')),
+            child_____ = parent.append(new Text('ferdinand'));
+
+        range.setStart(child);
+        range.setEnd(child_____);
+        assert(range.removeContent().toString() === 'alfred,bertrand,cees,dick,eric,ferdinand');
+
+        range = new Range();
+        child = parent.append(new Text('alfred'));
+        child_ = parent.append(new Text('bertrand'));
+        child__ = parent.append(new Text('cees'));
+        child___ = parent.append(new Text('dick'));
+        child____ = parent.append(new Text('eric'));
+        child_____ = parent.append(new Text('ferdinand'));
+        range.setStart(child, 3);
+        range.setEnd(child_____);
+        assert(range.removeContent().toString() === 'red,bertrand,cees,dick,eric,ferdinand');
+
+        range = new Range();
+        child = parent.append(new Text('alfred'));
+        child_ = parent.append(new Text('bertrand'));
+        child__ = parent.append(new Text('cees'));
+        child___ = parent.append(new Text('dick'));
+        child____ = parent.append(new Text('eric'));
+        child_____ = parent.append(new Text('ferdinand'));
+        range.setStart(child, 3);
+        range.setEnd(child_____, 7);
+        assert(range.removeContent().toString() === 'red,bertrand,cees,dick,eric,ferdina');
+    });
+
+    it('should concatenate children of different parents', function () {
+        var range = new Range(),
+            grandparent = new TextOM.ParagraphNode(),
+            parent = grandparent.append(new TextOM.SentenceNode()),
+            parent_ = grandparent.append(new TextOM.SentenceNode()),
+            child = parent.append(new TextOM.WordNode('alfred')),
+            child_ = parent.append(new TextOM.WordNode('bertrand')),
+            child__ = parent_.append(new TextOM.WordNode('cees'));
+
+        range.setStart(child);
+        range.setEnd(child__);
+        assert(range.removeContent().toString() === 'alfred,bertrand,cees');
+
+        range = new Range();
+        parent = grandparent.append(new TextOM.SentenceNode());
+        parent_ = grandparent.append(new TextOM.SentenceNode());
+        child = parent.append(new TextOM.WordNode('alfred'));
+        child_ = parent.append(new TextOM.WordNode('bertrand'));
+        child__ = parent_.append(new TextOM.WordNode('cees'));
+        range.setStart(child, 1);
+        range.setEnd(child__);
+        assert(range.removeContent().toString() === 'lfred,bertrand,cees');
+
+        range = new Range();
+        parent = grandparent.append(new TextOM.SentenceNode());
+        parent_ = grandparent.append(new TextOM.SentenceNode());
+        child = parent.append(new TextOM.WordNode('alfred'));
+        child_ = parent.append(new TextOM.WordNode('bertrand'));
+        child__ = parent_.append(new TextOM.WordNode('cees'));
+        range.setStart(child_);
+        range.setEnd(child__);
+        assert(range.removeContent().toString() === 'bertrand,cees');
+
+        range = new Range();
+        parent = grandparent.append(new TextOM.SentenceNode());
+        parent_ = grandparent.append(new TextOM.SentenceNode());
+        child = parent.append(new TextOM.WordNode('alfred'));
+        child_ = parent.append(new TextOM.WordNode('bertrand'));
+        child__ = parent_.append(new TextOM.WordNode('cees'));
+        range.setStart(child_);
+        range.setEnd(child__, 3);
+        assert(range.removeContent().toString() === 'bertrand,cee');
+    });
+
+    it('should concatenate children of different grandparents', function () {
+        var range = new Range(),
+            greatGrandparent = new TextOM.RootNode(),
+            grandparent = greatGrandparent.append(new TextOM.ParagraphNode()),
+            grandparent_ = greatGrandparent.append(new TextOM.ParagraphNode()),
+            parent = grandparent.append(new TextOM.SentenceNode()),
+            parent_ = grandparent.append(new TextOM.SentenceNode()),
+            parent__ = grandparent_.append(new TextOM.SentenceNode()),
+            parent___ = grandparent_.append(new TextOM.SentenceNode()),
+            child = parent.append(new TextOM.WordNode('alfred')),
+            child_ = parent_.append(new TextOM.WordNode('bertrand')),
+            child__ = parent__.append(new TextOM.WordNode('cees')),
+            child___ = parent___.append(new TextOM.WordNode('dick'));
+
+        range.setStart(child);
+        range.setEnd(child___);
+        assert(range.removeContent().toString() === 'alfred,bertrand,cees,dick');
+
+        range = new Range();
+        grandparent = greatGrandparent.append(new TextOM.ParagraphNode());
+        grandparent_ = greatGrandparent.append(new TextOM.ParagraphNode());
+        parent = grandparent.append(new TextOM.SentenceNode());
+        parent_ = grandparent.append(new TextOM.SentenceNode());
+        parent__ = grandparent_.append(new TextOM.SentenceNode());
+        parent___ = grandparent_.append(new TextOM.SentenceNode());
+        child = parent.append(new TextOM.WordNode('alfred'));
+        child_ = parent_.append(new TextOM.WordNode('bertrand'));
+        child__ = parent__.append(new TextOM.WordNode('cees'));
+        child___ = parent___.append(new TextOM.WordNode('dick'));
+        range.setStart(child, 1);
+        range.setEnd(child___);
+        assert(range.removeContent().toString() === 'lfred,bertrand,cees,dick');
+
+        range = new Range();
+        grandparent = greatGrandparent.append(new TextOM.ParagraphNode());
+        grandparent_ = greatGrandparent.append(new TextOM.ParagraphNode());
+        parent = grandparent.append(new TextOM.SentenceNode());
+        parent_ = grandparent.append(new TextOM.SentenceNode());
+        parent__ = grandparent_.append(new TextOM.SentenceNode());
+        parent___ = grandparent_.append(new TextOM.SentenceNode());
+        child = parent.append(new TextOM.WordNode('alfred'));
+        child_ = parent_.append(new TextOM.WordNode('bertrand'));
+        child__ = parent__.append(new TextOM.WordNode('cees'));
+        child___ = parent___.append(new TextOM.WordNode('dick'));
+        range.setStart(child, 1);
+        range.setEnd(child___, 3);
+        assert(range.removeContent().toString() === 'lfred,bertrand,cees,dic');
+
+        range = new Range();
+        grandparent = greatGrandparent.append(new TextOM.ParagraphNode());
+        grandparent_ = greatGrandparent.append(new TextOM.ParagraphNode());
+        parent = grandparent.append(new TextOM.SentenceNode());
+        parent_ = grandparent.append(new TextOM.SentenceNode());
+        parent__ = grandparent_.append(new TextOM.SentenceNode());
+        parent___ = grandparent_.append(new TextOM.SentenceNode());
+        child = parent.append(new TextOM.WordNode('alfred'));
+        child_ = parent_.append(new TextOM.WordNode('bertrand'));
+        child__ = parent__.append(new TextOM.WordNode('cees'));
+        child___ = parent___.append(new TextOM.WordNode('dick'));
+        range.setStart(child_);
+        range.setEnd(child___, 3);
+        assert(range.removeContent().toString() === 'bertrand,cees,dic');
+
+        range = new Range();
+        grandparent = greatGrandparent.append(new TextOM.ParagraphNode());
+        grandparent_ = greatGrandparent.append(new TextOM.ParagraphNode());
+        parent = grandparent.append(new TextOM.SentenceNode());
+        parent_ = grandparent.append(new TextOM.SentenceNode());
+        parent__ = grandparent_.append(new TextOM.SentenceNode());
+        parent___ = grandparent_.append(new TextOM.SentenceNode());
+        child = parent.append(new TextOM.WordNode('alfred'));
+        child_ = parent_.append(new TextOM.WordNode('bertrand'));
+        child__ = parent__.append(new TextOM.WordNode('cees'));
+        child___ = parent___.append(new TextOM.WordNode('dick'));
+        range.setStart(child_);
+        range.setEnd(child__);
+        assert(range.removeContent().toString() === 'bertrand,cees');
+
+        range = new Range();
+        grandparent = greatGrandparent.append(new TextOM.ParagraphNode());
+        grandparent_ = greatGrandparent.append(new TextOM.ParagraphNode());
+        parent = grandparent.append(new TextOM.SentenceNode());
+        parent_ = grandparent.append(new TextOM.SentenceNode());
+        parent__ = grandparent_.append(new TextOM.SentenceNode());
+        parent___ = grandparent_.append(new TextOM.SentenceNode());
+        child = parent.append(new TextOM.WordNode('alfred'));
+        child_ = parent_.append(new TextOM.WordNode('bertrand'));
+        child__ = parent__.append(new TextOM.WordNode('cees'));
+        child___ = parent___.append(new TextOM.WordNode('dick'));
+        range.setStart(child_, 1);
+        range.setEnd(child__);
+        assert(range.removeContent().toString() === 'ertrand,cees');
+
+        range = new Range();
+        grandparent = greatGrandparent.append(new TextOM.ParagraphNode());
+        grandparent_ = greatGrandparent.append(new TextOM.ParagraphNode());
+        parent = grandparent.append(new TextOM.SentenceNode());
+        parent_ = grandparent.append(new TextOM.SentenceNode());
+        parent__ = grandparent_.append(new TextOM.SentenceNode());
+        parent___ = grandparent_.append(new TextOM.SentenceNode());
+        child = parent.append(new TextOM.WordNode('alfred'));
+        child_ = parent_.append(new TextOM.WordNode('bertrand'));
+        child__ = parent__.append(new TextOM.WordNode('cees'));
+        child___ = parent___.append(new TextOM.WordNode('dick'));
+        range.setStart(child_, 1);
+        range.setEnd(child__, 3);
+        assert(range.removeContent().toString() === 'ertrand,cee');
+    });
+
+    it('should return an empty string, when startContainer and endContainer no longer share the same root', function () {
+        var range = new Range(),
+           parent = new Parent(),
+           child = parent.append(new Text('alfred')),
+           child_ = parent.append(new Text('bertrand')),
+           child__ = parent.append(new Text('cees'));
+
+        range.setStart(child);
+        range.setEnd(child__);
+
+        child__.remove();
+        assert(range.removeContent().length === 0);
+    });
+
+    it('should concatenate a parent using offset', function () {
+        var range = new Range(),
+            grandparent = new TextOM.ParagraphNode(),
+            parent = grandparent.append(new TextOM.SentenceNode()),
+            child = parent.append(new TextOM.WordNode('alfred')),
+            child_ = parent.append(new TextOM.WordNode('bertrand')),
+            child__ = parent.append(new TextOM.WordNode('cees')),
+            child___ = parent.append(new TextOM.WordNode('dick'));
+
+        range.setStart(parent, 1);
+        range.setEnd(parent, 3);
+        assert(range.removeContent().toString() === 'bertrand,cees');
+    });
+
+    it('should concatenate different parents', function () {
+        var range = new Range(),
+            grandparent = new TextOM.ParagraphNode(),
+            parent = grandparent.append(new TextOM.SentenceNode()),
+            parent_ = grandparent.append(new TextOM.SentenceNode()),
+            child = parent.append(new TextOM.WordNode('alfred')),
+            child_ = parent_.append(new TextOM.WordNode('bertrand'));
+
+        range.setStart(parent);
+        range.setEnd(parent_);
+        assert(range.removeContent().toString() === 'alfred,bertrand');
+    });
+
+    it('should concatenate different grandparents', function () {
+        var range = new Range(),
+            greatGrandparent = new TextOM.RootNode(),
+            grandparent = greatGrandparent.append(new TextOM.ParagraphNode()),
+            grandparent_ = greatGrandparent.append(new TextOM.ParagraphNode()),
+            parent = grandparent.append(new TextOM.SentenceNode()),
+            parent_ = grandparent_.append(new TextOM.SentenceNode()),
+            child = parent.append(new TextOM.WordNode('alfred')),
+            child_ = parent_.append(new TextOM.WordNode('bertrand'));
+
+        range.setStart(grandparent);
+        range.setEnd(grandparent_);
+        assert(range.removeContent().toString() === 'alfred,bertrand');
+    });
+
+    it('should concatenate different parents using offset', function () {
+        var range = new Range(),
+            grandparent = new TextOM.ParagraphNode(),
+            parent = grandparent.append(new TextOM.SentenceNode()),
+            parent_ = grandparent.append(new TextOM.SentenceNode()),
+            child = parent.append(new TextOM.WordNode('alfred')),
+            child_ = parent.append(new TextOM.WordNode('bertrand')),
+            child__ = parent_.append(new TextOM.WordNode('cees')),
+            child___ = parent_.append(new TextOM.WordNode('dick'));
+
+        range.setStart(parent, 1);
+        range.setEnd(parent_, 1);
+        assert(range.removeContent().toString() === 'bertrand,cees');
+    });
+});
+
 describe('TextOM.Range#getContent()', function () {
     it('should be of type `function`', function () {
         assert(typeof (new Range()).getContent === 'function');
