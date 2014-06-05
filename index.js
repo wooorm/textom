@@ -1232,7 +1232,7 @@
 
     /**
      * Removes all nodes completely covered by `range` and removes the parts
-     * covered by `range in partial covered nodes.
+     * covered by `range` in partial covered nodes.
      *
      * @return {Node[]} content - The removed nodes.
      * @api public
