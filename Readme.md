@@ -540,8 +540,9 @@ A `"changetextinside"` event will fire on the parent of dogs (sentence), and bec
 ### List of events
 #### remove
 ```js
-dogs.on('remove', function () {
+dogs.on('remove', function (parent) {
   this === dogs; // true
+  parent === sentence; // true
 })
 dogs.remove();
 ```
@@ -549,6 +550,8 @@ dogs.remove();
 Fired when a node is removed from its parent.
 
 - this: the removed node;
+- arguments:
+  - parent: the previous parent.
 
 #### insert
 ```js
