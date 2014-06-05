@@ -271,7 +271,7 @@
          * and to the parent. */
         node.prev = node.next = node.parent = null;
 
-        emit(node, 'remove');
+        emit(node, 'remove', parent);
 
         if (next) {
             emit(next, 'changeprev', prev || null, node);
