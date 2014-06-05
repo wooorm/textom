@@ -369,6 +369,27 @@ range.toString(); // "Dogs & cats."
 
 Return the result of calling `toString` on each text node inside `range`, substringing when necessary;
 
+##### TextOM\.Range#removeContent()
+```js
+var range = new Range();
+range.setStart(space0);
+range.setEnd(space1);
+range.removeContent(); // [space0, ampersand, space1]
+range.toString(); // [dogs, cats, fullStop]
+```
+
+Or with partial covered nodes...
+
+```js
+var range = new Range();
+range.setStart(dogs, 2);
+range.setEnd(cats, 2);
+range.removeContent(); // [gs, space0, ampersand, space1, ca]
+range.toString(); // [do, ts, fullStop]
+```
+
+Removes all nodes completely covered by `range` and removes the parts covered by `range` in partial covered nodes.
+
 ##### TextOM\.Range#getContent()
 ```js
 var range = new Range();
