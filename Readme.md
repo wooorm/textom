@@ -527,6 +527,7 @@ module textom
   
     string toString();
     Array getContent();
+    Array removeContent();
   };
 }
 ```
