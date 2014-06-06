@@ -1,5 +1,5 @@
 (function () {
-    /* jshint expr:true, boss:true */
+    /* jshint expr:true */
     /**
      * Utilities.
      */
@@ -129,7 +129,7 @@
      * @api private
      */
     function append(parent, item, appendee) {
-        var result, next, head;
+        var result, next;
 
         if (!parent) {
             throw new TypeError('Illegal invocation: \'' + parent +
@@ -170,8 +170,8 @@
 
             result = insertAfter(item, appendee);
         /* If parent has a first node... */
-        } else if (head = parent.head) {
-            result = insertBeforeHead(head, appendee);
+        } else if (parent.head) {
+            result = insertBeforeHead(parent.head, appendee);
         /* Prepend. There is no `head` (or `tail`) node yet. */
         } else {
             /* Detach the prependee. */
@@ -428,8 +428,7 @@
     }
 
     function fire(context, callbacks, args) {
-        var iterator = -1,
-            callback;
+        var iterator = -1;
 
         if (!callbacks || !callbacks.length) {
             return;
@@ -437,8 +436,8 @@
 
         callbacks = callbacks.concat();
 
-        while (callback = callbacks[++iterator]) {
-            callback.apply(context, args);
+        while (callbacks[++iterator]) {
+            callbacks[iterator].apply(context, args);
         }
 
         return;
@@ -449,10 +448,13 @@
             callbacks, namedCallbacks;
 
         while (context) {
-            if (callbacks = context.callbacks) {
+            callbacks = context.callbacks;
+            if (callbacks) {
                 fire(context, callbacks[name], args);
             }
-            if (callbacks = context.constructor.callbacks) {
+
+            callbacks = context.constructor.callbacks;
+            if (callbacks) {
                 fire(context, callbacks[name], args);
             }
 
@@ -464,9 +466,10 @@
         var args = arraySlice.call(arguments, 2),
             constructors = context.constructor.constructors,
             iterator = -1,
-            callbacks, namedCallbacks, constructor;
+            callbacks = context.callbacks,
+            namedCallbacks;
 
-        if (callbacks = context.callbacks) {
+        if (callbacks) {
             fire(context, callbacks[name], args);
         }
 
@@ -475,8 +478,10 @@
             return;
         }
 
-        while (constructor = constructors[++iterator]) {
-            if (callbacks = constructor.callbacks) {
+        while (constructors[++iterator]) {
+            callbacks = constructors[iterator].callbacks;
+
+            if (callbacks) {
                 fire(context, callbacks[name], args);
             }
         }
@@ -838,7 +843,8 @@
 
             emit(self, 'changetext', value, previousValue);
 
-            if (parent = self.parent) {
+            parent = self.parent;
+            if (parent) {
                 trigger(
                     parent, 'changetextinside', self, value, previousValue
                 );
@@ -1279,7 +1285,7 @@
             startContainer = this.startContainer,
             endContainer = this.endContainer,
             iterator = -1,
-            node, startIsText, middle;
+            startIsText, middle;
 
         if (content.length === 0) {
             return content;
@@ -1319,8 +1325,8 @@
                 endContainer.split(endOffset);
         }
 
-        while (node = content[++iterator]) {
-            node.remove();
+        while (content[++iterator]) {
+            content[iterator].remove();
         }
 
         return content;
