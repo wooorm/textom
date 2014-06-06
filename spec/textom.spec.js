@@ -53,7 +53,7 @@ describe('TextOM', function () {
         }
     );
 
-    it('should return a newly initialized `RootNode` object when invoked',
+    it('should return a newly initialised `RootNode` object when invoked',
         function () {
             assert(new TextOM() instanceof TextOM.RootNode);
             assert(TextOM() instanceof TextOM.RootNode);
@@ -155,13 +155,13 @@ describe('TextOM.Node#WHITE_SPACE_NODE', function () {
     );
 });
 
-describe('TextOM.Node#on(name?, callback)', function () {
+describe('TextOM.Node#on(name, callback)', function () {
     it('should be of type `function`', function () {
         assert(typeof nodePrototype.on === 'function');
     });
 
     it('should NOT throw, when no arguments are given, but return the ' +
-        'current contex', function () {
+        'current context', function () {
             assert.doesNotThrow(function () {
                 (new Node()).on();
             });
@@ -172,7 +172,7 @@ describe('TextOM.Node#on(name?, callback)', function () {
     );
 
     it('should NOT throw, when a name but no callback is given, but ' +
-        'return the current contex', function () {
+        'return the current context', function () {
             assert.doesNotThrow(function () {
                 (new Node()).on('test');
             });
@@ -220,7 +220,7 @@ describe('TextOM.Node#off(name?, callback?)', function () {
     });
 
     it('should NOT throw, when no arguments are given, but return the ' +
-        'current contex', function () {
+        'current context', function () {
             assert.doesNotThrow(function () {
                 (new Node()).off();
             });
@@ -246,7 +246,7 @@ describe('TextOM.Node#off(name?, callback?)', function () {
     });
 
     it('should NOT throw, when valid arguments are given, but no listeners ' +
-        'are subscribed, but return the current contex', function () {
+        'are subscribed, but return the current context', function () {
             var node = new Node();
 
             assert.doesNotThrow(function () {
@@ -256,7 +256,7 @@ describe('TextOM.Node#off(name?, callback?)', function () {
     );
 
     it('should NOT throw, when listeners to the given name do not exist, ' +
-        'but return the current contex', function () {
+        'but return the current context', function () {
             var node = new Node();
             node.on('test', noop);
             assert.doesNotThrow(function () {
@@ -272,7 +272,7 @@ describe('TextOM.Node#off(name?, callback?)', function () {
     );
 
     it('should NOT throw, when a listener but no name is given, but return ' +
-        'the current contex', function () {
+        'the current context', function () {
             var node = new Node();
             node.on('test', noop);
             assert.doesNotThrow(function () {
@@ -949,7 +949,7 @@ describe('TextOM.Parent#toString', function () {
         }
     );
 
-    it('should return the concatenation of its childrens `toString` ' +
+    it('should return the concatenation of its children\'s `toString` ' +
         'methods', function () {
         var node = new Parent(),
             head = node.head = new Node(),
@@ -1505,7 +1505,7 @@ describe('TextOM.Child#remove()', function () {
         assert(parent.head === null);
     });
 
-    it('should decreese the parents `length` property by one (1), to ' +
+    it('should decrease the parents `length` property by one (1), to ' +
         'correspond to the removed child', function () {
         var parent = new Parent(),
             child = new Child(),
@@ -3278,7 +3278,7 @@ describe('TextOM.Range#getContent()', function () {
         assert(result instanceof Array);
     });
 
-    it('should return an array containg node, when startContainer equals ' +
+    it('should return an array containing node, when startContainer equals ' +
         'endContainer, and startContainer is a Text node', function () {
         var range = new Range(),
             parent = new Parent(),
@@ -4366,7 +4366,7 @@ describe('Events on TextOM.Child', function () {
     });
 
     describe('[changenext]', function () {
-        it('emits on child and all childs constructors, with child as the ' +
+        it('emits on child and all child\'s constructors, with child as the ' +
             'context, and the new and the old next nodes as arguments, ' +
             'when the `next` attribute on child changes', function () {
                 var sentenceNode = new TextOM.SentenceNode(),
@@ -4399,7 +4399,7 @@ describe('Events on TextOM.Child', function () {
     });
 
     describe('[changeprev]', function () {
-        it('emits on child and all childs constructors, with child as the ' +
+        it('emits on child and all child\'s constructors, with child as the ' +
             'context, and the new and the old prev nodes as arguments, ' +
             'when the `prev` attribute on child changes', function () {
                 var sentenceNode = new TextOM.SentenceNode(),
