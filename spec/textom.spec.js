@@ -4366,8 +4366,8 @@ describe('Events on TextOM.Child', function () {
     });
 
     describe('[changenext]', function () {
-        it('emits on child and all child\'s constructors, with child as the ' +
-            'context, and the new and the old next nodes as arguments, ' +
+        it('emits on child and all child\'s constructors, with child as ' +
+            'the context, and the new and the old next nodes as arguments, ' +
             'when the `next` attribute on child changes', function () {
                 var sentenceNode = new TextOM.SentenceNode(),
                     wordNode = sentenceNode.append(
@@ -4399,8 +4399,8 @@ describe('Events on TextOM.Child', function () {
     });
 
     describe('[changeprev]', function () {
-        it('emits on child and all child\'s constructors, with child as the ' +
-            'context, and the new and the old prev nodes as arguments, ' +
+        it('emits on child and all child\'s constructors, with child as ' +
+            'the context, and the new and the old prev nodes as arguments, ' +
             'when the `prev` attribute on child changes', function () {
                 var sentenceNode = new TextOM.SentenceNode(),
                     wordNode = sentenceNode.append(
