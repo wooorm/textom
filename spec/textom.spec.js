@@ -171,7 +171,7 @@ describe('TextOM.Node#on(name?, callback)', function () {
         }
     );
 
-    it('should NOT throw, when an name but no callback is given, but ' +
+    it('should NOT throw, when a name but no callback is given, but ' +
         'return the current contex', function () {
             assert.doesNotThrow(function () {
                 (new Node()).on('test');
@@ -181,23 +181,17 @@ describe('TextOM.Node#on(name?, callback)', function () {
         }
     );
 
-    it('should NOT set a `callbacks` attribute on the instance, when no ' +
-        'callback is given', function () {
-            var node = new Node();
-            assert(!('callbacks' in node));
-            node.on('test');
-            assert(!('callbacks' in node));
-        }
-    );
+    it('should throw, when an invalid name is given', function () {
+        assert.throws(function () {
+            (new Node()).on(true);
+        });
+    });
 
-    it('should NOT set a `callbacks` attribute on the instance, when no ' +
-        'name is given', function () {
-            var node = new Node();
-            assert(!('callbacks' in node));
-            node.on(noop);
-            assert(!('callbacks' in node));
-        }
-    );
+    it('should throw, when an invalid callback is given', function () {
+        assert.throws(function () {
+            (new Node()).on('test', true);
+        });
+    });
 
     it('should set a `callbacks` attribute on the instance, when a name ' +
         'and callback is given', function () {
@@ -232,6 +226,32 @@ describe('TextOM.Node#off(name?, callback?)', function () {
             });
             var node = new Node();
             assert(node.off() === node);
+        }
+    );
+
+    it('should throw, when an invalid name is given', function () {
+        assert.throws(function () {
+            (new Node()).off(false);
+        });
+    });
+
+    it('should throw, when an invalid callback is given', function () {
+        var node = new Node();
+
+        node.on('test', noop);
+
+        assert.throws(function () {
+            node.off('test', false);
+        });
+    });
+
+    it('should NOT throw, when valid arguments are given, but no listeners ' +
+        'are subscribed, but return the current contex', function () {
+            var node = new Node();
+
+            assert.doesNotThrow(function () {
+                assert(node.off('test') === node);
+            });
         }
     );
 
