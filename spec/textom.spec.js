@@ -9,36 +9,56 @@ function noop() {}
 function altNoop() {}
 
 describe('TextOM', function () {
+    it('should have a `ROOT_NODE` property, equal to the `type` property ' +
+        'on an instance of `RootNode`', function () {
+            assert(TextOM.ROOT_NODE === (new TextOM.RootNode()).type);
+        }
+    );
 
-    it('should have a `ROOT_NODE` property, equal to the `type` property on an instance of `RootNode`', function () {
-        assert(TextOM.ROOT_NODE === (new TextOM.RootNode()).type);
-    });
+    it('should have a `PARAGRAPH_NODE` property, equal to the `type` ' +
+        'property on an instance of `ParagraphNode`', function () {
+            assert(
+                TextOM.PARAGRAPH_NODE === (new TextOM.ParagraphNode()).type
+            );
+        }
+    );
 
-    it('should have a `PARAGRAPH_NODE` property, equal to the `type` property on an instance of `ParagraphNode`', function () {
-        assert(TextOM.PARAGRAPH_NODE === (new TextOM.ParagraphNode()).type);
-    });
+    it('should have a `SENTENCE_NODE` property, equal to the `type` ' +
+        'property on an instance of `SentenceNode`', function () {
+            assert(TextOM.SENTENCE_NODE === (new TextOM.SentenceNode()).type);
+        }
+    );
 
-    it('should have a `SENTENCE_NODE` property, equal to the `type` property on an instance of `SentenceNode`', function () {
-        assert(TextOM.SENTENCE_NODE === (new TextOM.SentenceNode()).type);
-    });
+    it('should have a `WORD_NODE` property, equal to the `type` property ' +
+        'on an instance of `WordNode`', function () {
+            assert(TextOM.WORD_NODE === (new TextOM.WordNode()).type);
+        }
+    );
 
-    it('should have a `WORD_NODE` property, equal to the `type` property on an instance of `WordNode`', function () {
-        assert(TextOM.WORD_NODE === (new TextOM.WordNode()).type);
-    });
+    it('should have a `PUNCTUATION_NODE` property, equal to the `type` ' +
+        'property on an instance of `PunctuationNode`', function () {
+            assert(
+                TextOM.PUNCTUATION_NODE ===
+                (new TextOM.PunctuationNode()).type
+            );
+        }
+    );
 
-    it('should have a `PUNCTUATION_NODE` property, equal to the `type` property on an instance of `PunctuationNode`', function () {
-        assert(TextOM.PUNCTUATION_NODE === (new TextOM.PunctuationNode()).type);
-    });
+    it('should have a `WHITE_SPACE_NODE` property, equal to the `type` ' +
+        'property on an instance of `WhiteSpaceNode`', function () {
+            assert(
+                TextOM.WHITE_SPACE_NODE ===
+                (new TextOM.WhiteSpaceNode()).type
+            );
+        }
+    );
 
-    it('should have a `WHITE_SPACE_NODE` property, equal to the `type` property on an instance of `WhiteSpaceNode`', function () {
-        assert(TextOM.WHITE_SPACE_NODE === (new TextOM.WhiteSpaceNode()).type);
-    });
-
-    it('should return a newly initialized `RootNode` object when invoked', function () {
-        assert(new TextOM() instanceof TextOM.RootNode);
-        assert(TextOM() instanceof TextOM.RootNode);
-    });
-
+    it('should return a newly initialized `RootNode` object when invoked',
+        function () {
+            assert(new TextOM() instanceof TextOM.RootNode);
+            assert(TextOM() instanceof TextOM.RootNode);
+        }
+    );
 });
 
 var Node = TextOM.Node,
@@ -49,11 +69,16 @@ describe('TextOM.Node', function () {
         assert(typeof Node === 'function');
     });
 
-    it('should set a `data` property on the newly constructed instance, which should be an object', function () {
-        var node = new Node();
-        assert(node.hasOwnProperty('data'));
-        assert('[object Object]' === Object.prototype.toString.call(node.data));
-    });
+    it('should set a `data` property on the newly constructed instance, ' +
+        'which should be an object', function () {
+            var node = new Node();
+            assert(node.hasOwnProperty('data'));
+            assert(
+                Object.prototype.toString.call(node.data) ===
+                '[object Object]'
+            );
+        }
+    );
 });
 
 describe('TextOM.Node.on', function () {
@@ -69,39 +94,65 @@ describe('TextOM.Node.off', function () {
 });
 
 describe('TextOM.Node#ROOT_NODE', function () {
-    it('should be equal to the `type` property on an instance of `RootNode`', function () {
-        assert(nodePrototype.ROOT_NODE === (new TextOM.RootNode()).type);
-    });
+    it('should be equal to the `type` property on an instance of `RootNode`',
+        function () {
+            assert(nodePrototype.ROOT_NODE === (new TextOM.RootNode()).type);
+        }
+    );
 });
 
 describe('TextOM.Node#PARAGRAPH_NODE', function () {
-    it('should be equal to the `type` property on an instance of `ParagraphNode`', function () {
-        assert(nodePrototype.PARAGRAPH_NODE === (new TextOM.ParagraphNode()).type);
-    });
+    it('should be equal to the `type` property on an instance of ' +
+        '`ParagraphNode`', function () {
+            assert(
+                nodePrototype.PARAGRAPH_NODE ===
+                (new TextOM.ParagraphNode()).type
+            );
+        }
+    );
 });
 
 describe('TextOM.Node#SENTENCE_NODE', function () {
-    it('should be equal to the `type` property on an instance of `SentenceNode`', function () {
-        assert(nodePrototype.SENTENCE_NODE === (new TextOM.SentenceNode()).type);
-    });
+    it('should be equal to the `type` property on an instance of ' +
+        '`SentenceNode`', function () {
+            assert(
+                nodePrototype.SENTENCE_NODE ===
+                (new TextOM.SentenceNode()).type
+            );
+        }
+    );
 });
 
 describe('TextOM.Node#WORD_NODE', function () {
-    it('should be equal to the `type` property on an instance of `WordNode`', function () {
-        assert(nodePrototype.WORD_NODE === (new TextOM.WordNode()).type);
-    });
+    it('should be equal to the `type` property on an instance of `WordNode`',
+        function () {
+            assert(
+                nodePrototype.WORD_NODE === (new TextOM.WordNode()).type
+            );
+        }
+    );
 });
 
 describe('TextOM.Node#PUNCTUATION_NODE', function () {
-    it('should be equal to the `type` property on an instance of `PunctuationNode`', function () {
-        assert(nodePrototype.PUNCTUATION_NODE === (new TextOM.PunctuationNode()).type);
-    });
+    it('should be equal to the `type` property on an instance of ' +
+        '`PunctuationNode`', function () {
+            assert(
+                nodePrototype.PUNCTUATION_NODE ===
+                (new TextOM.PunctuationNode()).type
+            );
+        }
+    );
 });
 
 describe('TextOM.Node#WHITE_SPACE_NODE', function () {
-    it('should be equal to the `type` property on an instance of `WhiteSpaceNode`', function () {
-        assert(nodePrototype.WHITE_SPACE_NODE === (new TextOM.WhiteSpaceNode()).type);
-    });
+    it('should be equal to the `type` property on an instance of ' +
+        '`WhiteSpaceNode`', function () {
+            assert(
+                nodePrototype.WHITE_SPACE_NODE ===
+                (new TextOM.WhiteSpaceNode()).type
+            );
+        }
+    );
 });
 
 describe('TextOM.Node#on(name?, callback)', function () {
@@ -109,47 +160,64 @@ describe('TextOM.Node#on(name?, callback)', function () {
         assert(typeof nodePrototype.on === 'function');
     });
 
-    it('should NOT throw, when no arguments are given, but return the current contex', function () {
-        assert.doesNotThrow(function () { (new Node()).on(); });
-        var node = new Node();
-        assert(node.on() === node);
-    });
+    it('should NOT throw, when no arguments are given, but return the ' +
+        'current contex', function () {
+            assert.doesNotThrow(function () {
+                (new Node()).on();
+            });
 
-    it('should NOT throw, when an name but no callback is given, but return the current contex', function () {
-        assert.doesNotThrow(function () { (new Node()).on('test'); });
-        var node = new Node();
-        assert(node.on('test') === node);
-    });
+            var node = new Node();
+            assert(node.on() === node);
+        }
+    );
 
-    it('should NOT set a `callbacks` attribute on the instance, when no callback is given', function () {
-        var node = new Node();
-        assert(!('callbacks' in node));
-        node.on('test');
-        assert(!('callbacks' in node));
-    });
+    it('should NOT throw, when an name but no callback is given, but ' +
+        'return the current contex', function () {
+            assert.doesNotThrow(function () {
+                (new Node()).on('test');
+            });
+            var node = new Node();
+            assert(node.on('test') === node);
+        }
+    );
 
-    it('should NOT set a `callbacks` attribute on the instance, when no name is given', function () {
-        var node = new Node();
-        assert(!('callbacks' in node));
-        node.on(noop);
-        assert(!('callbacks' in node));
-    });
+    it('should NOT set a `callbacks` attribute on the instance, when no ' +
+        'callback is given', function () {
+            var node = new Node();
+            assert(!('callbacks' in node));
+            node.on('test');
+            assert(!('callbacks' in node));
+        }
+    );
 
-    it('should set a `callbacks` attribute on the instance, when a name and callback is given', function () {
-        var node = new Node();
-        assert(!('callbacks' in node));
-        node.on('test', noop);
-        assert('callbacks' in node);
-    });
+    it('should NOT set a `callbacks` attribute on the instance, when no ' +
+        'name is given', function () {
+            var node = new Node();
+            assert(!('callbacks' in node));
+            node.on(noop);
+            assert(!('callbacks' in node));
+        }
+    );
 
-    it('should add the callback, when a name and a callback are given', function () {
-        var node = new Node();
-        assert(!('callbacks' in node));
-        node.on('test', noop);
-        assert('callbacks' in node);
-        assert('test' in node.callbacks);
-        assert(node.callbacks.test[0] === noop);
-    });
+    it('should set a `callbacks` attribute on the instance, when a name ' +
+        'and callback is given', function () {
+            var node = new Node();
+            assert(!('callbacks' in node));
+            node.on('test', noop);
+            assert('callbacks' in node);
+        }
+    );
+
+    it('should add the callback, when a name and a callback are given',
+        function () {
+            var node = new Node();
+            assert(!('callbacks' in node));
+            node.on('test', noop);
+            assert('callbacks' in node);
+            assert('test' in node.callbacks);
+            assert(node.callbacks.test[0] === noop);
+        }
+    );
 });
 
 describe('TextOM.Node#off(name?, callback?)', function () {
@@ -157,73 +225,86 @@ describe('TextOM.Node#off(name?, callback?)', function () {
         assert(typeof nodePrototype.off === 'function');
     });
 
-    it('should NOT throw, when no arguments are given, but return the current contex', function () {
-        assert.doesNotThrow(function () { (new Node()).off(); });
-        var node = new Node();
-        assert(node.off() === node);
-    });
+    it('should NOT throw, when no arguments are given, but return the ' +
+        'current contex', function () {
+            assert.doesNotThrow(function () {
+                (new Node()).off();
+            });
+            var node = new Node();
+            assert(node.off() === node);
+        }
+    );
 
-    it('should NOT throw, when listeners to the given name do not exist, but return the current contex', function () {
-        var node = new Node();
-        node.on('test', noop);
-        assert.doesNotThrow(function () {
-            assert(node.off('test2') === node);
-        });
+    it('should NOT throw, when listeners to the given name do not exist, ' +
+        'but return the current contex', function () {
+            var node = new Node();
+            node.on('test', noop);
+            assert.doesNotThrow(function () {
+                assert(node.off('test2') === node);
+            });
 
-        node = new Node();
-        node.on('test', noop);
-        assert.doesNotThrow(function () {
-            assert(node.off('test', altNoop) === node);
-        });
-    });
+            node = new Node();
+            node.on('test', noop);
+            assert.doesNotThrow(function () {
+                assert(node.off('test', altNoop) === node);
+            });
+        }
+    );
 
-    it('should NOT throw, when a listener but no name is given, but return the current contex', function () {
-        var node = new Node();
-        node.on('test', noop);
-        assert.doesNotThrow(function () {
-            assert(node.off(null, noop) === node);
-        });
-    });
+    it('should NOT throw, when a listener but no name is given, but return ' +
+        'the current contex', function () {
+            var node = new Node();
+            node.on('test', noop);
+            assert.doesNotThrow(function () {
+                assert(node.off(null, noop) === node);
+            });
+        }
+    );
 
-    it('should remove all callbacks, when no name and no callback is given', function () {
-        var node = new Node();
-        node.on('test', noop);
-        node.on('test2', altNoop);
-        assert('test' in node.callbacks);
-        assert('test2' in node.callbacks);
-        node.off();
-        assert(!('test' in node.callbacks));
-        assert(!('test2' in node.callbacks));
-    });
+    it('should remove all callbacks, when no name and no callback is given',
+        function () {
+            var node = new Node();
+            node.on('test', noop);
+            node.on('test2', altNoop);
+            assert('test' in node.callbacks);
+            assert('test2' in node.callbacks);
+            node.off();
+            assert(!('test' in node.callbacks));
+            assert(!('test2' in node.callbacks));
+        }
+    );
 
-    it('should remove all listeners to a given name, when a name but no callback are given', function () {
-        var node = new Node();
-        node.on('test', noop);
-        node.on('test', altNoop);
-        assert(node.callbacks.test.indexOf(noop) > -1);
-        assert(node.callbacks.test.indexOf(altNoop) > -1);
-        node.off('test');
-        assert(node.callbacks.test.indexOf(noop) === -1);
-        assert(node.callbacks.test.indexOf(altNoop) === -1);
-    });
+    it('should remove all listeners to a given name, when a name but no ' +
+        'callback are given', function () {
+            var node = new Node();
+            node.on('test', noop);
+            node.on('test', altNoop);
+            assert(node.callbacks.test.indexOf(noop) > -1);
+            assert(node.callbacks.test.indexOf(altNoop) > -1);
+            node.off('test');
+            assert(node.callbacks.test.indexOf(noop) === -1);
+            assert(node.callbacks.test.indexOf(altNoop) === -1);
+        }
+    );
 
-    it('should remove a listener, when a name and a callback are given', function () {
-        var node = new Node();
-        node.on('test', noop);
-        node.on('test', altNoop);
-        assert(node.callbacks.test.indexOf(noop) > -1);
-        assert(node.callbacks.test.indexOf(altNoop) > -1);
-        node.off('test', noop);
-        assert(node.callbacks.test.indexOf(noop) === -1);
-        assert(node.callbacks.test.indexOf(altNoop) > -1);
-    });
+    it('should remove a listener, when a name and a callback are given',
+        function () {
+            var node = new Node();
+            node.on('test', noop);
+            node.on('test', altNoop);
+            assert(node.callbacks.test.indexOf(noop) > -1);
+            assert(node.callbacks.test.indexOf(altNoop) > -1);
+            node.off('test', noop);
+            assert(node.callbacks.test.indexOf(noop) === -1);
+            assert(node.callbacks.test.indexOf(altNoop) > -1);
+        }
+    );
 });
 
 var Parent = TextOM.Parent,
     parentPrototype = Parent.prototype;
 
 describe('TextOM.Parent', function () {
-
     it('should be of type `function`', function () {
         assert(typeof Parent === 'function');
     });
@@ -231,7 +312,6 @@ describe('TextOM.Parent', function () {
     it('should inherit from `Node`', function () {
         assert(new Parent() instanceof Node);
     });
-
 });
 
 describe('TextOM.Parent#head', function () {
@@ -240,13 +320,15 @@ describe('TextOM.Parent#head', function () {
         assert((new Parent()).head === null);
     });
 
-    it('should be the first child when one or more children exist', function () {
-        var parent = new Parent();
-        parent.append(new TextOM.Child());
-        assert(parent.head === parent[0]);
-        parent.prepend(new TextOM.Child());
-        assert(parent.head === parent[0]);
-    });
+    it('should be the first child when one or more children exist',
+        function () {
+            var parent = new Parent();
+            parent.append(new TextOM.Child());
+            assert(parent.head === parent[0]);
+            parent.prepend(new TextOM.Child());
+            assert(parent.head === parent[0]);
+        }
+    );
 });
 
 describe('TextOM.Parent#tail', function () {
@@ -261,14 +343,16 @@ describe('TextOM.Parent#tail', function () {
         assert(parent.tail === null);
     });
 
-    it('should be the last child when two or more children exist', function () {
-        var parent = new Parent();
-        parent.append(new TextOM.Child());
-        parent.prepend(new TextOM.Child());
-        assert(parent.tail === parent[1]);
-        parent.append(new TextOM.Child());
-        assert(parent.tail === parent[2]);
-    });
+    it('should be the last child when two or more children exist',
+        function () {
+            var parent = new Parent();
+            parent.append(new TextOM.Child());
+            parent.prepend(new TextOM.Child());
+            assert(parent.tail === parent[1]);
+            parent.append(new TextOM.Child());
+            assert(parent.tail === parent[2]);
+        }
+    );
 });
 
 describe('TextOM.Parent#length', function () {
@@ -277,31 +361,53 @@ describe('TextOM.Parent#length', function () {
         assert((new Parent()).length === 0);
     });
 
-    it('should be the number of children when one or more children exist', function () {
-        var parent = new Parent();
-        parent.append(new TextOM.Child());
-        assert(parent.length === 1);
-        parent.prepend(new TextOM.Child());
-        assert(parent.length === 2);
-        parent.append(new TextOM.Child());
-        assert(parent.length === 3);
-    });
+    it('should be the number of children when one or more children exist',
+        function () {
+            var parent = new Parent();
+            parent.append(new TextOM.Child());
+            assert(parent.length === 1);
+            parent.prepend(new TextOM.Child());
+            assert(parent.length === 2);
+            parent.append(new TextOM.Child());
+            assert(parent.length === 3);
+        }
+    );
 });
 
 describe('TextOM.Parent#prepend(childNode)', function () {
     it('should throw when falsey values are provided', function () {
         var parent = new Parent();
-        assert.throws(function () { parent.prepend(); }, /undefined/);
-        assert.throws(function () { parent.prepend(null); }, /null/);
-        assert.throws(function () { parent.prepend(undefined); }, /undefined/);
-        assert.throws(function () { parent.prepend(false); }, /false/);
+
+        assert.throws(function () {
+            parent.prepend();
+        }, /undefined/);
+
+        assert.throws(function () {
+            parent.prepend(null);
+        }, /null/);
+
+        assert.throws(function () {
+            parent.prepend(undefined);
+        }, /undefined/);
+
+        assert.throws(function () {
+            parent.prepend(false);
+        }, /false/);
     });
 
-    it('should throw when non-removable nodes are prepended (e.g., not inheriting from TextOM.Child)', function () {
-        var parent = new Parent();
-        assert.throws(function () { parent.prepend(new Node()); }, /remove/);
-        assert.throws(function () { parent.prepend({}); }, /remove/);
-    });
+    it('should throw when non-removable nodes are prepended (e.g., not ' +
+        'inheriting from TextOM.Child)', function () {
+            var parent = new Parent();
+
+            assert.throws(function () {
+                parent.prepend(new Node());
+            }, /remove/);
+
+            assert.throws(function () {
+                parent.prepend({});
+            }, /remove/);
+        }
+    );
 
     it('should call the `remove` method on the prependee', function () {
         var parent = new Parent(),
@@ -318,113 +424,127 @@ describe('TextOM.Parent#prepend(childNode)', function () {
         assert(isCalled === true);
     });
 
-    it('should set the `parent` property on the prependee to the operated on parent', function () {
-        var parent = new Parent(),
-            node = new TextOM.Child(),
-            node_ = new TextOM.Child();
+    it('should set the `parent` property on the prependee to the operated ' +
+        'on parent', function () {
+            var parent = new Parent(),
+                node = new TextOM.Child(),
+                node1 = new TextOM.Child();
 
-        parent.prepend(node);
-        assert(node.parent === parent);
+            parent.prepend(node);
+            assert(node.parent === parent);
 
-        parent.prepend(node_);
-        assert(node_.parent === parent);
-    });
+            parent.prepend(node1);
+            assert(node1.parent === parent);
+        }
+    );
 
-    it('should set the `head` and `0` properties to the prepended node', function () {
-        var parent = new Parent(),
-            node = new TextOM.Child();
+    it('should set the `head` and `0` properties to the prepended node',
+        function () {
+            var parent = new Parent(),
+                node = new TextOM.Child();
 
-        parent.prepend(node);
-        assert(parent.head === node);
-        assert(parent[0] === node);
-    });
+            parent.prepend(node);
+            assert(parent.head === node);
+            assert(parent[0] === node);
+        }
+    );
 
-    it('should set the `tail` and `1` properties to the previous `head`, when no `tail` exists', function () {
-        var parent = new Parent(),
-            node = new TextOM.Child(),
-            node_ = new TextOM.Child();
+    it('should set the `tail` and `1` properties to the previous `head`, ' +
+        'when no `tail` exists', function () {
+            var parent = new Parent(),
+                node = new TextOM.Child(),
+                node1 = new TextOM.Child();
 
-        parent.prepend(node);
-        parent.prepend(node_);
-        assert(parent.tail === node);
-        assert(parent[1] === node);
-    });
+            parent.prepend(node);
+            parent.prepend(node1);
+            assert(parent.tail === node);
+            assert(parent[1] === node);
+        }
+    );
 
-    it('should set the `head` and `0` properties to further prepended nodes', function () {
-        var parent = new Parent(),
-            node = new TextOM.Child(),
-            node_ = new TextOM.Child(),
-            node__ = new TextOM.Child();
+    it('should set the `head` and `0` properties to further prepended nodes',
+        function () {
+            var parent = new Parent(),
+                node = new TextOM.Child(),
+                node1 = new TextOM.Child(),
+                node2 = new TextOM.Child();
 
-        parent.prepend(node);
-        parent.prepend(node_);
-        assert(parent.head === node_);
-        assert(parent[0] === node_);
-        parent.prepend(node__);
-        assert(parent.head === node__);
-        assert(parent[0] === node__);
-    });
+            parent.prepend(node);
+            parent.prepend(node1);
+            assert(parent.head === node1);
+            assert(parent[0] === node1);
+            parent.prepend(node2);
+            assert(parent.head === node2);
+            assert(parent[0] === node2);
+        }
+    );
 
-    it('should set the `next` property on the prependee to the parents previous `head`', function () {
-        var parent = new Parent(),
-            node = new TextOM.Child(),
-            node_ = new TextOM.Child();
+    it('should set the `next` property on the prependee to the parents ' +
+        'previous `head`', function () {
+            var parent = new Parent(),
+                node = new TextOM.Child(),
+                node1 = new TextOM.Child();
 
-        parent.prepend(node);
-        assert(node.next === null);
+            parent.prepend(node);
+            assert(node.next === null);
 
-        parent.prepend(node_);
-        assert(node_.next === node);
-    });
+            parent.prepend(node1);
+            assert(node1.next === node);
+        }
+    );
 
-    it('should set the `prev` property on the parents previous `head` to the prependee', function () {
-        var parent = new Parent(),
-            node = new TextOM.Child(),
-            node_ = new TextOM.Child();
+    it('should set the `prev` property on the parents previous `head` to ' +
+        'the prependee', function () {
+            var parent = new Parent(),
+                node = new TextOM.Child(),
+                node1 = new TextOM.Child();
 
-        parent.prepend(node);
+            parent.prepend(node);
 
-        parent.prepend(node_);
-        assert(node.prev === node_);
-    });
+            parent.prepend(node1);
+            assert(node.prev === node1);
+        }
+    );
 
-    it('should update the `length` property to correspond to the number of prepended children', function () {
-        var parent = new Parent(),
-            node = new TextOM.Child(),
-            node_ = new TextOM.Child(),
-            node__ = new TextOM.Child();
+    it('should update the `length` property to correspond to the number ' +
+        'of prepended children', function () {
+            var parent = new Parent(),
+                node = new TextOM.Child(),
+                node1 = new TextOM.Child(),
+                node2 = new TextOM.Child();
 
-        assert(parent.length === 0);
+            assert(parent.length === 0);
 
-        parent.prepend(node);
-        assert(parent.length === 1);
+            parent.prepend(node);
+            assert(parent.length === 1);
 
-        parent.prepend(node_);
-        assert(parent.length === 2);
+            parent.prepend(node1);
+            assert(parent.length === 2);
 
-        parent.prepend(node__);
-        assert(parent.length === 3);
-    });
+            parent.prepend(node2);
+            assert(parent.length === 3);
+        }
+    );
 
     it('should shift the indices of all children', function () {
         var parent = new Parent(),
             child = new TextOM.Child(),
-            child_ = new TextOM.Child(),
-            child__ = new TextOM.Child(),
-            child___ = new TextOM.Child();
+            child1 = new TextOM.Child(),
+            child2 = new TextOM.Child(),
+            child3 = new TextOM.Child();
 
         parent.prepend(child);
-        parent.prepend(child_);
+        parent.prepend(child1);
 
-        parent.prepend(child__);
-        assert(parent[0] === child__);
-        assert(parent[1] === child_);
+        parent.prepend(child2);
+        assert(parent[0] === child2);
+        assert(parent[1] === child1);
         assert(parent[2] === child);
 
-        parent.prepend(child___);
-        assert(parent[0] === child___);
-        assert(parent[1] === child__);
-        assert(parent[2] === child_);
+        parent.prepend(child3);
+        assert(parent[0] === child3);
+        assert(parent[1] === child2);
+        assert(parent[2] === child1);
         assert(parent[3] === child);
     });
 
@@ -439,17 +559,37 @@ describe('TextOM.Parent#prepend(childNode)', function () {
 describe('TextOM.Parent#append(childNode)', function () {
     it('should throw when falsey values are provided', function () {
         var parent = new Parent();
-        assert.throws(function () { parent.append(); }, /undefined/);
-        assert.throws(function () { parent.append(null); }, /null/);
-        assert.throws(function () { parent.append(undefined); }, /undefined/);
-        assert.throws(function () { parent.append(false); }, /false/);
+
+        assert.throws(function () {
+            parent.append();
+        }, /undefined/);
+
+        assert.throws(function () {
+            parent.append(null);
+        }, /null/);
+
+        assert.throws(function () {
+            parent.append(undefined);
+        }, /undefined/);
+
+        assert.throws(function () {
+            parent.append(false);
+        }, /false/);
     });
 
-    it('should throw when non-removable nodes are appended (e.g., not inheriting from TextOM.Child)', function () {
-        var parent = new Parent();
-        assert.throws(function () { parent.append(new Node()); }, /remove/);
-        assert.throws(function () { parent.append({}); }, /remove/);
-    });
+    it('should throw when non-removable nodes are appended (e.g., not ' +
+        'inheriting from TextOM.Child)', function () {
+            var parent = new Parent();
+
+            assert.throws(function () {
+                parent.append(new Node());
+            }, /remove/);
+
+            assert.throws(function () {
+                parent.append({});
+            }, /remove/);
+        }
+    );
 
     it('should call the `remove` method on the appendee', function () {
         var parent = new Parent(),
@@ -466,101 +606,115 @@ describe('TextOM.Parent#append(childNode)', function () {
         assert(isCalled === true);
     });
 
-    it('should set the `parent` property on the appendee to the operated on parent', function () {
-        var parent = new Parent(),
-            node = new TextOM.Child(),
-            node_ = new TextOM.Child();
+    it('should set the `parent` property on the appendee to the operated ' +
+        'on parent', function () {
+            var parent = new Parent(),
+                node = new TextOM.Child(),
+                node1 = new TextOM.Child();
 
-        parent.append(node);
-        assert(node.parent === parent);
+            parent.append(node);
+            assert(node.parent === parent);
 
-        parent.append(node_);
-        assert(node_.parent === parent);
-    });
+            parent.append(node1);
+            assert(node1.parent === parent);
+        }
+    );
 
-    it('should set the `head` and `0` properties to the appended node, when no `head` exists', function () {
-        var parent = new Parent(),
-            node = new TextOM.Child();
+    it('should set the `head` and `0` properties to the appended node, ' +
+        'when no `head` exists', function () {
+            var parent = new Parent(),
+                node = new TextOM.Child();
 
-        parent.append(node);
-        assert(parent.head === node);
-        assert(parent[0] === node);
-    });
+            parent.append(node);
+            assert(parent.head === node);
+            assert(parent[0] === node);
+        }
+    );
 
-    it('should set the `tail` and `1` properties to the appended node, when no `tail` exists', function () {
-        var parent = new Parent(),
-            node = new TextOM.Child(),
-            node_ = new TextOM.Child();
+    it('should set the `tail` and `1` properties to the appended node, ' +
+        'when no `tail` exists', function () {
+            var parent = new Parent(),
+                node = new TextOM.Child(),
+                node1 = new TextOM.Child();
 
-        parent.append(node);
-        parent.append(node_);
-        assert(parent.tail === node_);
-        assert(parent[1] === node_);
-    });
+            parent.append(node);
+            parent.append(node1);
+            assert(parent.tail === node1);
+            assert(parent[1] === node1);
+        }
+    );
 
-    it('should set the `tail`, and `length - 1`, properties to further appended nodes', function () {
-        var parent = new Parent(),
-            node = new TextOM.Child(),
-            node_ = new TextOM.Child(),
-            node__ = new TextOM.Child();
+    it('should set the `tail`, and `length - 1`, properties to further ' +
+        'appended nodes', function () {
+            var parent = new Parent(),
+                node = new TextOM.Child(),
+                node1 = new TextOM.Child(),
+                node2 = new TextOM.Child();
 
-        parent.append(node);
-        parent.append(node_);
-        assert(parent.tail === node_);
-        assert(parent[1] === node_);
-        parent.append(node__);
-        assert(parent.tail === node__);
-        assert(parent[2] === node__);
-    });
+            parent.append(node);
+            parent.append(node1);
+            assert(parent.tail === node1);
+            assert(parent[1] === node1);
+            parent.append(node2);
+            assert(parent.tail === node2);
+            assert(parent[2] === node2);
+        }
+    );
 
-    it('should set the `prev` property on the appendee to the parents previous `tail` (or `head`, when no `tail` exists)', function () {
-        var parent = new Parent(),
-            node = new TextOM.Child(),
-            node_ = new TextOM.Child(),
-            node__ = new TextOM.Child();
+    it('should set the `prev` property on the appendee to the parents ' +
+        'previous `tail` (or `head`, when no `tail` exists)', function () {
+            var parent = new Parent(),
+                node = new TextOM.Child(),
+                node1 = new TextOM.Child(),
+                node2 = new TextOM.Child();
 
-        parent.append(node);
-        assert(node.prev === null);
+            parent.append(node);
+            assert(node.prev === null);
 
-        parent.append(node_);
-        assert(node_.prev === node);
+            parent.append(node1);
+            assert(node1.prev === node);
 
-        parent.append(node__);
-        assert(node__.prev === node_);
-    });
+            parent.append(node2);
+            assert(node2.prev === node1);
+        }
+    );
 
-    it('should set the `next` property on the parents previous `tail` (or `head`, when no `tail` exists) to the appendee', function () {
-        var parent = new Parent(),
-            node = new TextOM.Child(),
-            node_ = new TextOM.Child(),
-            node__ = new TextOM.Child();
+    it('should set the `next` property on the parents previous `tail` (or ' +
+        '`head`, when no `tail` exists) to the appendee', function () {
+            var parent = new Parent(),
+                node = new TextOM.Child(),
+                node1 = new TextOM.Child(),
+                node2 = new TextOM.Child();
 
-        parent.append(node);
+            parent.append(node);
 
-        parent.append(node_);
-        assert(node.next === node_);
+            parent.append(node1);
+            assert(node.next === node1);
 
-        parent.append(node__);
-        assert(node_.next === node__);
-    });
+            parent.append(node2);
+            assert(node1.next === node2);
+        }
+    );
 
-    it('should update the `length` property to correspond to the number of appended children', function () {
-        var parent = new Parent(),
-            node = new TextOM.Child(),
-            node_ = new TextOM.Child(),
-            node__ = new TextOM.Child();
+    it('should update the `length` property to correspond to the number of ' +
+        'appended children', function () {
+            var parent = new Parent(),
+                node = new TextOM.Child(),
+                node1 = new TextOM.Child(),
+                node2 = new TextOM.Child();
 
-        assert(parent.length === 0);
+            assert(parent.length === 0);
 
-        parent.append(node);
-        assert(parent.length === 1);
+            parent.append(node);
+            assert(parent.length === 1);
 
-        parent.append(node_);
-        assert(parent.length === 2);
+            parent.append(node1);
+            assert(parent.length === 2);
 
-        parent.append(node__);
-        assert(parent.length === 3);
-    });
+            parent.append(node2);
+            assert(parent.length === 3);
+        }
+    );
 
     it('should return the appended child', function () {
         var parent = new Parent(),
@@ -571,14 +725,26 @@ describe('TextOM.Parent#append(childNode)', function () {
 });
 
 describe('TextOM.Parent#item(index?)', function () {
-    it('should throw on non-nully, non-number (including NaN) values', function () {
-        var parent = new Parent();
-        assert.throws(function () { parent.item('string'); }, /string/);
-        assert.throws(function () { parent.item(0/0); }, /NaN/);
-        assert.throws(function () { parent.item(true); }, /true/);
-    });
+    it('should throw on non-nully, non-number (including NaN) values',
+        function () {
+            var parent = new Parent();
 
-    it('should return the first child when the given index is either null, undefined, or not given', function () {
+            assert.throws(function () {
+                parent.item('string');
+            }, /string/);
+
+            assert.throws(function () {
+                parent.item(0 / 0);
+            }, /NaN/);
+
+            assert.throws(function () {
+                parent.item(true);
+            }, /true/);
+        }
+    );
+
+    it('should return the first child when the given index is either null, ' +
+        'undefined, or not given', function () {
         var parent = new Parent();
         parent[0] = new Node();
         assert(parent.item(null) === parent[0]);
@@ -586,7 +752,8 @@ describe('TextOM.Parent#item(index?)', function () {
         assert(parent.item() === parent[0]);
     });
 
-    it('should return a child at a given index when available, and null otherwise', function () {
+    it('should return a child at a given index when available, and null ' +
+        'otherwise', function () {
         var parent = new Parent();
         parent[0] = new Node();
         parent[1] = new Node();
@@ -596,45 +763,57 @@ describe('TextOM.Parent#item(index?)', function () {
         assert(parent.item(2) === parent[2]);
         assert(parent.item(3) === null);
     });
-
 });
 
 describe('TextOM.Parent#split(position)', function () {
+    it('should throw when the operated on item is not attached',
+        function () {
+            var parent = new Parent();
 
-    it('should throw when the operated on item is not attached', function () {
-        var parent = new Parent();
+            assert.throws(function () {
+                parent.split();
+            }, /undefined/);
+        }
+    );
 
-        assert.throws(function () { parent.split(); }, /undefined/);
-    });
+    it('should throw when a position was given, not of type number',
+        function () {
+            var parent = new Parent(),
+                element = parent.append(new Element());
 
-    it('should throw when a position was given, not of type number', function () {
-        var parent = new Parent(),
-            element = parent.append(new Element());
+            assert.throws(function () {
+                element.split('failure');
+            }, /failure/);
+        }
+    );
 
-        assert.throws(function () { element.split('failure'); }, /failure/);
-    });
+    it('should return a new instance() of the operated on item',
+        function () {
+            var parent = new Parent(),
+                element = parent.append(new Element(''));
 
-    it('should return a new instance() of the operated on item', function () {
-        var parent = new Parent(),
-            element = parent.append(new Element(''));
+            assert(element.split() instanceof element.constructor);
+        }
+    );
 
-        assert(element.split() instanceof element.constructor);
-    });
+    it('should treat a given negative position, as an position from the ' +
+        'end (e.g., when the internal value of element is `alfred`, treat ' +
+        '`-1` as `5`)', function () {
+            var parent = new Parent(),
+                element = parent.append(new Element());
 
-    it('should treat a given negative position, as an position from the end (e.g., when the internal value of element is `alfred`, treat `-1` as `5`)', function () {
-        var parent = new Parent(),
-            element = parent.append(new Element());
+            element.append(new Text('alfred'));
+            element.append(new Text('bertrand'));
 
-        element.append(new Text('alfred'));
-        element.append(new Text('bertrand'));
+            element.split(-1);
 
-        element.split(-1);
+            assert(element.toString() === 'bertrand');
+            assert(element.prev.toString() === 'alfred');
+        }
+    );
 
-        assert(element.toString() === 'bertrand');
-        assert(element.prev.toString() === 'alfred');
-    });
-
-    it('should NOT throw when NaN, or -Infinity are given (but treat it as `0`)', function () {
+    it('should NOT throw when NaN, or -Infinity are given (but treat it ' +
+        'as `0`)', function () {
         var parent = new Parent(),
             element = parent.append(new Element());
 
@@ -652,7 +831,8 @@ describe('TextOM.Parent#split(position)', function () {
         assert(element.prev.toString() === '');
     });
 
-    it('should NOT throw when Infinity is given (but treat it as `this.length`)', function () {
+    it('should NOT throw when Infinity is given (but treat it as ' +
+        '`this.length`)', function () {
         var parent = new Parent(),
             element = parent.append(new Element());
 
@@ -665,7 +845,8 @@ describe('TextOM.Parent#split(position)', function () {
         assert(element.prev.toString() === 'alfredbertrand');
     });
 
-    it('should NOT throw when a position greater than the length of the element is given (but treat it as `this.length`)', function () {
+    it('should NOT throw when a position greater than the length of the ' +
+        'element is given (but treat it as `this.length`)', function () {
         var parent = new Parent(),
             element = parent.append(new Element());
 
@@ -678,7 +859,8 @@ describe('TextOM.Parent#split(position)', function () {
         assert(element.prev.toString() === 'alfredbertrand');
     });
 
-    it('should NOT throw when a nully position is given, but treat it as `0`', function () {
+    it('should NOT throw when a nully position is given, but treat it as ' +
+        '`0`', function () {
         var parent = new Parent(),
             element = parent.append(new Element());
 
@@ -698,7 +880,8 @@ describe('TextOM.Parent#split(position)', function () {
         assert(element.prev.toString() === '');
     });
 
-    it('should remove the children of the current items value, from `0` to the given position', function () {
+    it('should remove the children of the current items value, from `0` to ' +
+        'the given position', function () {
         var parent = new Parent(),
             element = parent.append(new Element());
 
@@ -710,16 +893,19 @@ describe('TextOM.Parent#split(position)', function () {
         assert(element.toString() === 'bertrand');
     });
 
-    it('should prepend a new instance() of the operated on item', function () {
-        var parent = new Parent(),
-            element = parent.append(new Element());
+    it('should prepend a new instance() of the operated on item',
+        function () {
+            var parent = new Parent(),
+                element = parent.append(new Element());
 
-        element.split();
+            element.split();
 
-        assert(element.prev instanceof element.constructor);
-    });
+            assert(element.prev instanceof element.constructor);
+        }
+    );
 
-    it('should move the part of the current items value, from `0` to the given position, to prepended item', function () {
+    it('should move the part of the current items value, from `0` to the ' +
+        'given position, to prepended item', function () {
         var parent = new Parent(),
             element = parent.append(new Element());
 
@@ -737,19 +923,27 @@ describe('TextOM.Parent#toString', function () {
         assert(typeof parentPrototype.toString === 'function');
     });
 
-    it('should return an empty string when no children are present', function () {
-        assert((new Parent()).toString() === '');
-    });
+    it('should return an empty string when no children are present',
+        function () {
+            assert((new Parent()).toString() === '');
+        }
+    );
 
-    it('should return the concatenation of its childrens `toString` methods', function () {
+    it('should return the concatenation of its childrens `toString` ' +
+        'methods', function () {
         var node = new Parent(),
             head = node.head = new Node(),
             tail = node.tail = new Node();
 
         head.next = tail;
 
-        head.toString = function () { return 'a '; };
-        tail.toString = function () { return 'value'; };
+        head.toString = function () {
+            return 'a ';
+        };
+
+        tail.toString = function () {
+            return 'value';
+        };
 
         assert(node.toString() === 'a value');
     });
@@ -790,14 +984,16 @@ describe('TextOM.Child#prev', function () {
         assert((new Child()).prev === null);
     });
 
-    it('should be `null` when attached, but no previous sibling exist', function () {
-        var parent = new Parent(),
-            child = new Child();
+    it('should be `null` when attached, but no previous sibling exist',
+        function () {
+            var parent = new Parent(),
+                child = new Child();
 
-        parent.append(child);
+            parent.append(child);
 
-        assert(child.prev === null);
-    });
+            assert(child.prev === null);
+        }
+    );
 
     it('should be the previous sibling when it exists', function () {
         var parent = new Parent(),
@@ -817,14 +1013,16 @@ describe('TextOM.Child#next', function () {
         assert((new Child()).next === null);
     });
 
-    it('should be `null` when attached, but no next sibling exist', function () {
-        var parent = new Parent(),
-            child = new Child();
+    it('should be `null` when attached, but no next sibling exist',
+        function () {
+            var parent = new Parent(),
+                child = new Child();
 
-        parent.append(child);
+            parent.append(child);
 
-        assert(child.next === null);
-    });
+            assert(child.next === null);
+        }
+    );
 
     it('should be the next sibling when it exists', function () {
         var parent = new Parent(),
@@ -840,374 +1038,444 @@ describe('TextOM.Child#next', function () {
 
 describe('TextOM.Child#before(childNode)', function () {
     it('should throw when not attached', function () {
-        assert.throws(function () { (new Child()).before(new Child()); }, /Illegal invocation/);
+        assert.throws(function () {
+            (new Child()).before(new Child());
+        }, /Illegal invocation/);
     });
 
     it('should throw when falsey values are provided', function () {
         var child = (new Parent()).append(new Child());
 
-        assert.throws(function () { child.before(); }, /undefined/);
-        assert.throws(function () { child.before(null); }, /null/);
-        assert.throws(function () { child.before(undefined); }, /undefined/);
-        assert.throws(function () { child.before(false); }, /false/);
+        assert.throws(function () {
+            child.before();
+        }, /undefined/);
+
+        assert.throws(function () {
+            child.before(null);
+        }, /null/);
+
+        assert.throws(function () {
+            child.before(undefined);
+        }, /undefined/);
+
+        assert.throws(function () {
+            child.before(false);
+        }, /false/);
     });
 
-    it('should throw when non-removable nodes are prepended (e.g., not inheriting from TextOM.Child)', function () {
+    it('should throw when non-removable nodes are prepended (e.g., not ' +
+        'inheriting from TextOM.Child)', function () {
         var child = (new Parent()).append(new Child());
 
-        assert.throws(function () { child.before(new Node()); }, /remove/);
-        assert.throws(function () { child.before({}); }, /remove/);
+        assert.throws(function () {
+            child.before(new Node());
+        }, /remove/);
+
+        assert.throws(function () {
+            child.before({});
+        }, /remove/);
     });
 
     it('should call the `remove` method on the prependee', function () {
         var child = (new Parent()).append(new Child()),
-            child_ = new TextOM.Child(),
-            childRemove = child_.remove,
+            child1 = new TextOM.Child(),
+            childRemove = child1.remove,
             isCalled = false;
 
-        child_.remove = function () {
+        child1.remove = function () {
             isCalled = true;
             childRemove.apply(this, arguments);
         };
 
-        child.before(child_);
+        child.before(child1);
         assert(isCalled === true);
     });
 
-    it('should set the `parent` property on the prependee to the operated on nodes\' parent', function () {
+    it('should set the `parent` property on the prependee to the operated ' +
+        'on nodes\' parent', function () {
         var child = (new Parent()).append(new Child()),
-            child_ = new Child();
+            child1 = new Child();
 
-        child.before(child_);
+        child.before(child1);
 
-        assert(child.parent === child_.parent);
+        assert(child.parent === child1.parent);
     });
 
-    it('should set the parents `head` and `0` properties to the prepended node, when the operated on node is its parents `head`', function () {
+    it('should set the parents `head` and `0` properties to the prepended ' +
+        'node, when the operated on node is its parents `head`', function () {
         var parent = new Parent(),
             child = new Child(),
-            child_ = new Child();
+            child1 = new Child();
 
         parent.append(child);
-        child.before(child_);
-        assert(parent.head === child_);
-        assert(parent[0] === child_);
+        child.before(child1);
+        assert(parent.head === child1);
+        assert(parent[0] === child1);
     });
 
-    it('should set the parents `tail` and `1` properties to the operated on node, when no `tail` exists', function () {
+    it('should set the parents `tail` and `1` properties to the operated ' +
+        'on node, when no `tail` exists', function () {
         var parent = new Parent(),
             child = new Child(),
-            child_ = new Child();
+            child1 = new Child();
 
         parent.append(child);
 
-        child.before(child_);
+        child.before(child1);
         assert(parent.tail === child);
         assert(parent[1] === child);
     });
 
-    it('should set the `prev` property to the operated on nodes\' `prev` property', function () {
+    it('should set the `prev` property to the operated on nodes\' `prev` ' +
+        'property', function () {
         var parent = new Parent(),
             child = new Child(),
-            child_ = new Child(),
-            child__ = new Child();
+            child1 = new Child(),
+            child2 = new Child();
 
         parent.append(child);
 
-        child.before(child_);
-        assert(child_.prev === null);
+        child.before(child1);
+        assert(child1.prev === null);
 
-        child.before(child__);
-        assert(child__.prev === child_);
+        child.before(child2);
+        assert(child2.prev === child1);
     });
 
-    it('should set the `next` property to the operated on node', function () {
+    it('should set the `next` property to the operated on node',
+        function () {
+            var parent = new Parent(),
+                child = new Child(),
+                child1 = new Child(),
+                child2 = new Child();
+
+            parent.append(child);
+
+            child.before(child1);
+            assert(child1.next === child);
+
+            child.before(child2);
+            assert(child2.next === child);
+        }
+    );
+
+    it('should update the parents `length` property to correspond to the' +
+        'number of prepended children', function () {
         var parent = new Parent(),
             child = new Child(),
-            child_ = new Child(),
-            child__ = new Child();
+            child1 = new Child(),
+            child2 = new Child();
 
         parent.append(child);
 
-        child.before(child_);
-        assert(child_.next === child);
-
-        child.before(child__);
-        assert(child__.next === child);
-    });
-
-    it('should update the parents `length` property to correspond to the number of prepended children', function () {
-        var parent = new Parent(),
-            child = new Child(),
-            child_ = new Child(),
-            child__ = new Child();
-
-        parent.append(child);
-
-        child.before(child_);
+        child.before(child1);
         assert(parent.length === 2);
 
-        child.before(child__);
+        child.before(child2);
         assert(parent.length === 3);
     });
 
-    it('should shift the indices of the operated on item, and its next siblings', function () {
+    it('should shift the indices of the operated on item, and its next' +
+        'siblings', function () {
         var parent = new Parent(),
             child = new Child(),
-            child_ = new Child(),
-            child__ = new Child(),
-            child___ = new Child();
+            child1 = new Child(),
+            child2 = new Child(),
+            child3 = new Child();
 
         parent.append(child);
-        parent.prepend(child_);
+        parent.prepend(child1);
 
-        child_.before(child__);
-        assert(parent[0] === child__);
-        assert(parent[1] === child_);
+        child1.before(child2);
+        assert(parent[0] === child2);
+        assert(parent[1] === child1);
         assert(parent[2] === child);
 
-        child__.before(child___);
-        assert(parent[0] === child___);
-        assert(parent[1] === child__);
-        assert(parent[2] === child_);
+        child2.before(child3);
+        assert(parent[0] === child3);
+        assert(parent[1] === child2);
+        assert(parent[2] === child1);
         assert(parent[3] === child);
     });
 
     it('should return the prepended child', function () {
         var parent = new Parent(),
             child = new Child(),
-            child_ = new Child();
+            child1 = new Child();
 
         parent.append(child);
 
-        assert(child_ === child.before(child_));
+        assert(child1 === child.before(child1));
     });
 });
 
 describe('TextOM.Child#after(childNode)', function () {
     it('should throw when not attached', function () {
-        assert.throws(function () { (new Child()).after(new Child()); }, /Illegal invocation/);
+        assert.throws(function () {
+            (new Child()).after(new Child());
+        }, /Illegal invocation/);
     });
 
     it('should throw when falsey values are provided', function () {
         var child = (new Parent()).append(new Child());
 
-        assert.throws(function () { child.after(); }, /undefined/);
-        assert.throws(function () { child.after(null); }, /null/);
-        assert.throws(function () { child.after(undefined); }, /undefined/);
-        assert.throws(function () { child.after(false); }, /false/);
+        assert.throws(function () {
+            child.after();
+        }, /undefined/);
+
+        assert.throws(function () {
+            child.after(null);
+        }, /null/);
+
+        assert.throws(function () {
+            child.after(undefined);
+        }, /undefined/);
+
+        assert.throws(function () {
+            child.after(false);
+        }, /false/);
     });
 
-    it('should throw when non-removable nodes are appended (e.g., not inheriting from TextOM.Child)', function () {
+    it('should throw when non-removable nodes are appended (e.g., not' +
+        'inheriting from TextOM.Child)', function () {
         var child = (new Parent()).append(new Child());
 
-        assert.throws(function () { child.after(new Node()); }, /remove/);
-        assert.throws(function () { child.after({}); }, /remove/);
+        assert.throws(function () {
+            child.after(new Node());
+        }, /remove/);
+
+        assert.throws(function () {
+            child.after({});
+        }, /remove/);
     });
 
     it('should call the `remove` method on the appendee', function () {
         var child = (new Parent()).append(new Child()),
-            child_ = new TextOM.Child(),
-            childRemove = child_.remove,
+            child1 = new TextOM.Child(),
+            childRemove = child1.remove,
             isCalled = false;
 
-        child_.remove = function () {
+        child1.remove = function () {
             isCalled = true;
             childRemove.apply(this, arguments);
         };
 
-        child.after(child_);
+        child.after(child1);
         assert(isCalled === true);
     });
 
-    it('should set the `parent` property on the appendee to the operated on nodes\' parent', function () {
+    it('should set the `parent` property on the appendee to the operated on' +
+        'nodes\' parent', function () {
         var child = (new Parent()).append(new Child()),
-            child_ = new Child();
+            child1 = new Child();
 
-        child.after(child_);
+        child.after(child1);
 
-        assert(child.parent === child_.parent);
+        assert(child.parent === child1.parent);
     });
 
-    it('should set the parents `tail` and `1` properties to the appendee, when no `tail` exists', function () {
+    it('should set the parents `tail` and `1` properties to the appendee,' +
+        'when no `tail` exists', function () {
         var parent = new Parent(),
             child = new Child(),
-            child_ = new Child();
+            child1 = new Child();
 
         parent.append(child);
-        child.after(child_);
-        assert(parent.tail === child_);
-        assert(parent[1] === child_);
+        child.after(child1);
+        assert(parent.tail === child1);
+        assert(parent[1] === child1);
     });
 
-    it('should set the parents `tail` and `1` properties to the appendee, when the operated on item is the parents `tail`', function () {
+    it('should set the parents `tail` and `1` properties to the appendee,' +
+        'when the operated on item is the parents `tail`', function () {
         var parent = new Parent(),
             child = new Child(),
-            child_ = new Child(),
-            child__ = new Child();
+            child1 = new Child(),
+            child2 = new Child();
 
         parent.append(child);
-        parent.append(child_);
-        child_.after(child__);
+        parent.append(child1);
+        child1.after(child2);
 
-        assert(parent.tail === child__);
-        assert(parent[2] === child__);
+        assert(parent.tail === child2);
+        assert(parent[2] === child2);
     });
 
-    it('should set the `next` property to the operated on nodes\' `next` property', function () {
+    it('should set the `next` property to the operated on nodes\' `next`' +
+        'property', function () {
         var parent = new Parent(),
             child = new Child(),
-            child_ = new Child(),
-            child__ = new Child();
-
-        parent.append(child);
-
-        child.after(child_);
-        assert(child_.next === null);
-
-        child.after(child__);
-        assert(child__.next === child_);
-    });
-
-    it('should set the `prev` property to the operated on node', function () {
-        var parent = new Parent(),
-            child = new Child(),
-            child_ = new Child(),
-            child__ = new Child();
+            child1 = new Child(),
+            child2 = new Child();
 
         parent.append(child);
 
-        child.after(child_);
-        assert(child_.prev === child);
+        child.after(child1);
+        assert(child1.next === null);
 
-        child.after(child__);
-        assert(child__.prev === child);
+        child.after(child2);
+        assert(child2.next === child1);
     });
 
-    it('should update the parents `length` property to correspond to the number of appended children', function () {
+    it('should set the `prev` property to the operated on node',
+        function () {
+            var parent = new Parent(),
+                child = new Child(),
+                child1 = new Child(),
+                child2 = new Child();
+
+            parent.append(child);
+
+            child.after(child1);
+            assert(child1.prev === child);
+
+            child.after(child2);
+            assert(child2.prev === child);
+        }
+    );
+
+    it('should update the parents `length` property to correspond to the' +
+        'number of appended children', function () {
         var parent = new Parent(),
             child = new Child(),
-            child_ = new Child(),
-            child__ = new Child();
+            child1 = new Child(),
+            child2 = new Child();
 
         parent.append(child);
 
-        child.after(child_);
+        child.after(child1);
         assert(parent.length === 2);
 
-        child.after(child__);
+        child.after(child2);
         assert(parent.length === 3);
     });
 
-    it('should shift the indices of the operated on items next siblings', function () {
-        var parent = new Parent(),
-            child = new Child(),
-            child_ = new Child(),
-            child__ = new Child(),
-            child___ = new Child();
+    it('should shift the indices of the operated on items next siblings',
+        function () {
+            var parent = new Parent(),
+                child = new Child(),
+                child1 = new Child(),
+                child2 = new Child(),
+                child3 = new Child();
 
-        parent.append(child);
-        parent.append(child_);
+            parent.append(child);
+            parent.append(child1);
 
-        child.after(child__);
-        assert(parent[0] === child);
-        assert(parent[1] === child__);
-        assert(parent[2] === child_);
+            child.after(child2);
+            assert(parent[0] === child);
+            assert(parent[1] === child2);
+            assert(parent[2] === child1);
 
-        child.after(child___);
-        assert(parent[0] === child);
-        assert(parent[1] === child___);
-        assert(parent[2] === child__);
-        assert(parent[3] === child_);
-    });
+            child.after(child3);
+            assert(parent[0] === child);
+            assert(parent[1] === child3);
+            assert(parent[2] === child2);
+            assert(parent[3] === child1);
+        }
+    );
 
     it('should return the appended child', function () {
         var parent = new Parent(),
             child = new Child(),
-            child_ = new Child();
+            child1 = new Child();
 
         parent.append(child);
 
-        assert(child_ === child.after(child_));
+        assert(child1 === child.after(child1));
     });
 });
 
 describe('TextOM.Child#remove()', function () {
-    it('should NOT throw when the operated on item is not attached', function () {
-        assert.doesNotThrow(function () { (new Child()).remove(); });
-    });
+    it('should NOT throw when the operated on item is not attached',
+        function () {
+            assert.doesNotThrow(function () {
+                (new Child()).remove();
+            });
+        }
+    );
 
-    it('should set the `parent` property on the operated on node to `null`', function () {
-        var child = (new Parent()).append(new Child());
+    it('should set the `parent` property on the operated on node to `null`',
+        function () {
+            var child = (new Parent()).append(new Child());
 
-        child.remove();
+            child.remove();
 
-        assert(child.parent === null);
-    });
+            assert(child.parent === null);
+        }
+    );
 
-    it('should set the `prev` property on the operated on node to `null`', function () {
-        var child = (new Parent()).append(new Child()),
-            child_ = child.before(new Child());
+    it('should set the `prev` property on the operated on node to `null`',
+        function () {
+            var child = (new Parent()).append(new Child()),
+                child1 = child.before(new Child());
 
-        child.remove();
+            child.remove();
 
-        assert(child.prev === null);
-    });
+            assert(child.prev === null);
+        }
+    );
 
-    it('should set the `next` property on the operated on node to `null`', function () {
-        var child = (new Parent()).append(new Child()),
-            child_ = child.after(new Child());
+    it('should set the `next` property on the operated on node to `null`',
+        function () {
+            var child = (new Parent()).append(new Child()),
+                child1 = child.after(new Child());
 
-        child.remove();
+            child.remove();
 
-        assert(child.next === null);
-    });
+            assert(child.next === null);
+        }
+    );
 
-    it('should set the parents `head` property to the next sibling, when the operated on item has no previous sibling', function () {
+    it('should set the parents `head` property to the next sibling, when ' +
+        'the operated on item has no previous sibling', function () {
         var parent = new Parent(),
             child = new Child(),
-            child_ = new Child(),
-            child__ = new Child();
+            child1 = new Child(),
+            child2 = new Child();
 
         parent.append(child);
-        parent.append(child_);
-        parent.append(child__);
+        parent.append(child1);
+        parent.append(child2);
 
         child.remove();
 
-        assert(parent.head === child_);
+        assert(parent.head === child1);
 
-        child_.remove();
-        assert(parent.head === child__);
+        child1.remove();
+        assert(parent.head === child2);
     });
 
-    it('should set the parents `tail` property to the previous sibling, when the operated on item has no next sibling', function () {
+    it('should set the parents `tail` property to the previous sibling, ' +
+        'when the operated on item has no next sibling', function () {
         var parent = new Parent(),
             child = new Child(),
-            child_ = new Child(),
-            child__ = new Child();
+            child1 = new Child(),
+            child2 = new Child();
 
         parent.append(child);
-        parent.append(child_);
-        parent.append(child__);
+        parent.append(child1);
+        parent.append(child2);
 
-        child__.remove();
-        assert(parent.tail === child_);
+        child2.remove();
+        assert(parent.tail === child1);
     });
 
-    it('should set the parents `tail` property to `null` when the operated on item is the current `tail`, and the current `head` is its previous sibling', function () {
+    it('should set the parents `tail` property to `null` when the ' +
+        'operated on item is the current `tail`, and the current `head` ' +
+        'is its previous sibling', function () {
         var parent = new Parent(),
             child = new Child(),
-            child_ = new Child();
+            child1 = new Child();
 
         parent.append(child);
-        parent.append(child_);
+        parent.append(child1);
 
-        child_.remove();
+        child1.remove();
         assert(parent.tail === null);
     });
 
-    it('should set the parents `head` property to `null` when the operated on item is the current `head`, and no `tail` exists', function () {
+    it('should set the parents `head` property to `null` when the operated ' +
+        'on item is the current `head`, and no `tail` exists', function () {
         var parent = new Parent(),
             child = new Child();
 
@@ -1217,55 +1485,58 @@ describe('TextOM.Child#remove()', function () {
         assert(parent.head === null);
     });
 
-    it('should decreese the parents `length` property by one (1), to correspond to the removed child', function () {
+    it('should decreese the parents `length` property by one (1), to ' +
+        'correspond to the removed child', function () {
         var parent = new Parent(),
             child = new Child(),
-            child_ = new Child(),
-            child__ = new Child();
+            child1 = new Child(),
+            child2 = new Child();
 
         parent.append(child);
-        parent.append(child_);
-        parent.append(child__);
+        parent.append(child1);
+        parent.append(child2);
 
         child.remove();
         assert(parent.length === 2);
 
-        child_.remove();
+        child1.remove();
         assert(parent.length === 1);
 
-        child__.remove();
+        child2.remove();
         assert(parent.length === 0);
     });
 
-    it('should unshift the indices of the operated on items next siblings', function () {
-        var parent = new Parent(),
-            child = new Child(),
-            child_ = new Child(),
-            child__ = new Child(),
-            child___ = new Child();
+    it('should unshift the indices of the operated on items next siblings',
+        function () {
+            var parent = new Parent(),
+                child = new Child(),
+                child1 = new Child(),
+                child2 = new Child(),
+                child3 = new Child();
 
-        parent.append(child);
-        parent.append(child_);
-        parent.append(child__);
-        parent.append(child___);
+            parent.append(child);
+            parent.append(child1);
+            parent.append(child2);
+            parent.append(child3);
 
-        child.remove();
-        assert(parent[0] === child_);
-        assert(parent[1] === child__);
-        assert(parent[2] === child___);
+            child.remove();
+            assert(parent[0] === child1);
+            assert(parent[1] === child2);
+            assert(parent[2] === child3);
 
-        child_.remove();
-        assert(parent[0] === child__);
-        assert(parent[1] === child___);
+            child1.remove();
+            assert(parent[0] === child2);
+            assert(parent[1] === child3);
 
-        child__.remove();
-        assert(parent[0] === child___);
-    });
+            child2.remove();
+            assert(parent[0] === child3);
+        }
+    );
 
     it('should return the removed child', function () {
         var parent = new Parent(),
             child = new Child(),
-            child_ = new Child();
+            child1 = new Child();
 
         assert(child === child.remove());
 
@@ -1276,165 +1547,193 @@ describe('TextOM.Child#remove()', function () {
 
 describe('TextOM.Child#replace(childNode)', function () {
     it('should throw when not attached', function () {
-        assert.throws(function () { (new Child()).replace(new Child()); }, /Illegal invocation/);
+        assert.throws(function () {
+            (new Child()).replace(new Child());
+        }, /Illegal invocation/);
     });
 
     it('should throw when falsey values are provided', function () {
         var child = (new Parent()).append(new Child());
 
-        assert.throws(function () { child.replace(); }, /undefined/);
-        assert.throws(function () { child.replace(null); }, /null/);
-        assert.throws(function () { child.replace(undefined); }, /undefined/);
-        assert.throws(function () { child.replace(false); }, /false/);
+        assert.throws(function () {
+            child.replace();
+        }, /undefined/);
+
+        assert.throws(function () {
+            child.replace(null);
+        }, /null/);
+
+        assert.throws(function () {
+            child.replace(undefined);
+        }, /undefined/);
+
+        assert.throws(function () {
+            child.replace(false);
+        }, /false/);
     });
 
-    it('should throw when non-removable nodes are given (e.g., not inheriting from TextOM.Child)', function () {
+    it('should throw when non-removable nodes are given (e.g., not ' +
+        'inheriting from TextOM.Child)', function () {
         var child = (new Parent()).append(new Child());
 
-        assert.throws(function () { child.replace(new Node()); }, /remove/);
-        assert.throws(function () { child.replace({}); }, /remove/);
+        assert.throws(function () {
+            child.replace(new Node());
+        }, /remove/);
+
+        assert.throws(function () {
+            child.replace({});
+        }, /remove/);
     });
 
     it('should call the `remove` method on the replacee', function () {
         var child = (new Parent()).append(new Child()),
-            child_ = new TextOM.Child(),
-            childRemove = child_.remove,
+            child1 = new TextOM.Child(),
+            childRemove = child1.remove,
             isCalled = false;
 
-        child_.remove = function () {
+        child1.remove = function () {
             isCalled = true;
             childRemove.apply(this, arguments);
         };
 
-        child.replace(child_);
+        child.replace(child1);
         assert(isCalled === true);
     });
 
-    it('should set the `parent` property on the replacee to the operated on nodes\' parent', function () {
+    it('should set the `parent` property on the replacee to the operated ' +
+        'on nodes\' parent', function () {
         var parent = new Parent(),
             child = new Child(),
-            child_ = new Child();
+            child1 = new Child();
 
         parent.append(child);
-        child.replace(child_);
+        child.replace(child1);
 
-        assert(parent === child_.parent);
+        assert(parent === child1.parent);
     });
 
-    it('should set the `parent` property on the operated on node to `null`', function () {
+    it('should set the `parent` property on the operated on node to `null`',
+        function () {
+            var parent = new Parent(),
+                child = new Child(),
+                child1 = new Child();
+
+            parent.append(child);
+            child.replace(child1);
+
+            assert(child.parent === null);
+        }
+    );
+
+    it('should set the parents `head` properties to the replacee, when the ' +
+        'operated on item is the current head', function () {
         var parent = new Parent(),
             child = new Child(),
-            child_ = new Child();
+            child1 = new Child();
 
         parent.append(child);
-        child.replace(child_);
+        child.replace(child1);
 
-        assert(child.parent === null);
+        assert(parent.head === child1);
     });
 
-    it('should set the parents `head` properties to the replacee, when the operated on item is the current head', function () {
+    it('should set the parents `tail` property to the replacee, when the ' +
+        'operated on item is the current tail', function () {
         var parent = new Parent(),
             child = new Child(),
-            child_ = new Child();
+            child1 = new Child(),
+            child2 = new Child();
 
         parent.append(child);
-        child.replace(child_);
+        parent.append(child1);
+        child1.replace(child2);
 
-        assert(parent.head === child_);
+        assert(parent.tail === child2);
     });
 
-    it('should set the parents `tail` property to the replacee, when the operated on item is the current tail', function () {
+    it('should set the `next` property to the operated on nodes\' `next` ' +
+        'property', function () {
         var parent = new Parent(),
             child = new Child(),
-            child_ = new Child(),
-            child__ = new Child();
+            child1 = new Child(),
+            child2 = new Child();
 
         parent.append(child);
-        parent.append(child_);
-        child_.replace(child__);
+        parent.append(child1);
+        child.replace(child2);
 
-        assert(parent.tail === child__);
+        assert(child2.next === child1);
     });
 
-    it('should set the `next` property to the operated on nodes\' `next` property', function () {
+    it('should set the `prev` property to the operated on nodes\' `prev` ' +
+        'property', function () {
         var parent = new Parent(),
             child = new Child(),
-            child_ = new Child(),
-            child__ = new Child();
+            child1 = new Child(),
+            child2 = new Child();
 
         parent.append(child);
-        parent.append(child_);
-        child.replace(child__);
+        parent.append(child1);
+        child1.replace(child2);
 
-        assert(child__.next === child_);
-    });
-
-    it('should set the `prev` property to the operated on nodes\' `prev` property', function () {
-        var parent = new Parent(),
-            child = new Child(),
-            child_ = new Child(),
-            child__ = new Child();
-
-        parent.append(child);
-        parent.append(child_);
-        child_.replace(child__);
-
-        assert(child__.prev === child);
+        assert(child2.prev === child);
     });
 
     it('should NOT update the parents `length` property', function () {
         var parent = new Parent(),
             child = new Child(),
-            child_ = new Child(),
-            child__ = new Child();
+            child1 = new Child(),
+            child2 = new Child();
 
         parent.append(child);
-        child.replace(child_);
+        child.replace(child1);
         assert(parent.length === 1);
 
         parent.prepend(child);
-        child.replace(child__);
+        child.replace(child2);
         assert(parent.length === 2);
     });
 
-    it('should NOT shift the indices of the operated on items siblings', function () {
-        var parent = new Parent(),
-            child = new Child(),
-            child_ = new Child(),
-            child__ = new Child(),
-            child___ = new Child();
+    it('should NOT shift the indices of the operated on items siblings',
+        function () {
+            var parent = new Parent(),
+                child = new Child(),
+                child1 = new Child(),
+                child2 = new Child(),
+                child3 = new Child();
 
-        parent.append(child);
-        parent.append(child_);
-        parent.append(child__);
-        assert(parent[0] === child);
-        assert(parent[1] === child_);
-        assert(parent[2] === child__);
+            parent.append(child);
+            parent.append(child1);
+            parent.append(child2);
+            assert(parent[0] === child);
+            assert(parent[1] === child1);
+            assert(parent[2] === child2);
 
-        child.replace(child___);
-        assert(parent[0] === child___);
-        assert(parent[1] === child_);
-        assert(parent[2] === child__);
+            child.replace(child3);
+            assert(parent[0] === child3);
+            assert(parent[1] === child1);
+            assert(parent[2] === child2);
 
-        child__.replace(child);
-        assert(parent[0] === child___);
-        assert(parent[1] === child_);
-        assert(parent[2] === child);
+            child2.replace(child);
+            assert(parent[0] === child3);
+            assert(parent[1] === child1);
+            assert(parent[2] === child);
 
-        child_.replace(child__);
-        assert(parent[0] === child___);
-        assert(parent[1] === child__);
-        assert(parent[2] === child);
-    });
+            child1.replace(child2);
+            assert(parent[0] === child3);
+            assert(parent[1] === child2);
+            assert(parent[2] === child);
+        }
+    );
 
     it('should return the replacee', function () {
         var parent = new Parent(),
             child = new Child(),
-            child_ = new Child();
+            child1 = new Child();
 
         parent.append(child);
 
-        assert(child_ === child.replace(child_));
+        assert(child1 === child.replace(child1));
     });
 });
 
@@ -1442,7 +1741,6 @@ var Element = TextOM.Element,
     elementPrototype = Element.prototype;
 
 describe('TextOM.Element()', function () {
-
     it('should be of type `function`', function () {
         assert(typeof Element === 'function');
     });
@@ -1479,7 +1777,6 @@ var Text = TextOM.Text,
     textPrototype = Text.prototype;
 
 describe('TextOM.Text(value?)', function () {
-
     it('should be of type `function`', function () {
         assert(typeof Text === 'function');
     });
@@ -1490,7 +1787,6 @@ describe('TextOM.Text(value?)', function () {
 });
 
 describe('TextOM.Text#toString()', function () {
-
     it('should return an empty string (`""`) when never set', function () {
         assert((new Text()).toString() === '');
     });
@@ -1501,18 +1797,19 @@ describe('TextOM.Text#toString()', function () {
 });
 
 describe('TextOM.Text#fromString(value?)', function () {
+    it('should (re)set an empty string (`""`) when a nully value is given',
+        function () {
+            var box = new Text('alfred');
 
-    it('should (re)set an empty string (`""`) when a nully value is given', function () {
-        var box = new Text('alfred');
+            assert(box.fromString() === '');
 
-        assert(box.fromString() === '');
+            box.fromString('alfred');
+            assert(box.fromString(null) === '');
 
-        box.fromString('alfred');
-        assert(box.fromString(null) === '');
-
-        box.fromString('alfred');
-        assert(box.fromString(undefined) === '');
-    });
+            box.fromString('alfred');
+            assert(box.fromString(undefined) === '');
+        }
+    );
 
     it('should return the set value otherwise', function () {
         var box = new Text();
@@ -1524,19 +1821,24 @@ describe('TextOM.Text#fromString(value?)', function () {
 });
 
 describe('TextOM.Text#split(position)', function () {
-
     it('should throw when the operated on item is not attached', function () {
         var box = new Text('alfred');
 
-        assert.throws(function () { box.split(); }, /Illegal invocation/);
+        assert.throws(function () {
+            box.split();
+        }, /Illegal invocation/);
     });
 
-    it('should throw when a position was given, not of type number', function () {
-        var parent = new Parent(),
-            box = parent.append(new Text('alfred'));
+    it('should throw when a position was given, not of type number',
+        function () {
+            var parent = new Parent(),
+                box = parent.append(new Text('alfred'));
 
-        assert.throws(function () { box.split('failure'); }, /failure/);
-    });
+            assert.throws(function () {
+                box.split('failure');
+            }, /failure/);
+        }
+    );
 
     it('should return a new instance() of the operated on item', function () {
         var parent = new Parent(),
@@ -1545,7 +1847,9 @@ describe('TextOM.Text#split(position)', function () {
         assert(box.split() instanceof box.constructor);
     });
 
-    it('should treat a given negative position, as an position from the end (e.g., when the internal value of box is `alfred`, treat `-1` as `5`)', function () {
+    it('should treat a given negative position, as an position from the ' +
+        'end (e.g., when the internal value of box is `alfred`, treat ' +
+        '`-1` as `5`)', function () {
         var parent = new Parent(),
             box = parent.append(new Text('alfred'));
 
@@ -1555,7 +1859,8 @@ describe('TextOM.Text#split(position)', function () {
         assert(box.prev.toString() === 'alfre');
     });
 
-    it('should NOT throw when NaN, or -Infinity are given (but treat it as `0`)', function () {
+    it('should NOT throw when NaN, or -Infinity are given (but treat it as ' +
+        '`0`)', function () {
         var parent = new Parent(),
             box = parent.append(new Text('alfred'));
 
@@ -1570,7 +1875,8 @@ describe('TextOM.Text#split(position)', function () {
         assert(box.prev.toString() === '');
     });
 
-    it('should NOT throw when Infinity is given (but treat it as `value.length`)', function () {
+    it('should NOT throw when Infinity is given (but treat it as ' +
+        '`value.length`)', function () {
         var parent = new Parent(),
             box = parent.append(new Text('alfred'));
 
@@ -1580,7 +1886,8 @@ describe('TextOM.Text#split(position)', function () {
         assert(box.prev.toString() === 'alfred');
     });
 
-    it('should NOT throw when a position greater than the length of the box is given (but treat it as `this.value.length`)', function () {
+    it('should NOT throw when a position greater than the length of the ' +
+        'box is given (but treat it as `this.value.length`)', function () {
         var parent = new Parent(),
             box = parent.append(new Text('alfred'));
 
@@ -1590,24 +1897,27 @@ describe('TextOM.Text#split(position)', function () {
         assert(box.prev.toString() === 'alfred');
     });
 
-    it('should NOT throw when a nully position is given, but treat it as `0`', function () {
-        var parent = new Parent(),
-            box = parent.append(new Text('alfred'));
+    it('should NOT throw when a nully position is given, but treat it as `0`',
+        function () {
+            var parent = new Parent(),
+                box = parent.append(new Text('alfred'));
 
-        box.split();
-        assert(box.toString() === 'alfred');
-        assert(box.prev.toString() === '');
+            box.split();
+            assert(box.toString() === 'alfred');
+            assert(box.prev.toString() === '');
 
-        box.split(null);
-        assert(box.toString() === 'alfred');
-        assert(box.prev.toString() === '');
+            box.split(null);
+            assert(box.toString() === 'alfred');
+            assert(box.prev.toString() === '');
 
-        box.split(undefined);
-        assert(box.toString() === 'alfred');
-        assert(box.prev.toString() === '');
-    });
+            box.split(undefined);
+            assert(box.toString() === 'alfred');
+            assert(box.prev.toString() === '');
+        }
+    );
 
-    it('should remove the part of the current items value, from `0` to the given position', function () {
+    it('should remove the part of the current items value, from `0` to the ' +
+        'given position', function () {
         var parent = new Parent(),
             box = parent.append(new Text('alfred'));
 
@@ -1616,16 +1926,19 @@ describe('TextOM.Text#split(position)', function () {
         assert(box.toString() === 'fred');
     });
 
-    it('should prepend a new instance() of the operated on item', function () {
-        var parent = new Parent(),
-            box = parent.append(new Text('alfred'));
+    it('should prepend a new instance() of the operated on item',
+        function () {
+            var parent = new Parent(),
+                box = parent.append(new Text('alfred'));
 
-        box.split(2);
+            box.split(2);
 
-        assert(box.prev instanceof box.constructor);
-    });
+            assert(box.prev instanceof box.constructor);
+        }
+    );
 
-    it('should move the part of the current items value, from `0` to the given position, to prepended item', function () {
+    it('should move the part of the current items value, from `0` to the' +
+        'given position, to prepended item', function () {
         var parent = new Parent(),
             box = parent.append(new Text('alfred'));
 
@@ -1651,69 +1964,116 @@ describe('TextOM.Range#setStart(node, offset?)', function () {
 
     it('should throw when no node is given', function () {
         var range = new Range();
-        assert.throws(function () { range.setStart(); }, /undefined/);
-        assert.throws(function () { range.setStart(false); }, /false/);
+
+        assert.throws(function () {
+            range.setStart();
+        }, /undefined/);
+
+        assert.throws(function () {
+            range.setStart(false);
+        }, /false/);
     });
 
     it('should NOT throw when an unattached node is given', function () {
         var range = new Range();
-        assert.doesNotThrow(function () { range.setStart(new Child()); });
-        assert.doesNotThrow(function () { range.setStart(new Parent()); });
+
+        assert.doesNotThrow(function () {
+            range.setStart(new Child());
+        });
+
+        assert.doesNotThrow(function () {
+            range.setStart(new Parent());
+        });
     });
 
     it('should throw when a negative offset is given', function () {
         var child = (new Parent()).append(new Child());
-        assert.throws(function () { (new Range()).setStart(child, -1); }, /-1/);
-        assert.throws(function () { (new Range()).setStart(child, -Infinity); }, /-Infinity/);
+
+        assert.throws(function () {
+            (new Range()).setStart(child, -1);
+        }, /-1/);
+
+        assert.throws(function () {
+            (new Range()).setStart(child, -Infinity);
+        }, /-Infinity/);
     });
 
-    it('should NOT throw when NaN is given, but treat it as `0`', function () {
-        var child = (new Parent()).append(new Child());
-        var range = new Range();
-        assert.doesNotThrow(function () { range.setStart(child, NaN); });
-        assert(range.startOffset === 0);
-    });
+    it('should NOT throw when NaN is given, but treat it as `0`',
+        function () {
+            var child = (new Parent()).append(new Child()),
+                range = new Range();
 
-    it('should throw when a value other than a number is given', function () {
-        var child = (new Parent()).append(new Child());
-        assert.throws(function () { (new Range()).setStart(child, 'failure'); }, /failure/);
-    });
+            assert.doesNotThrow(function () {
+                range.setStart(child, NaN);
+            });
 
-    it('should NOT throw when an offset greater than the length of the node is given', function () {
+            assert(range.startOffset === 0);
+        }
+    );
+
+    it('should throw when a value other than a number is given',
+        function () {
+            var child = (new Parent()).append(new Child());
+
+            assert.throws(function () {
+                (new Range()).setStart(child, 'failure');
+            }, /failure/);
+        }
+    );
+
+    it('should NOT throw when an offset greater than the length of the ' +
+        'node is given', function () {
         var parent = new Parent(),
-            parent_ = new Parent(),
+            parent1 = new Parent(),
             child = new Child(),
-            child_ = new Child();
+            child1 = new Child();
 
         // Fool code to think parent is attached;
-        parent_.parent = parent;
-        parent[0] = parent.head = parent_;
+        parent1.parent = parent;
+        parent[0] = parent.head = parent1;
 
-        parent_.append(child);
-        parent_.append(child_);
+        parent1.append(child);
+        parent1.append(child1);
 
-        assert.doesNotThrow(function () { (new Range()).setStart(parent_, 3); });
-        assert.doesNotThrow(function () { (new Range()).setStart(parent_, Infinity); });
+        assert.doesNotThrow(function () {
+            (new Range()).setStart(parent1, 3);
+        });
+
+        assert.doesNotThrow(function () {
+            (new Range()).setStart(parent1, Infinity);
+        });
     });
 
-    it('should throw when `endContainer` does not share the same root as the given node', function () {
+    it('should throw when `endContainer` does not share the same root as ' +
+        'the given node', function () {
         var range = new Range(),
            parent = new Parent(),
-           parent_ = new Parent(),
+           parent1 = new Parent(),
            child = parent.append(new Text('alfred')),
-           child_ = parent_.append(new Text('bertrand'));
+           child1 = parent1.append(new Text('bertrand'));
 
-        range.setEnd(child_);
-        assert.throws(function () { range.setStart(child); }, /WrongRootError/);
+        range.setEnd(child1);
+
+        assert.throws(function () {
+            range.setStart(child);
+        }, /WrongRootError/);
     });
 
-    it('should not throw when an offset is given, but no length property exists on the given node', function () {
+    it('should not throw when an offset is given, but no length property ' +
+        'exists on the given node', function () {
         var child = (new Parent()).append(new Child());
-        assert.doesNotThrow(function () { (new Range()).setStart(child, 1); });
-        assert.doesNotThrow(function () { (new Range()).setStart(child, Infinity); });
+
+        assert.doesNotThrow(function () {
+            (new Range()).setStart(child, 1);
+        });
+
+        assert.doesNotThrow(function () {
+            (new Range()).setStart(child, Infinity);
+        });
     });
 
-    it('should set `startContainer` and `startOffset` to the given values, when no endContainer exists', function () {
+    it('should set `startContainer` and `startOffset` to the given values, ' +
+        'when no endContainer exists', function () {
         var parent = new Parent(),
             child = new Child(),
             range = new Range(),
@@ -1726,7 +2086,9 @@ describe('TextOM.Range#setStart(node, offset?)', function () {
         assert(range.startOffset === offset);
     });
 
-    it('should switch the given start values with the current end values, when `endContainer` equals the given container and the endOffset is lower than the given offset', function () {
+    it('should switch the given start values with the current end values, ' +
+        'when `endContainer` equals the given container and the endOffset ' +
+        'is lower than the given offset', function () {
         var parent = new Parent(),
             child = new Child(),
             range = new Range();
@@ -1740,7 +2102,9 @@ describe('TextOM.Range#setStart(node, offset?)', function () {
         assert(range.endOffset === 1);
     });
 
-    it('should switch the given start values with the current end values, when the given item is a descendant of the current end container', function () {
+    it('should switch the given start values with the current end values, ' +
+        'when the given item is a descendant of the current end container',
+        function () {
         /*
         Tree:
               greatGrandparent[
@@ -1780,7 +2144,9 @@ describe('TextOM.Range#setStart(node, offset?)', function () {
         assert(range.startContainer === grandparent);
     });
 
-    it('should switch the given start values with the current end values, when the given item is before the current end container', function () {
+    it('should switch the given start values with the current end values, ' +
+        'when the given item is before the current end container',
+        function () {
         /*
         Tree:
               greatGrandparent[
@@ -1890,69 +2256,116 @@ describe('TextOM.Range#setEnd(node, offset?)', function () {
 
     it('should throw when no node is given', function () {
         var range = new Range();
-        assert.throws(function () { range.setEnd(); }, /undefined/);
-        assert.throws(function () { range.setEnd(false); }, /false/);
+
+        assert.throws(function () {
+            range.setEnd();
+        }, /undefined/);
+
+        assert.throws(function () {
+            range.setEnd(false);
+        }, /false/);
     });
 
     it('should NOT throw when an unattached node is given', function () {
         var range = new Range();
-        assert.doesNotThrow(function () { range.setEnd(new Child()); });
-        assert.doesNotThrow(function () { range.setEnd(new Parent()); });
+
+        assert.doesNotThrow(function () {
+            range.setEnd(new Child());
+        });
+
+        assert.doesNotThrow(function () {
+            range.setEnd(new Parent());
+        });
     });
 
     it('should throw when a negative offset is given', function () {
         var child = (new Parent()).append(new Child());
-        assert.throws(function () { (new Range()).setEnd(child, -1); }, /-1/);
-        assert.throws(function () { (new Range()).setEnd(child, -Infinity); }, /-Infinity/);
+
+        assert.throws(function () {
+            (new Range()).setEnd(child, -1);
+        }, /-1/);
+
+        assert.throws(function () {
+            (new Range()).setEnd(child, -Infinity);
+        }, /-Infinity/);
     });
 
-    it('should NOT throw when NaN is given, but treat it as `0`', function () {
-        var child = (new Parent()).append(new Child());
-        var range = new Range();
-        assert.doesNotThrow(function () { range.setStart(child, NaN); });
-        assert(range.startOffset === 0);
-    });
+    it('should NOT throw when NaN is given, but treat it as `0`',
+        function () {
+            var child = (new Parent()).append(new Child()),
+                range = new Range();
 
-    it('should throw when a value other than a number is given', function () {
-        var child = (new Parent()).append(new Child());
-        assert.throws(function () { (new Range()).setStart(child, 'failure'); }, /failure/);
-    });
+            assert.doesNotThrow(function () {
+                range.setStart(child, NaN);
+            });
 
-    it('should NOT throw when an offset greater than the length of the node is given', function () {
+            assert(range.startOffset === 0);
+        }
+    );
+
+    it('should throw when a value other than a number is given',
+        function () {
+            var child = (new Parent()).append(new Child());
+
+            assert.throws(function () {
+                (new Range()).setStart(child, 'failure');
+            }, /failure/);
+        }
+    );
+
+    it('should NOT throw when an offset greater than the length of the ' +
+        'node is given', function () {
         var parent = new Parent(),
-            parent_ = new Parent(),
+            parent1 = new Parent(),
             child = new Child(),
-            child_ = new Child();
+            child1 = new Child();
 
         // Fool code to think parent is attached;
-        parent_.parent = parent;
-        parent[0] = parent.head = parent_;
+        parent1.parent = parent;
+        parent[0] = parent.head = parent1;
 
-        parent_.append(child);
-        parent_.append(child_);
+        parent1.append(child);
+        parent1.append(child1);
 
-        assert.doesNotThrow(function () { (new Range()).setEnd(parent_, 3); });
-        assert.doesNotThrow(function () { (new Range()).setEnd(parent_, Infinity); });
+        assert.doesNotThrow(function () {
+            (new Range()).setEnd(parent1, 3);
+        });
+
+        assert.doesNotThrow(function () {
+            (new Range()).setEnd(parent1, Infinity);
+        });
     });
 
-    it('should throw when `startContainer` does not share the same root as the given node', function () {
+    it('should throw when `startContainer` does not share the same root ' +
+        'as the given node', function () {
         var range = new Range(),
            parent = new Parent(),
-           parent_ = new Parent(),
+           parent1 = new Parent(),
            child = parent.append(new Text('alfred')),
-           child_ = parent_.append(new Text('bertrand'));
+           child1 = parent1.append(new Text('bertrand'));
 
         range.setStart(child);
-        assert.throws(function () { range.setEnd(child_); }, /WrongRootError/);
+
+        assert.throws(function () {
+            range.setEnd(child1);
+        }, /WrongRootError/);
     });
 
-    it('should not throw when an offset is given, but no length property exists on the given node', function () {
+    it('should not throw when an offset is given, but no length property ' +
+        'exists on the given node', function () {
         var child = (new Parent()).append(new Child());
-        assert.doesNotThrow(function () { (new Range()).setEnd(child, 1); });
-        assert.doesNotThrow(function () { (new Range()).setEnd(child, Infinity); });
+
+        assert.doesNotThrow(function () {
+            (new Range()).setEnd(child, 1);
+        });
+
+        assert.doesNotThrow(function () {
+            (new Range()).setEnd(child, Infinity);
+        });
     });
 
-    it('should set `endContainer` and `endOffset` to the given values, when no startContainer exists', function () {
+    it('should set `endContainer` and `endOffset` to the given values, ' +
+        'when no startContainer exists', function () {
         var parent = new Parent(),
             child = new Child(),
             range = new Range(),
@@ -1965,7 +2378,9 @@ describe('TextOM.Range#setEnd(node, offset?)', function () {
         assert(range.endOffset === offset);
     });
 
-    it('should switch the given end values with the current start values, when `startContainer` equals the given container and the startOffset is higher than the given offset', function () {
+    it('should switch the given end values with the current start values, ' +
+        'when `startContainer` equals the given container and the ' +
+        'startOffset is higher than the given offset', function () {
         var parent = new Parent(),
             child = new Child(),
             range = new Range();
@@ -1979,7 +2394,9 @@ describe('TextOM.Range#setEnd(node, offset?)', function () {
         assert(range.endOffset === 1);
     });
 
-    it('should switch the given end values with the current start values, when the given item is before the current start container', function () {
+    it('should switch the given end values with the current start values, ' +
+        'when the given item is before the current start container',
+        function () {
         /*
         Tree:
               greatGrandparent[
@@ -2052,7 +2469,6 @@ describe('TextOM.Range#setEnd(node, offset?)', function () {
         assert(range.startContainer === child3);
         assert(range.endContainer === child7);
 
-
         range = new Range();
 
         range.setStart(child7);
@@ -2089,7 +2505,9 @@ describe('TextOM.Range#cloneRange()', function () {
     });
 
     it('should return a new instance() of `this.constructor`', function () {
-        assert((new Range()).cloneRange() instanceof (new Range()).constructor);
+        assert(
+            (new Range()).cloneRange() instanceof (new Range()).constructor
+        );
 
         function F () {}
         F.prototype.cloneRange = Range.prototype.cloneRange;
@@ -2097,20 +2515,21 @@ describe('TextOM.Range#cloneRange()', function () {
         assert((new F()).cloneRange() instanceof (new F()).constructor);
     });
 
-    it('should copy `startContainer`, `startOffset`, `endContainer`, and `endOffset` to the new instance()', function () {
+    it('should copy `startContainer`, `startOffset`, `endContainer`, and ' +
+        '`endOffset` to the new instance()', function () {
         var range = new Range(),
-            range_;
+            range1;
 
         range.startContainer = 'a';
         range.endContainer = 'b';
         range.startOffset = 0;
 
-        range_ = range.cloneRange();
+        range1 = range.cloneRange();
 
-        assert(range.startContainer === range_.startContainer);
-        assert(range.endContainer === range_.endContainer);
-        assert(range.startOffset === range_.startOffset);
-        assert(range.endOffset === range_.endOffset);
+        assert(range.startContainer === range1.startContainer);
+        assert(range.endContainer === range1.endContainer);
+        assert(range.startOffset === range1.startOffset);
+        assert(range.endOffset === range1.endOffset);
     });
 });
 
@@ -2119,23 +2538,26 @@ describe('TextOM.Range#toString()', function () {
         assert(typeof (new Range()).toString === 'function');
     });
 
-    it('should return an empty string when no start- or endpoints exist', function () {
-        var range = new Range(),
-            parent = new Parent(),
-            child = parent.append(new Text('alfred'));
+    it('should return an empty string when no start- or endpoints exist',
+        function () {
+            var range = new Range(),
+                parent = new Parent(),
+                child = parent.append(new Text('alfred'));
 
-        assert(range.toString() === '');
+            assert(range.toString() === '');
 
-        range = new Range();
-        range.setStart(child);
-        assert(range.toString() === '');
+            range = new Range();
+            range.setStart(child);
+            assert(range.toString() === '');
 
-        range = new Range();
-        range.setEnd(child);
-        assert(range.toString() === '');
-    });
+            range = new Range();
+            range.setEnd(child);
+            assert(range.toString() === '');
+        }
+    );
 
-    it('should return an empty string when startContainer equals endContainer and startOffset equals endOffset', function () {
+    it('should return an empty string when startContainer equals ' +
+        'endContainer and startOffset equals endOffset', function () {
         var range = new Range(),
             parent = new Parent(),
             child = parent.append(new Text('alfred'));
@@ -2145,7 +2567,10 @@ describe('TextOM.Range#toString()', function () {
         assert(range.toString() === '');
     });
 
-    it('should return the substring of the `startContainer`, starting at `startOffset` and ending at `endOffset`, when `startContainer` equals `endContainer` and `startContainer` has no `length` property', function () {
+    it('should return the substring of the `startContainer`, starting at ' +
+        '`startOffset` and ending at `endOffset`, when `startContainer` ' +
+        'equals `endContainer` and `startContainer` has no `length` ' +
+        'property', function () {
         var range = new Range(),
             parent = new Parent(),
             child = parent.append(new Text('alfred'));
@@ -2161,7 +2586,11 @@ describe('TextOM.Range#toString()', function () {
         assert(range.toString() === 'alfred');
     });
 
-    it('should return the substring of the `startContainer`, starting at `startOffset` and ending at the last possible character, when `startContainer` equals `endContainer`, `startContainer` has no `length`property, and `endOffset` is larger than the result of calling the `toString` method on `startContainer`', function () {
+    it('should return the substring of the `startContainer`, starting at ' +
+        '`startOffset` and ending at the last possible character, when ' +
+        '`startContainer` equals `endContainer`, `startContainer` has no ' +
+        '`length`property, and `endOffset` is larger than the result of ' +
+        'calling the `toString` method on `startContainer`', function () {
         var range = new Range(),
             parent = new Parent(),
             child = parent.append(new Text('alfred'));
@@ -2172,14 +2601,15 @@ describe('TextOM.Range#toString()', function () {
         assert(range.toString() === 'bert');
     });
 
-    it('should substring the endContainer from its start and ending at its `endOffset`', function () {
+    it('should substring the endContainer from its start and ending at ' +
+        'its `endOffset`', function () {
         var range = new Range(),
             parent = new Parent(),
             child = parent.append(new Text('alfred')),
-            child_ = parent.append(new Text('bertrand'));
+            child1 = parent.append(new Text('bertrand'));
 
         range.setStart(child);
-        range.setEnd(child_, 6);
+        range.setEnd(child1, 6);
         assert(range.toString() === 'alfredbertra');
     });
 
@@ -2187,16 +2617,16 @@ describe('TextOM.Range#toString()', function () {
         var range = new Range(),
             parent = new Parent(),
             child = parent.append(new Text('alfred')),
-            child_ = parent.append(new Text('bertrand'));
+            child1 = parent.append(new Text('bertrand'));
 
         range.setStart(child);
-        range.setEnd(child_);
+        range.setEnd(child1);
         assert(range.toString() === 'alfredbertrand');
 
         range.setStart(child, 2);
         assert(range.toString() === 'fredbertrand');
 
-        range.setEnd(child_, 6);
+        range.setEnd(child1, 6);
         assert(range.toString() === 'fredbertra');
     });
 
@@ -2204,20 +2634,20 @@ describe('TextOM.Range#toString()', function () {
         var range = new Range(),
             parent = new Parent(),
             child = parent.append(new Text('alfred')),
-            child_ = parent.append(new Text('bertrand')),
-            child__ = parent.append(new Text('cees')),
-            child___ = parent.append(new Text('dick')),
-            child____ = parent.append(new Text('eric')),
-            child_____ = parent.append(new Text('ferdinand'));
+            child1 = parent.append(new Text('bertrand')),
+            child2 = parent.append(new Text('cees')),
+            child3 = parent.append(new Text('dick')),
+            child4 = parent.append(new Text('eric')),
+            child5 = parent.append(new Text('ferdinand'));
 
         range.setStart(child);
-        range.setEnd(child_____);
+        range.setEnd(child5);
         assert(range.toString() === 'alfredbertrandceesdickericferdinand');
 
         range.setStart(child, 3);
         assert(range.toString() === 'redbertrandceesdickericferdinand');
 
-        range.setEnd(child_____, 7);
+        range.setEnd(child5, 7);
         assert(range.toString() === 'redbertrandceesdickericferdina');
     });
 
@@ -2225,74 +2655,81 @@ describe('TextOM.Range#toString()', function () {
         var range = new Range(),
             grandparent = new TextOM.ParagraphNode(),
             parent = grandparent.append(new TextOM.SentenceNode()),
-            parent_ = grandparent.append(new TextOM.SentenceNode()),
+            parent1 = grandparent.append(new TextOM.SentenceNode()),
             child = parent.append(new TextOM.WordNode('alfred')),
-            child_ = parent.append(new TextOM.WordNode('bertrand')),
-            child__ = parent_.append(new TextOM.WordNode('cees'));
+            child1 = parent.append(new TextOM.WordNode('bertrand')),
+            child2 = parent1.append(new TextOM.WordNode('cees'));
 
         range.setStart(child);
-        range.setEnd(child__);
+        range.setEnd(child2);
         assert(range.toString() === 'alfredbertrandcees');
 
         range.setStart(child, 1);
         assert(range.toString() === 'lfredbertrandcees');
 
-        range.setStart(child_);
+        range.setStart(child1);
         assert(range.toString() === 'bertrandcees');
 
-        range.setEnd(child__, 3);
+        range.setEnd(child2, 3);
         assert(range.toString() === 'bertrandcee');
     });
 
-    it('should concatenate children of different grandparents', function () {
-        var range = new Range(),
-            greatGrandparent = new TextOM.RootNode(),
-            grandparent = greatGrandparent.append(new TextOM.ParagraphNode()),
-            grandparent_ = greatGrandparent.append(new TextOM.ParagraphNode()),
-            parent = grandparent.append(new TextOM.SentenceNode()),
-            parent_ = grandparent.append(new TextOM.SentenceNode()),
-            parent__ = grandparent_.append(new TextOM.SentenceNode()),
-            parent___ = grandparent_.append(new TextOM.SentenceNode()),
-            child = parent.append(new TextOM.WordNode('alfred')),
-            child_ = parent_.append(new TextOM.WordNode('bertrand')),
-            child__ = parent__.append(new TextOM.WordNode('cees')),
-            child___ = parent___.append(new TextOM.WordNode('dick'));
+    it('should concatenate children of different grandparents',
+        function () {
+            var range = new Range(),
+                greatGrandparent = new TextOM.RootNode(),
+                grandparent = greatGrandparent.append(
+                    new TextOM.ParagraphNode()
+                ),
+                grandparent1 = greatGrandparent.append(
+                    new TextOM.ParagraphNode()
+                ),
+                parent = grandparent.append(new TextOM.SentenceNode()),
+                parent1 = grandparent.append(new TextOM.SentenceNode()),
+                parent2 = grandparent1.append(new TextOM.SentenceNode()),
+                parent3 = grandparent1.append(new TextOM.SentenceNode()),
+                child = parent.append(new TextOM.WordNode('alfred')),
+                child1 = parent1.append(new TextOM.WordNode('bertrand')),
+                child2 = parent2.append(new TextOM.WordNode('cees')),
+                child3 = parent3.append(new TextOM.WordNode('dick'));
 
-        range.setStart(child);
-        range.setEnd(child___);
-        assert(range.toString() === 'alfredbertrandceesdick');
+            range.setStart(child);
+            range.setEnd(child3);
+            assert(range.toString() === 'alfredbertrandceesdick');
 
-        range.setStart(child, 1);
-        assert(range.toString() === 'lfredbertrandceesdick');
+            range.setStart(child, 1);
+            assert(range.toString() === 'lfredbertrandceesdick');
 
-        range.setEnd(child___, 3);
-        assert(range.toString() === 'lfredbertrandceesdic');
+            range.setEnd(child3, 3);
+            assert(range.toString() === 'lfredbertrandceesdic');
 
-        range.setStart(child_);
-        assert(range.toString() === 'bertrandceesdic');
+            range.setStart(child1);
+            assert(range.toString() === 'bertrandceesdic');
 
-        range.setEnd(child__);
-        assert(range.toString() === 'bertrandcees');
+            range.setEnd(child2);
+            assert(range.toString() === 'bertrandcees');
 
-        range.setStart(child_, 1);
-        assert(range.toString() === 'ertrandcees');
+            range.setStart(child1, 1);
+            assert(range.toString() === 'ertrandcees');
 
-        range.setEnd(child__, 3);
-        assert(range.toString() === 'ertrandcee');
-    });
+            range.setEnd(child2, 3);
+            assert(range.toString() === 'ertrandcee');
+        }
+    );
 
-    it('should return an empty string, when startContainer and endContainer no longer share the same root', function () {
+    it('should return an empty string, when startContainer and ' +
+        'endContainer no longer share the same root', function () {
         var range = new Range(),
            parent = new Parent(),
            child = parent.append(new Text('alfred')),
-           child_ = parent.append(new Text('bertrand')),
-           child__ = parent.append(new Text('cees'));
+           child1 = parent.append(new Text('bertrand')),
+           child2 = parent.append(new Text('cees'));
 
         range.setStart(child);
-        range.setEnd(child__);
+        range.setEnd(child2);
         assert(range.toString() === 'alfredbertrandcees');
 
-        child__.remove();
+        child2.remove();
         assert(range.toString() === '');
     });
 
@@ -2301,9 +2738,9 @@ describe('TextOM.Range#toString()', function () {
             grandparent = new TextOM.ParagraphNode(),
             parent = grandparent.append(new TextOM.SentenceNode()),
             child = parent.append(new TextOM.WordNode('alfred')),
-            child_ = parent.append(new TextOM.WordNode('bertrand')),
-            child__ = parent.append(new TextOM.WordNode('cees')),
-            child___ = parent.append(new TextOM.WordNode('dick'));
+            child1 = parent.append(new TextOM.WordNode('bertrand')),
+            child2 = parent.append(new TextOM.WordNode('cees')),
+            child3 = parent.append(new TextOM.WordNode('dick'));
 
         range.setStart(parent, 1);
         range.setEnd(parent, 3);
@@ -2314,27 +2751,31 @@ describe('TextOM.Range#toString()', function () {
         var range = new Range(),
             grandparent = new TextOM.ParagraphNode(),
             parent = grandparent.append(new TextOM.SentenceNode()),
-            parent_ = grandparent.append(new TextOM.SentenceNode()),
+            parent1 = grandparent.append(new TextOM.SentenceNode()),
             child = parent.append(new TextOM.WordNode('alfred')),
-            child_ = parent_.append(new TextOM.WordNode('bertrand'));
+            child1 = parent1.append(new TextOM.WordNode('bertrand'));
 
         range.setStart(parent);
-        range.setEnd(parent_);
+        range.setEnd(parent1);
         assert(range.toString() === 'alfredbertrand');
     });
 
     it('should concatenate different grandparents', function () {
         var range = new Range(),
             greatGrandparent = new TextOM.RootNode(),
-            grandparent = greatGrandparent.append(new TextOM.ParagraphNode()),
-            grandparent_ = greatGrandparent.append(new TextOM.ParagraphNode()),
+            grandparent = greatGrandparent.append(
+                new TextOM.ParagraphNode()
+            ),
+            grandparent1 = greatGrandparent.append(
+                new TextOM.ParagraphNode()
+            ),
             parent = grandparent.append(new TextOM.SentenceNode()),
-            parent_ = grandparent_.append(new TextOM.SentenceNode()),
+            parent1 = grandparent1.append(new TextOM.SentenceNode()),
             child = parent.append(new TextOM.WordNode('alfred')),
-            child_ = parent_.append(new TextOM.WordNode('bertrand'));
+            child1 = parent1.append(new TextOM.WordNode('bertrand'));
 
         range.setStart(grandparent);
-        range.setEnd(grandparent_);
+        range.setEnd(grandparent1);
         assert(range.toString() === 'alfredbertrand');
     });
 
@@ -2342,14 +2783,14 @@ describe('TextOM.Range#toString()', function () {
         var range = new Range(),
             grandparent = new TextOM.ParagraphNode(),
             parent = grandparent.append(new TextOM.SentenceNode()),
-            parent_ = grandparent.append(new TextOM.SentenceNode()),
+            parent1 = grandparent.append(new TextOM.SentenceNode()),
             child = parent.append(new TextOM.WordNode('alfred')),
-            child_ = parent.append(new TextOM.WordNode('bertrand')),
-            child__ = parent_.append(new TextOM.WordNode('cees')),
-            child___ = parent_.append(new TextOM.WordNode('dick'));
+            child1 = parent.append(new TextOM.WordNode('bertrand')),
+            child2 = parent1.append(new TextOM.WordNode('cees')),
+            child3 = parent1.append(new TextOM.WordNode('dick'));
 
         range.setStart(parent, 1);
-        range.setEnd(parent_, 1);
+        range.setEnd(parent1, 1);
         assert(range.toString() === 'bertrandcees');
     });
 });
@@ -2359,23 +2800,26 @@ describe('TextOM.Range#removeContent()', function () {
         assert(typeof (new Range()).removeContent === 'function');
     });
 
-    it('should return an empty array when no start- or endpoints exist', function () {
-        var range = new Range(),
-            parent = new Parent(),
-            child = parent.append(new Text('alfred'));
+    it('should return an empty array when no start- or endpoints exist',
+        function () {
+            var range = new Range(),
+                parent = new Parent(),
+                child = parent.append(new Text('alfred'));
 
-        assert(range.removeContent().length === 0);
+            assert(range.removeContent().length === 0);
 
-        range = new Range();
-        range.setStart(child);
-        assert(range.removeContent().length === 0);
+            range = new Range();
+            range.setStart(child);
+            assert(range.removeContent().length === 0);
 
-        range = new Range();
-        range.setEnd(child);
-        assert(range.removeContent().length === 0);
-    });
+            range = new Range();
+            range.setEnd(child);
+            assert(range.removeContent().length === 0);
+        }
+    );
 
-    it('should return an empty array when startContainer equals endContainer and startOffset equals endOffset', function () {
+    it('should return an empty array when startContainer equals ' +
+        'endContainer and startOffset equals endOffset', function () {
         var range = new Range(),
             parent = new Parent(),
             child = parent.append(new Text('alfred'));
@@ -2385,7 +2829,10 @@ describe('TextOM.Range#removeContent()', function () {
         assert(range.removeContent().length === 0);
     });
 
-    it('should return the substring of the `startContainer`, starting at `startOffset` and ending at `endOffset`, when `startContainer` equals `endContainer` and `startContainer` has no `length` property', function () {
+    it('should return the substring of the `startContainer`, starting at ' +
+        '`startOffset` and ending at `endOffset`, when `startContainer` ' +
+        'equals `endContainer` and `startContainer` has no `length` ' +
+        'property', function () {
         var range = new Range(),
             parent = new Parent(),
             child = parent.append(new Text('alfred'));
@@ -2408,7 +2855,11 @@ describe('TextOM.Range#removeContent()', function () {
         assert(range.removeContent().toString() === 'alfred');
     });
 
-    it('should return the substring of the `startContainer`, starting at `startOffset` and ending at the last possible character, when `startContainer` equals `endContainer`, `startContainer` has no `length`property, and `endOffset` is larger than the result of calling the `toString` method on `startContainer`', function () {
+    it('should return the substring of the `startContainer`, starting at ' +
+        '`startOffset` and ending at the last possible character, when ' +
+        '`startContainer` equals `endContainer`, `startContainer` has no ' +
+        '`length`property, and `endOffset` is larger than the result of ' +
+        'calling the `toString` method on `startContainer`', function () {
         var range = new Range(),
             parent = new Parent(),
             child = parent.append(new Text('alfred'));
@@ -2419,7 +2870,9 @@ describe('TextOM.Range#removeContent()', function () {
         assert(range.removeContent().toString() === 'bert');
     });
 
-    it('should substring the endContainer, when `startContainer` equals `endContainer`, from its start and ending at its `endOffset`', function () {
+    it('should substring the endContainer, when `startContainer` equals ' +
+        '`endContainer`, from its start and ending at its `endOffset`',
+        function () {
         var range = new Range(),
             parent = new Parent(),
             child = parent.append(new Text('alfred'));
@@ -2429,14 +2882,15 @@ describe('TextOM.Range#removeContent()', function () {
         assert(range.removeContent().toString() === 'alfr');
     });
 
-    it('should substring the endContainer from its start and ending at its `endOffset`', function () {
+    it('should substring the endContainer from its start and ending at its ' +
+        '`endOffset`', function () {
         var range = new Range(),
             parent = new Parent(),
             child = parent.append(new Text('alfred')),
-            child_ = parent.append(new Text('bertrand'));
+            child1 = parent.append(new Text('bertrand'));
 
         range.setStart(child);
-        range.setEnd(child_, 6);
+        range.setEnd(child1, 6);
         assert(range.removeContent().toString() === 'alfred,bertra');
     });
 
@@ -2444,24 +2898,24 @@ describe('TextOM.Range#removeContent()', function () {
         var range = new Range(),
             parent = new Parent(),
             child = parent.append(new Text('alfred')),
-            child_ = parent.append(new Text('bertrand'));
+            child1 = parent.append(new Text('bertrand'));
 
         range.setStart(child);
-        range.setEnd(child_);
+        range.setEnd(child1);
         assert(range.removeContent().toString() === 'alfred,bertrand');
 
         range = new Range();
         child = parent.append(new Text('alfred'));
-        child_ = parent.append(new Text('bertrand'));
+        child1 = parent.append(new Text('bertrand'));
         range.setStart(child, 2);
-        range.setEnd(child_);
+        range.setEnd(child1);
         assert(range.removeContent().toString() === 'fred,bertrand');
 
         range = new Range();
         child = parent.append(new Text('alfred'));
-        child_ = parent.append(new Text('bertrand'));
+        child1 = parent.append(new Text('bertrand'));
         range.setStart(child, 2);
-        range.setEnd(child_, 6);
+        range.setEnd(child1, 6);
         assert(range.removeContent().toString() === 'fred,bertra');
     });
 
@@ -2469,203 +2923,226 @@ describe('TextOM.Range#removeContent()', function () {
         var range = new Range(),
             parent = new Parent(),
             child = parent.append(new Text('alfred')),
-            child_ = parent.append(new Text('bertrand')),
-            child__ = parent.append(new Text('cees')),
-            child___ = parent.append(new Text('dick')),
-            child____ = parent.append(new Text('eric')),
-            child_____ = parent.append(new Text('ferdinand'));
+            child1 = parent.append(new Text('bertrand')),
+            child2 = parent.append(new Text('cees')),
+            child3 = parent.append(new Text('dick')),
+            child4 = parent.append(new Text('eric')),
+            child5 = parent.append(new Text('ferdinand'));
 
         range.setStart(child);
-        range.setEnd(child_____);
-        assert(range.removeContent().toString() === 'alfred,bertrand,cees,dick,eric,ferdinand');
+        range.setEnd(child5);
+
+        assert(
+            range.removeContent().toString() ===
+            'alfred,bertrand,cees,dick,eric,ferdinand'
+        );
 
         range = new Range();
         child = parent.append(new Text('alfred'));
-        child_ = parent.append(new Text('bertrand'));
-        child__ = parent.append(new Text('cees'));
-        child___ = parent.append(new Text('dick'));
-        child____ = parent.append(new Text('eric'));
-        child_____ = parent.append(new Text('ferdinand'));
+        child1 = parent.append(new Text('bertrand'));
+        child2 = parent.append(new Text('cees'));
+        child3 = parent.append(new Text('dick'));
+        child4 = parent.append(new Text('eric'));
+        child5 = parent.append(new Text('ferdinand'));
         range.setStart(child, 3);
-        range.setEnd(child_____);
-        assert(range.removeContent().toString() === 'red,bertrand,cees,dick,eric,ferdinand');
+        range.setEnd(child5);
+
+        assert(
+            range.removeContent().toString() ===
+            'red,bertrand,cees,dick,eric,ferdinand'
+        );
 
         range = new Range();
         child = parent.append(new Text('alfred'));
-        child_ = parent.append(new Text('bertrand'));
-        child__ = parent.append(new Text('cees'));
-        child___ = parent.append(new Text('dick'));
-        child____ = parent.append(new Text('eric'));
-        child_____ = parent.append(new Text('ferdinand'));
+        child1 = parent.append(new Text('bertrand'));
+        child2 = parent.append(new Text('cees'));
+        child3 = parent.append(new Text('dick'));
+        child4 = parent.append(new Text('eric'));
+        child5 = parent.append(new Text('ferdinand'));
         range.setStart(child, 3);
-        range.setEnd(child_____, 7);
-        assert(range.removeContent().toString() === 'red,bertrand,cees,dick,eric,ferdina');
+        range.setEnd(child5, 7);
+
+        assert(
+            range.removeContent().toString() ===
+            'red,bertrand,cees,dick,eric,ferdina'
+        );
     });
 
     it('should concatenate children of different parents', function () {
         var range = new Range(),
             grandparent = new TextOM.ParagraphNode(),
             parent = grandparent.append(new TextOM.SentenceNode()),
-            parent_ = grandparent.append(new TextOM.SentenceNode()),
+            parent1 = grandparent.append(new TextOM.SentenceNode()),
             child = parent.append(new TextOM.WordNode('alfred')),
-            child_ = parent.append(new TextOM.WordNode('bertrand')),
-            child__ = parent_.append(new TextOM.WordNode('cees'));
+            child1 = parent.append(new TextOM.WordNode('bertrand')),
+            child2 = parent1.append(new TextOM.WordNode('cees'));
 
         range.setStart(child);
-        range.setEnd(child__);
+        range.setEnd(child2);
         assert(range.removeContent().toString() === 'alfred,bertrand,cees');
 
         range = new Range();
         parent = grandparent.append(new TextOM.SentenceNode());
-        parent_ = grandparent.append(new TextOM.SentenceNode());
+        parent1 = grandparent.append(new TextOM.SentenceNode());
         child = parent.append(new TextOM.WordNode('alfred'));
-        child_ = parent.append(new TextOM.WordNode('bertrand'));
-        child__ = parent_.append(new TextOM.WordNode('cees'));
+        child1 = parent.append(new TextOM.WordNode('bertrand'));
+        child2 = parent1.append(new TextOM.WordNode('cees'));
         range.setStart(child, 1);
-        range.setEnd(child__);
+        range.setEnd(child2);
         assert(range.removeContent().toString() === 'lfred,bertrand,cees');
 
         range = new Range();
         parent = grandparent.append(new TextOM.SentenceNode());
-        parent_ = grandparent.append(new TextOM.SentenceNode());
+        parent1 = grandparent.append(new TextOM.SentenceNode());
         child = parent.append(new TextOM.WordNode('alfred'));
-        child_ = parent.append(new TextOM.WordNode('bertrand'));
-        child__ = parent_.append(new TextOM.WordNode('cees'));
-        range.setStart(child_);
-        range.setEnd(child__);
+        child1 = parent.append(new TextOM.WordNode('bertrand'));
+        child2 = parent1.append(new TextOM.WordNode('cees'));
+        range.setStart(child1);
+        range.setEnd(child2);
         assert(range.removeContent().toString() === 'bertrand,cees');
 
         range = new Range();
         parent = grandparent.append(new TextOM.SentenceNode());
-        parent_ = grandparent.append(new TextOM.SentenceNode());
+        parent1 = grandparent.append(new TextOM.SentenceNode());
         child = parent.append(new TextOM.WordNode('alfred'));
-        child_ = parent.append(new TextOM.WordNode('bertrand'));
-        child__ = parent_.append(new TextOM.WordNode('cees'));
-        range.setStart(child_);
-        range.setEnd(child__, 3);
+        child1 = parent.append(new TextOM.WordNode('bertrand'));
+        child2 = parent1.append(new TextOM.WordNode('cees'));
+        range.setStart(child1);
+        range.setEnd(child2, 3);
         assert(range.removeContent().toString() === 'bertrand,cee');
     });
 
     it('should concatenate children of different grandparents', function () {
         var range = new Range(),
             greatGrandparent = new TextOM.RootNode(),
-            grandparent = greatGrandparent.append(new TextOM.ParagraphNode()),
-            grandparent_ = greatGrandparent.append(new TextOM.ParagraphNode()),
+            grandparent = greatGrandparent.append(
+                new TextOM.ParagraphNode()
+            ),
+            grandparent1 = greatGrandparent.append(
+                new TextOM.ParagraphNode()
+            ),
             parent = grandparent.append(new TextOM.SentenceNode()),
-            parent_ = grandparent.append(new TextOM.SentenceNode()),
-            parent__ = grandparent_.append(new TextOM.SentenceNode()),
-            parent___ = grandparent_.append(new TextOM.SentenceNode()),
+            parent1 = grandparent.append(new TextOM.SentenceNode()),
+            parent2 = grandparent1.append(new TextOM.SentenceNode()),
+            parent3 = grandparent1.append(new TextOM.SentenceNode()),
             child = parent.append(new TextOM.WordNode('alfred')),
-            child_ = parent_.append(new TextOM.WordNode('bertrand')),
-            child__ = parent__.append(new TextOM.WordNode('cees')),
-            child___ = parent___.append(new TextOM.WordNode('dick'));
+            child1 = parent1.append(new TextOM.WordNode('bertrand')),
+            child2 = parent2.append(new TextOM.WordNode('cees')),
+            child3 = parent3.append(new TextOM.WordNode('dick'));
 
         range.setStart(child);
-        range.setEnd(child___);
-        assert(range.removeContent().toString() === 'alfred,bertrand,cees,dick');
+        range.setEnd(child3);
+        assert(
+            range.removeContent().toString() === 'alfred,bertrand,cees,dick'
+        );
 
         range = new Range();
         grandparent = greatGrandparent.append(new TextOM.ParagraphNode());
-        grandparent_ = greatGrandparent.append(new TextOM.ParagraphNode());
+        grandparent1 = greatGrandparent.append(new TextOM.ParagraphNode());
         parent = grandparent.append(new TextOM.SentenceNode());
-        parent_ = grandparent.append(new TextOM.SentenceNode());
-        parent__ = grandparent_.append(new TextOM.SentenceNode());
-        parent___ = grandparent_.append(new TextOM.SentenceNode());
+        parent1 = grandparent.append(new TextOM.SentenceNode());
+        parent2 = grandparent1.append(new TextOM.SentenceNode());
+        parent3 = grandparent1.append(new TextOM.SentenceNode());
         child = parent.append(new TextOM.WordNode('alfred'));
-        child_ = parent_.append(new TextOM.WordNode('bertrand'));
-        child__ = parent__.append(new TextOM.WordNode('cees'));
-        child___ = parent___.append(new TextOM.WordNode('dick'));
+        child1 = parent1.append(new TextOM.WordNode('bertrand'));
+        child2 = parent2.append(new TextOM.WordNode('cees'));
+        child3 = parent3.append(new TextOM.WordNode('dick'));
         range.setStart(child, 1);
-        range.setEnd(child___);
-        assert(range.removeContent().toString() === 'lfred,bertrand,cees,dick');
+        range.setEnd(child3);
+        assert(
+            range.removeContent().toString() === 'lfred,bertrand,cees,dick'
+        );
 
         range = new Range();
         grandparent = greatGrandparent.append(new TextOM.ParagraphNode());
-        grandparent_ = greatGrandparent.append(new TextOM.ParagraphNode());
+        grandparent1 = greatGrandparent.append(new TextOM.ParagraphNode());
         parent = grandparent.append(new TextOM.SentenceNode());
-        parent_ = grandparent.append(new TextOM.SentenceNode());
-        parent__ = grandparent_.append(new TextOM.SentenceNode());
-        parent___ = grandparent_.append(new TextOM.SentenceNode());
+        parent1 = grandparent.append(new TextOM.SentenceNode());
+        parent2 = grandparent1.append(new TextOM.SentenceNode());
+        parent3 = grandparent1.append(new TextOM.SentenceNode());
         child = parent.append(new TextOM.WordNode('alfred'));
-        child_ = parent_.append(new TextOM.WordNode('bertrand'));
-        child__ = parent__.append(new TextOM.WordNode('cees'));
-        child___ = parent___.append(new TextOM.WordNode('dick'));
+        child1 = parent1.append(new TextOM.WordNode('bertrand'));
+        child2 = parent2.append(new TextOM.WordNode('cees'));
+        child3 = parent3.append(new TextOM.WordNode('dick'));
         range.setStart(child, 1);
-        range.setEnd(child___, 3);
-        assert(range.removeContent().toString() === 'lfred,bertrand,cees,dic');
+        range.setEnd(child3, 3);
+        assert(
+            range.removeContent().toString() === 'lfred,bertrand,cees,dic'
+        );
 
         range = new Range();
         grandparent = greatGrandparent.append(new TextOM.ParagraphNode());
-        grandparent_ = greatGrandparent.append(new TextOM.ParagraphNode());
+        grandparent1 = greatGrandparent.append(new TextOM.ParagraphNode());
         parent = grandparent.append(new TextOM.SentenceNode());
-        parent_ = grandparent.append(new TextOM.SentenceNode());
-        parent__ = grandparent_.append(new TextOM.SentenceNode());
-        parent___ = grandparent_.append(new TextOM.SentenceNode());
+        parent1 = grandparent.append(new TextOM.SentenceNode());
+        parent2 = grandparent1.append(new TextOM.SentenceNode());
+        parent3 = grandparent1.append(new TextOM.SentenceNode());
         child = parent.append(new TextOM.WordNode('alfred'));
-        child_ = parent_.append(new TextOM.WordNode('bertrand'));
-        child__ = parent__.append(new TextOM.WordNode('cees'));
-        child___ = parent___.append(new TextOM.WordNode('dick'));
-        range.setStart(child_);
-        range.setEnd(child___, 3);
+        child1 = parent1.append(new TextOM.WordNode('bertrand'));
+        child2 = parent2.append(new TextOM.WordNode('cees'));
+        child3 = parent3.append(new TextOM.WordNode('dick'));
+        range.setStart(child1);
+        range.setEnd(child3, 3);
         assert(range.removeContent().toString() === 'bertrand,cees,dic');
 
         range = new Range();
         grandparent = greatGrandparent.append(new TextOM.ParagraphNode());
-        grandparent_ = greatGrandparent.append(new TextOM.ParagraphNode());
+        grandparent1 = greatGrandparent.append(new TextOM.ParagraphNode());
         parent = grandparent.append(new TextOM.SentenceNode());
-        parent_ = grandparent.append(new TextOM.SentenceNode());
-        parent__ = grandparent_.append(new TextOM.SentenceNode());
-        parent___ = grandparent_.append(new TextOM.SentenceNode());
+        parent1 = grandparent.append(new TextOM.SentenceNode());
+        parent2 = grandparent1.append(new TextOM.SentenceNode());
+        parent3 = grandparent1.append(new TextOM.SentenceNode());
         child = parent.append(new TextOM.WordNode('alfred'));
-        child_ = parent_.append(new TextOM.WordNode('bertrand'));
-        child__ = parent__.append(new TextOM.WordNode('cees'));
-        child___ = parent___.append(new TextOM.WordNode('dick'));
-        range.setStart(child_);
-        range.setEnd(child__);
+        child1 = parent1.append(new TextOM.WordNode('bertrand'));
+        child2 = parent2.append(new TextOM.WordNode('cees'));
+        child3 = parent3.append(new TextOM.WordNode('dick'));
+        range.setStart(child1);
+        range.setEnd(child2);
         assert(range.removeContent().toString() === 'bertrand,cees');
 
         range = new Range();
         grandparent = greatGrandparent.append(new TextOM.ParagraphNode());
-        grandparent_ = greatGrandparent.append(new TextOM.ParagraphNode());
+        grandparent1 = greatGrandparent.append(new TextOM.ParagraphNode());
         parent = grandparent.append(new TextOM.SentenceNode());
-        parent_ = grandparent.append(new TextOM.SentenceNode());
-        parent__ = grandparent_.append(new TextOM.SentenceNode());
-        parent___ = grandparent_.append(new TextOM.SentenceNode());
+        parent1 = grandparent.append(new TextOM.SentenceNode());
+        parent2 = grandparent1.append(new TextOM.SentenceNode());
+        parent3 = grandparent1.append(new TextOM.SentenceNode());
         child = parent.append(new TextOM.WordNode('alfred'));
-        child_ = parent_.append(new TextOM.WordNode('bertrand'));
-        child__ = parent__.append(new TextOM.WordNode('cees'));
-        child___ = parent___.append(new TextOM.WordNode('dick'));
-        range.setStart(child_, 1);
-        range.setEnd(child__);
+        child1 = parent1.append(new TextOM.WordNode('bertrand'));
+        child2 = parent2.append(new TextOM.WordNode('cees'));
+        child3 = parent3.append(new TextOM.WordNode('dick'));
+        range.setStart(child1, 1);
+        range.setEnd(child2);
         assert(range.removeContent().toString() === 'ertrand,cees');
 
         range = new Range();
         grandparent = greatGrandparent.append(new TextOM.ParagraphNode());
-        grandparent_ = greatGrandparent.append(new TextOM.ParagraphNode());
+        grandparent1 = greatGrandparent.append(new TextOM.ParagraphNode());
         parent = grandparent.append(new TextOM.SentenceNode());
-        parent_ = grandparent.append(new TextOM.SentenceNode());
-        parent__ = grandparent_.append(new TextOM.SentenceNode());
-        parent___ = grandparent_.append(new TextOM.SentenceNode());
+        parent1 = grandparent.append(new TextOM.SentenceNode());
+        parent2 = grandparent1.append(new TextOM.SentenceNode());
+        parent3 = grandparent1.append(new TextOM.SentenceNode());
         child = parent.append(new TextOM.WordNode('alfred'));
-        child_ = parent_.append(new TextOM.WordNode('bertrand'));
-        child__ = parent__.append(new TextOM.WordNode('cees'));
-        child___ = parent___.append(new TextOM.WordNode('dick'));
-        range.setStart(child_, 1);
-        range.setEnd(child__, 3);
+        child1 = parent1.append(new TextOM.WordNode('bertrand'));
+        child2 = parent2.append(new TextOM.WordNode('cees'));
+        child3 = parent3.append(new TextOM.WordNode('dick'));
+        range.setStart(child1, 1);
+        range.setEnd(child2, 3);
         assert(range.removeContent().toString() === 'ertrand,cee');
     });
 
-    it('should return an empty string, when startContainer and endContainer no longer share the same root', function () {
+    it('should return an empty string, when startContainer and ' +
+        'endContainer no longer share the same root', function () {
         var range = new Range(),
            parent = new Parent(),
            child = parent.append(new Text('alfred')),
-           child_ = parent.append(new Text('bertrand')),
-           child__ = parent.append(new Text('cees'));
+           child1 = parent.append(new Text('bertrand')),
+           child2 = parent.append(new Text('cees'));
 
         range.setStart(child);
-        range.setEnd(child__);
+        range.setEnd(child2);
 
-        child__.remove();
+        child2.remove();
         assert(range.removeContent().length === 0);
     });
 
@@ -2674,9 +3151,9 @@ describe('TextOM.Range#removeContent()', function () {
             grandparent = new TextOM.ParagraphNode(),
             parent = grandparent.append(new TextOM.SentenceNode()),
             child = parent.append(new TextOM.WordNode('alfred')),
-            child_ = parent.append(new TextOM.WordNode('bertrand')),
-            child__ = parent.append(new TextOM.WordNode('cees')),
-            child___ = parent.append(new TextOM.WordNode('dick'));
+            child1 = parent.append(new TextOM.WordNode('bertrand')),
+            child2 = parent.append(new TextOM.WordNode('cees')),
+            child3 = parent.append(new TextOM.WordNode('dick'));
 
         range.setStart(parent, 1);
         range.setEnd(parent, 3);
@@ -2687,27 +3164,31 @@ describe('TextOM.Range#removeContent()', function () {
         var range = new Range(),
             grandparent = new TextOM.ParagraphNode(),
             parent = grandparent.append(new TextOM.SentenceNode()),
-            parent_ = grandparent.append(new TextOM.SentenceNode()),
+            parent1 = grandparent.append(new TextOM.SentenceNode()),
             child = parent.append(new TextOM.WordNode('alfred')),
-            child_ = parent_.append(new TextOM.WordNode('bertrand'));
+            child1 = parent1.append(new TextOM.WordNode('bertrand'));
 
         range.setStart(parent);
-        range.setEnd(parent_);
+        range.setEnd(parent1);
         assert(range.removeContent().toString() === 'alfred,bertrand');
     });
 
     it('should concatenate different grandparents', function () {
         var range = new Range(),
             greatGrandparent = new TextOM.RootNode(),
-            grandparent = greatGrandparent.append(new TextOM.ParagraphNode()),
-            grandparent_ = greatGrandparent.append(new TextOM.ParagraphNode()),
+            grandparent = greatGrandparent.append(
+                new TextOM.ParagraphNode()
+            ),
+            grandparent1 = greatGrandparent.append(
+                new TextOM.ParagraphNode()
+            ),
             parent = grandparent.append(new TextOM.SentenceNode()),
-            parent_ = grandparent_.append(new TextOM.SentenceNode()),
+            parent1 = grandparent1.append(new TextOM.SentenceNode()),
             child = parent.append(new TextOM.WordNode('alfred')),
-            child_ = parent_.append(new TextOM.WordNode('bertrand'));
+            child1 = parent1.append(new TextOM.WordNode('bertrand'));
 
         range.setStart(grandparent);
-        range.setEnd(grandparent_);
+        range.setEnd(grandparent1);
         assert(range.removeContent().toString() === 'alfred,bertrand');
     });
 
@@ -2715,14 +3196,14 @@ describe('TextOM.Range#removeContent()', function () {
         var range = new Range(),
             grandparent = new TextOM.ParagraphNode(),
             parent = grandparent.append(new TextOM.SentenceNode()),
-            parent_ = grandparent.append(new TextOM.SentenceNode()),
+            parent1 = grandparent.append(new TextOM.SentenceNode()),
             child = parent.append(new TextOM.WordNode('alfred')),
-            child_ = parent.append(new TextOM.WordNode('bertrand')),
-            child__ = parent_.append(new TextOM.WordNode('cees')),
-            child___ = parent_.append(new TextOM.WordNode('dick'));
+            child1 = parent.append(new TextOM.WordNode('bertrand')),
+            child2 = parent1.append(new TextOM.WordNode('cees')),
+            child3 = parent1.append(new TextOM.WordNode('dick'));
 
         range.setStart(parent, 1);
-        range.setEnd(parent_, 1);
+        range.setEnd(parent1, 1);
         assert(range.removeContent().toString() === 'bertrand,cees');
     });
 });
@@ -2732,482 +3213,563 @@ describe('TextOM.Range#getContent()', function () {
         assert(typeof (new Range()).getContent === 'function');
     });
 
-    it('should return an empty array, when no start- or endpoints exist', function () {
+    it('should return an empty array, when no start- or endpoints exist',
+        function () {
+            var range = new Range(),
+                parent = new Parent(),
+                child = parent.append(new Text('alfred')),
+                result = range.getContent();
+
+            assert(result.length === 0);
+            assert(result instanceof Array);
+
+            range = new Range();
+            range.setStart(child);
+            result = range.getContent();
+            assert(result.length === 0);
+            assert(result instanceof Array);
+
+            range = new Range();
+            range.setEnd(child);
+            result = range.getContent();
+            assert(result.length === 0);
+            assert(result instanceof Array);
+        }
+    );
+
+    it('should return an empty array, when startContainer is not in the ' +
+        'same root as endContainer', function () {
         var range = new Range(),
-            parent = new Parent(),
-            child = parent.append(new Text('alfred')),
+            grandparent = new TextOM.ParagraphNode(),
+            parent = grandparent.append(new TextOM.SentenceNode()),
+            parent1 = grandparent.append(new TextOM.SentenceNode()),
+            child = parent.append(new TextOM.WordNode('alfred')),
+            child1 = parent1.append(new TextOM.WordNode('bertrand')),
             result = range.getContent();
 
-        assert(result.length === 0);
-        assert(result instanceof Array);
-
         range = new Range();
         range.setStart(child);
-        result = range.getContent();
-        assert(result.length === 0);
-        assert(result instanceof Array);
+        range.setEnd(child1);
 
-        range = new Range();
-        range.setEnd(child);
+        parent1.remove();
+
         result = range.getContent();
         assert(result.length === 0);
         assert(result instanceof Array);
     });
 
-    it('should return an empty array, when startContainer is not in the same root as endContainer', function () {
+    it('should return an array containg node, when startContainer equals ' +
+        'endContainer, and startContainer is a Text node', function () {
         var range = new Range(),
-            grandparent = new TextOM.ParagraphNode(),
-            parent = grandparent.append(new TextOM.SentenceNode()),
-            parent_ = grandparent.append(new TextOM.SentenceNode()),
-            child = parent.append(new TextOM.WordNode('alfred')),
-            child_ = parent_.append(new TextOM.WordNode('bertrand')),
+            parent = new Parent(),
+            child = parent.append(new Text('alfred')),
+            result;
+
+        range.setStart(child);
+        range.setEnd(child);
+
+        result = range.getContent();
+        assert(result.length === 1);
+        assert(result[0] === child);
+    });
+
+    it('should return an array containg node, when startContainer equals ' +
+        'endContainer, is a Text node, and startOffset equals endOffset',
+        function () {
+            var range = new Range(),
+                parent = new Parent(),
+                child = parent.append(new Text('alfred')),
+                result;
+
+            range.setStart(child, 2);
+            range.setEnd(child, 2);
+
+            result = range.getContent();
+            assert(result.length === 1);
+            assert(result[0] === child);
+        }
+    );
+
+    it('should return an array containing two direct text siblings',
+        function () {
+            var range = new Range(),
+                parent = new Parent(),
+                child = parent.append(new Text('alfred')),
+                child1 = parent.append(new Text('bertrand')),
+                result;
+
+            range.setStart(child);
+            range.setEnd(child1);
+            result = range.getContent();
+            assert(result.length === 2);
+            assert(result[0] === child);
+            assert(result[1] === child1);
+        }
+    );
+
+    it('should return an array containing multiple text siblings',
+        function () {
+            var range = new Range(),
+                parent = new Parent(),
+                child = parent.append(new Text('alfred')),
+                child1 = parent.append(new Text('bertrand')),
+                child2 = parent.append(new Text('cees')),
+                child3 = parent.append(new Text('dick')),
+                child4 = parent.append(new Text('eric')),
+                child5 = parent.append(new Text('ferdinand')),
+                result;
+
+            range.setStart(child);
+            range.setEnd(child5);
+            result = range.getContent();
+            assert(result.length === 6);
+            assert(
+                result.join() === 'alfred,bertrand,cees,dick,eric,ferdinand'
+            );
+
+            range.setStart(child, 3);
+            result = range.getContent();
+            assert(result.length === 6);
+            assert(
+                result.join() === 'alfred,bertrand,cees,dick,eric,ferdinand'
+            );
+
+            range.setEnd(child5, 7);
+            result = range.getContent();
+            assert(result.length === 6);
+            assert(
+                result.join() === 'alfred,bertrand,cees,dick,eric,ferdinand'
+            );
+        }
+    );
+
+    it('should return an array containing text children of different parents',
+        function () {
+            var range = new Range(),
+                grandparent = new TextOM.ParagraphNode(),
+                parent = grandparent.append(new TextOM.SentenceNode()),
+                parent1 = grandparent.append(new TextOM.SentenceNode()),
+                child = parent.append(new TextOM.WordNode('alfred')),
+                child1 = parent.append(new TextOM.WordNode('bertrand')),
+                child2 = parent1.append(new TextOM.WordNode('cees')),
+                child3 = parent1.append(new TextOM.WordNode('dick')),
+                result;
+
+            range.setStart(child1);
+            range.setEnd(child2);
+            result = range.getContent();
+            assert(result.length === 2);
+            assert(result[0] === child1);
+            assert(result[1] === child2);
+        }
+    );
+
+    it('should return an array containing text children of different ' +
+        'grandparents', function () {
+            var range = new Range(),
+                greatGrandparent = new TextOM.RootNode(),
+                grandparent = greatGrandparent.append(
+                    new TextOM.ParagraphNode()
+                ),
+                grandparent1 = greatGrandparent.append(
+                    new TextOM.ParagraphNode()
+                ),
+                parent = grandparent.append(new TextOM.SentenceNode()),
+                parent1 = grandparent.append(new TextOM.SentenceNode()),
+                child = parent.append(new TextOM.WordNode('alfred')),
+                child1 = parent.append(new TextOM.WordNode('bertrand')),
+                child2 = parent1.append(new TextOM.WordNode('cees')),
+                child3 = parent1.append(new TextOM.WordNode('dick')),
+                result;
+
+            range.setStart(child1);
+            range.setEnd(child2);
+            result = range.getContent();
+            assert(result.length === 2);
+            assert(result[0] === child1);
+            assert(result[1] === child2);
+            assert(result.join() === 'bertrand,cees');
+        }
+    );
+
+    it('should return an empty array, when start- and endContainer no ' +
+        'longer share the same root', function () {
+            var range = new Range(),
+               parent = new Parent(),
+               child = parent.append(new Text('alfred')),
+               child1 = parent.append(new Text('bertrand')),
+               child2 = parent.append(new Text('cees'));
+
+            range.setStart(child);
+            range.setEnd(child2);
+            assert(range.getContent().join() === 'alfred,bertrand,cees');
+
+            child2.remove();
+            assert(range.getContent().length === 0);
+        }
+    );
+
+    it('should return an array containing startContainer, when ' +
+        'startContainer equals endContainer, is an Element node, ' +
+        'startOffset is `0`, and endOffset is equal to or greater ' +
+        'than the length of node', function () {
+            var range = new Range(),
+                grandparent = new TextOM.ParagraphNode(),
+                parent = grandparent.append(new TextOM.SentenceNode()),
+                result;
+
+            range.setStart(parent);
+            range.setEnd(parent);
+            result = range.getContent();
+            assert(result.length === 1);
+            assert(result[0] === parent);
+        }
+    );
+
+    it('should return an array containing two direct elements siblings',
+        function () {
+            var range = new Range(),
+                grandparent = new TextOM.ParagraphNode(),
+                parent = grandparent.append(new TextOM.SentenceNode()),
+                parent1 = grandparent.append(new TextOM.SentenceNode()),
+                result;
+
+            range.setStart(parent);
+            range.setEnd(parent1);
             result = range.getContent();
 
-        range = new Range();
-        range.setStart(child);
-        range.setEnd(child_);
+            assert(result.length === 2);
+            assert(result[0] === parent);
+            assert(result[1] === parent1);
+        }
+    );
 
-        parent_.remove();
+    it('should return an array containing multiple elements siblings',
+        function () {
+            var range = new Range(),
+                grandparent = new TextOM.ParagraphNode(),
+                parent = grandparent.append(new TextOM.SentenceNode()),
+                parent1 = grandparent.append(new TextOM.SentenceNode()),
+                parent2 = grandparent.append(new TextOM.SentenceNode()),
+                parent3 = grandparent.append(new TextOM.SentenceNode()),
+                parent4 = grandparent.append(new TextOM.SentenceNode()),
+                parent5 = grandparent.append(new TextOM.SentenceNode()),
+                result;
 
-        result = range.getContent();
-        assert(result.length === 0);
-        assert(result instanceof Array);
-    });
+            range.setStart(parent);
+            range.setEnd(parent4);
+            result = range.getContent();
+            assert(result.length === 5);
+            assert(result[0] === parent);
+            assert(result[1] === parent1);
+            assert(result[2] === parent2);
+            assert(result[3] === parent3);
+            assert(result[4] === parent4);
 
-    it('should return an array containg node, when startContainer equals endContainer, and startContainer is a Text node', function () {
-        var range = new Range(),
-            parent = new Parent(),
-            child = parent.append(new Text('alfred')),
-            result;
+            range.setStart(parent1);
+            result = range.getContent();
+            assert(result.length === 4);
+            assert(result[0] === parent1);
+            assert(result[1] === parent2);
+            assert(result[2] === parent3);
+            assert(result[3] === parent4);
 
-        range.setStart(child);
-        range.setEnd(child);
+            range.setEnd(parent3);
+            result = range.getContent();
+            assert(result.length === 3);
+            assert(result[0] === parent1);
+            assert(result[1] === parent2);
+            assert(result[2] === parent3);
+        }
+    );
 
-        result = range.getContent();
-        assert(result.length === 1);
-        assert(result[0] === child);
-    });
+    it('should return an array containing elements of different grandparents',
+        function () {
+            var range = new Range(),
+                greatGrandparent = new TextOM.RootNode(),
+                grandparent = greatGrandparent.append(
+                    new TextOM.ParagraphNode()
+                ),
+                grandparent1 = greatGrandparent.append(
+                    new TextOM.ParagraphNode()
+                ),
+                parent = grandparent.append(new TextOM.SentenceNode()),
+                parent1 = grandparent1.append(new TextOM.SentenceNode()),
+                result;
 
-    it('should return an array containg node, when startContainer equals endContainer, is a Text node, and startOffset equals endOffset', function () {
-        var range = new Range(),
-            parent = new Parent(),
-            child = parent.append(new Text('alfred')),
-            result;
+            range.setStart(parent);
+            range.setEnd(parent1);
+            result = range.getContent();
+            assert(result.length === 2);
+            assert(result[0] === parent);
+            assert(result[1] === parent1);
+        }
+    );
 
-        range.setStart(child, 2);
-        range.setEnd(child, 2);
+    it('should return an array containing children, when startContainer ' +
+        'equals endContainer, is an Element node, and endOffset is NOT ' +
+        'equal to or greater than the length of node', function () {
+            var range = new Range(),
+                grandparent = new TextOM.ParagraphNode(),
+                parent = grandparent.append(new TextOM.SentenceNode()),
+                child = parent.append(new TextOM.WordNode('alfred')),
+                child1 = parent.append(new TextOM.WordNode('bertrand')),
+                child2 = parent.append(new TextOM.WordNode('cees')),
+                child3 = parent.append(new TextOM.WordNode('dick')),
+                result;
 
-        result = range.getContent();
-        assert(result.length === 1);
-        assert(result[0] === child);
-    });
+            range.setStart(parent);
+            range.setEnd(parent, 3);
+            result = range.getContent();
+            assert(result.length === 3);
+            assert(result[0] === child);
+            assert(result[1] === child1);
+            assert(result[2] === child2);
 
-    it('should return an array containing two direct text siblings', function () {
-        var range = new Range(),
-            parent = new Parent(),
-            child = parent.append(new Text('alfred')),
-            child_ = parent.append(new Text('bertrand')),
-            result;
+            range.setStart(parent, 1);
+            result = range.getContent();
+            assert(result.length === 2);
+            assert(result[0] === child1);
+            assert(result[1] === child2);
+        }
+    );
 
-        range.setStart(child);
-        range.setEnd(child_);
-        result = range.getContent();
-        assert(result.length === 2);
-        assert(result[0] === child);
-        assert(result[1] === child_);
-    });
+    it('should return an array containing children, when startContainer ' +
+        'is an Element node, and endContainer is inside startContainer',
+        function () {
+            var range = new Range(),
+                grandparent = new TextOM.ParagraphNode(),
+                parent = grandparent.append(new TextOM.SentenceNode()),
+                child = parent.append(new TextOM.WordNode('alfred')),
+                child1 = parent.append(new TextOM.WordNode('bertrand')),
+                child2 = parent.append(new TextOM.WordNode('cees')),
+                child3 = parent.append(new TextOM.WordNode('dick')),
+                result;
 
-    it('should return an array containing multiple text siblings', function () {
-        var range = new Range(),
-            parent = new Parent(),
-            child = parent.append(new Text('alfred')),
-            child_ = parent.append(new Text('bertrand')),
-            child__ = parent.append(new Text('cees')),
-            child___ = parent.append(new Text('dick')),
-            child____ = parent.append(new Text('eric')),
-            child_____ = parent.append(new Text('ferdinand')),
-            result;
+            range.setStart(parent);
+            range.setEnd(child2);
+            result = range.getContent();
+            assert(result.length === 3);
+            assert(result[0] === child);
+            assert(result[1] === child1);
+            assert(result[2] === child2);
 
-        range.setStart(child);
-        range.setEnd(child_____);
-        result = range.getContent();
-        assert(result.length === 6);
-        assert(result.join('|') === 'alfred|bertrand|cees|dick|eric|ferdinand');
+            range.setStart(parent, 1);
+            result = range.getContent();
+            assert(result.length === 2);
+            assert(result[0] === child1);
+            assert(result[1] === child2);
+        }
+    );
 
-        range.setStart(child, 3);
-        result = range.getContent();
-        assert(result.length === 6);
-        assert(result.join('|') === 'alfred|bertrand|cees|dick|eric|ferdinand');
+    it('should return an array containing children, when startContainer ' +
+        'equals endContainer, is a grandparent, and endOffset is NOT ' +
+        'equal to or greater than the length of node', function () {
+            var range = new Range(),
+                greatGrandparent = new TextOM.RootNode(),
+                grandparent = greatGrandparent.append(
+                    new TextOM.ParagraphNode()
+                ),
+                parent = grandparent.append(new TextOM.SentenceNode()),
+                parent1 = grandparent.append(new TextOM.SentenceNode()),
+                parent2 = grandparent.append(new TextOM.SentenceNode()),
+                parent3 = grandparent.append(new TextOM.SentenceNode()),
+                child = parent.append(new TextOM.WordNode('alfred')),
+                child1 = parent1.append(new TextOM.WordNode('bertrand')),
+                child2 = parent2.append(new TextOM.WordNode('cees')),
+                child3 = parent3.append(new TextOM.WordNode('dick')),
+                result;
 
-        range.setEnd(child_____, 7);
-        result = range.getContent();
-        assert(result.length === 6);
-        assert(result.join('|') === 'alfred|bertrand|cees|dick|eric|ferdinand');
-    });
+            range.setStart(grandparent);
+            range.setEnd(grandparent, 3);
+            result = range.getContent();
+            assert(result.length === 3);
+            assert(result[0] === parent);
+            assert(result[1] === parent1);
+            assert(result[2] === parent2);
 
-    it('should return an array containing text children of different parents', function () {
-        var range = new Range(),
-            grandparent = new TextOM.ParagraphNode(),
-            parent = grandparent.append(new TextOM.SentenceNode()),
-            parent_ = grandparent.append(new TextOM.SentenceNode()),
-            child = parent.append(new TextOM.WordNode('alfred')),
-            child_ = parent.append(new TextOM.WordNode('bertrand')),
-            child__ = parent_.append(new TextOM.WordNode('cees')),
-            child___ = parent_.append(new TextOM.WordNode('dick')),
-            result;
+            range.setStart(grandparent, 1);
+            result = range.getContent();
+            assert(result.length === 2);
+            assert(result[0] === parent1);
+            assert(result[1] === parent2);
+        }
+    );
 
-        range.setStart(child_);
-        range.setEnd(child__);
-        result = range.getContent();
-        assert(result.length === 2);
-        assert(result[0] === child_);
-        assert(result[1] === child__);
-    });
+    it('should return an array containing children, when startContainer ' +
+        'is a Parent node, and endContainer is inside startContainer',
+        function () {
+            var range = new Range(),
+                greatGrandparent = new TextOM.RootNode(),
+                grandparent = greatGrandparent.append(
+                    new TextOM.ParagraphNode()
+                ),
+                parent = grandparent.append(new TextOM.SentenceNode()),
+                parent1 = grandparent.append(new TextOM.SentenceNode()),
+                parent2 = grandparent.append(new TextOM.SentenceNode()),
+                parent3 = grandparent.append(new TextOM.SentenceNode()),
+                child = parent.append(new TextOM.WordNode('alfred')),
+                child1 = parent1.append(new TextOM.WordNode('bertrand')),
+                child2 = parent2.append(new TextOM.WordNode('cees')),
+                child3 = parent3.append(new TextOM.WordNode('dick')),
+                result;
 
-    it('should return an array containing text children of different grandparents', function () {
-        var range = new Range(),
-            greatGrandparent = new TextOM.RootNode(),
-            grandparent = greatGrandparent.append(new TextOM.ParagraphNode()),
-            grandparent_ = greatGrandparent.append(new TextOM.ParagraphNode()),
-            parent = grandparent.append(new TextOM.SentenceNode()),
-            parent_ = grandparent.append(new TextOM.SentenceNode()),
-            child = parent.append(new TextOM.WordNode('alfred')),
-            child_ = parent.append(new TextOM.WordNode('bertrand')),
-            child__ = parent_.append(new TextOM.WordNode('cees')),
-            child___ = parent_.append(new TextOM.WordNode('dick')),
-            result;
+            range.setStart(grandparent);
+            range.setEnd(child3);
+            result = range.getContent();
+            assert(result.length === 4);
+            assert(result[0] === parent);
+            assert(result[1] === parent1);
+            assert(result[2] === parent2);
+            assert(result[3] === child3);
 
-        range.setStart(child_);
-        range.setEnd(child__);
-        result = range.getContent();
-        assert(result.length === 2);
-        assert(result[0] === child_);
-        assert(result[1] === child__);
-        assert(result.join('|') === 'bertrand|cees');
-    });
+            range.setStart(grandparent, 1);
+            result = range.getContent();
+            assert(result.length === 3);
+            assert(result[0] === parent1);
+            assert(result[1] === parent2);
+            assert(result[2] === child3);
 
-    it('should return an empty array, when start- and endContainer no longer share the same root', function () {
-        var range = new Range(),
-           parent = new Parent(),
-           child = parent.append(new Text('alfred')),
-           child_ = parent.append(new Text('bertrand')),
-           child__ = parent.append(new Text('cees'));
+            range.setEnd(parent3);
+            result = range.getContent();
+            assert(result.length === 3);
+            assert(result[0] === parent1);
+            assert(result[1] === parent2);
+            assert(result[2] === parent3);
+        }
+    );
 
-        range.setStart(child);
-        range.setEnd(child__);
-        assert(range.getContent().join('|') === 'alfred|bertrand|cees');
+    it('should return an array containing children but excluding ' +
+        'startContainer, when startOffset is more than the length ' +
+        'of startContainer', function () {
+            var range = new Range(),
+                greatGrandparent = new TextOM.RootNode(),
+                grandparent = greatGrandparent.append(
+                    new TextOM.ParagraphNode()
+                ),
+                grandparent1 = greatGrandparent.append(
+                    new TextOM.ParagraphNode()
+                ),
+                parent = grandparent.append(new TextOM.SentenceNode()),
+                parent1 = grandparent.append(new TextOM.SentenceNode()),
+                parent2 = grandparent1.append(new TextOM.SentenceNode()),
+                parent3 = grandparent1.append(new TextOM.SentenceNode()),
+                child = parent.append(new TextOM.WordNode('alfred')),
+                child1 = parent1.append(new TextOM.WordNode('bertrand')),
+                child2 = parent2.append(new TextOM.WordNode('cees')),
+                child3 = parent3.append(new TextOM.WordNode('dick')),
+                result;
 
-        child__.remove();
-        assert(range.getContent().length === 0);
-    });
+            range.setStart(grandparent, Infinity);
+            range.setEnd(child3);
+            result = range.getContent();
+            assert(result.length === 2);
+            assert(result[0] === parent2);
+            assert(result[1] === child3);
 
-    it('should return an array containing startContainer, when startContainer equals endContainer, is an Element node, startOffset is `0`, and endOffset is equal to or greater than the length of node', function () {
-        var range = new Range(),
-            grandparent = new TextOM.ParagraphNode(),
-            parent = grandparent.append(new TextOM.SentenceNode()),
-            result;
+            range.setStart(parent, Infinity);
+            result = range.getContent();
+            assert(result.length === 3);
+            assert(result[0] === parent1);
+            assert(result[1] === parent2);
+            assert(result[2] === child3);
 
-        range.setStart(parent);
-        range.setEnd(parent);
-        result = range.getContent();
-        assert(result.length === 1);
-        assert(result[0] === parent);
-    });
+            range = new Range();
+            greatGrandparent = new TextOM.RootNode();
+            grandparent = greatGrandparent.append(
+                new TextOM.ParagraphNode()
+            );
+            grandparent1 = greatGrandparent.append(
+                new TextOM.ParagraphNode()
+            );
+            parent = grandparent.append(new TextOM.SentenceNode());
+            parent1 = grandparent1.append(new TextOM.SentenceNode());
+            parent2 = grandparent1.append(new TextOM.SentenceNode());
 
-    it('should return an array containing two direct elements siblings', function () {
-        var range = new Range(),
-            grandparent = new TextOM.ParagraphNode(),
-            parent = grandparent.append(new TextOM.SentenceNode()),
-            parent_ = grandparent.append(new TextOM.SentenceNode()),
-            result;
+            range.setStart(parent, Infinity);
+            range.setEnd(parent2);
+            result = range.getContent();
+            assert(result.length === 1);
+            assert(result[0] === grandparent1);
+        }
+    );
 
-        range.setStart(parent);
-        range.setEnd(parent_);
-        result = range.getContent();
+    it('should return an array containing children, when endContainer ' +
+        'is an element, and endOffset is equal to or greater than the ' +
+        'length of node', function () {
+            var range = new Range(),
+                greatGrandparent = new TextOM.RootNode(),
+                grandparent = greatGrandparent.append(
+                    new TextOM.ParagraphNode()
+                ),
+                grandparent1 = greatGrandparent.append(
+                    new TextOM.ParagraphNode()
+                ),
+                parent = grandparent.append(new TextOM.SentenceNode()),
+                parent1 = grandparent.append(new TextOM.SentenceNode()),
+                parent2 = grandparent1.append(new TextOM.SentenceNode()),
+                parent3 = grandparent1.append(new TextOM.SentenceNode()),
+                child = parent.append(new TextOM.WordNode('alfred')),
+                child1 = parent1.append(new TextOM.WordNode('bertrand')),
+                child2 = parent2.append(new TextOM.WordNode('cees')),
+                child3 = parent3.append(new TextOM.WordNode('dick')),
+                result;
 
-        assert(result.length === 2);
-        assert(result[0] === parent);
-        assert(result[1] === parent_);
-    });
+            range.setStart(grandparent);
+            range.setEnd(parent3, Infinity);
+            result = range.getContent();
+            assert(result.length === 2);
+            assert(result[0] === grandparent);
+            assert(result[1] === grandparent1);
 
-    it('should return an array containing multiple elements siblings', function () {
-        var range = new Range(),
-            grandparent = new TextOM.ParagraphNode(),
-            parent = grandparent.append(new TextOM.SentenceNode()),
-            parent_ = grandparent.append(new TextOM.SentenceNode()),
-            parent__ = grandparent.append(new TextOM.SentenceNode()),
-            parent___ = grandparent.append(new TextOM.SentenceNode()),
-            parent____ = grandparent.append(new TextOM.SentenceNode()),
-            parent_____ = grandparent.append(new TextOM.SentenceNode()),
-            result;
+            range.setEnd(grandparent1);
+            result = range.getContent();
+            assert(result.length === 2);
+            assert(result[0] === grandparent);
+            assert(result[1] === grandparent1);
+        }
+    );
 
-        range.setStart(parent);
-        range.setEnd(parent____);
-        result = range.getContent();
-        assert(result.length === 5);
-        assert(result[0] === parent);
-        assert(result[1] === parent_);
-        assert(result[2] === parent__);
-        assert(result[3] === parent___);
-        assert(result[4] === parent____);
+    it('should return an array containing children, when endContainer ' +
+        'is an element, and endOffset is less than the length of node',
+        function () {
+            var range = new Range(),
+                greatGrandparent = new TextOM.RootNode(),
+                grandparent = greatGrandparent.append(
+                    new TextOM.ParagraphNode()
+                ),
+                grandparent1 = greatGrandparent.append(
+                    new TextOM.ParagraphNode()
+                ),
+                parent = grandparent.append(new TextOM.SentenceNode()),
+                parent1 = grandparent.append(new TextOM.SentenceNode()),
+                parent2 = grandparent1.append(new TextOM.SentenceNode()),
+                parent3 = grandparent1.append(new TextOM.SentenceNode()),
+                child = parent.append(new TextOM.WordNode('alfred')),
+                child1 = parent.append(new TextOM.WordNode('bertrand')),
+                child2 = parent1.append(new TextOM.WordNode('cees')),
+                child3 = parent1.append(new TextOM.WordNode('dick')),
+                child4 = parent2.append(new TextOM.WordNode('eric')),
+                child5 = parent2.append(new TextOM.WordNode('ferdinand')),
+                child6 = parent3.append(new TextOM.WordNode('gerard')),
+                child7 = parent3.append(new TextOM.WordNode('hendrick')),
+                result;
 
-        range.setStart(parent_);
-        result = range.getContent();
-        assert(result.length === 4);
-        assert(result[0] === parent_);
-        assert(result[1] === parent__);
-        assert(result[2] === parent___);
-        assert(result[3] === parent____);
+            range.setStart(grandparent);
+            range.setEnd(parent3, 1);
+            result = range.getContent();
+            assert(result.length === 3);
+            assert(result[0] === grandparent);
+            assert(result[1] === parent2);
+            assert(result[2] === child6);
 
-        range.setEnd(parent___);
-        result = range.getContent();
-        assert(result.length === 3);
-        assert(result[0] === parent_);
-        assert(result[1] === parent__);
-        assert(result[2] === parent___);
-    });
-
-    it('should return an array containing elements of different grandparents', function () {
-        var range = new Range(),
-            greatGrandparent = new TextOM.RootNode(),
-            grandparent = greatGrandparent.append(new TextOM.ParagraphNode()),
-            grandparent_ = greatGrandparent.append(new TextOM.ParagraphNode()),
-            parent = grandparent.append(new TextOM.SentenceNode()),
-            parent_ = grandparent_.append(new TextOM.SentenceNode()),
-            result;
-
-        range.setStart(parent);
-        range.setEnd(parent_);
-        result = range.getContent();
-        assert(result.length === 2);
-        assert(result[0] === parent);
-        assert(result[1] === parent_);
-    });
-
-    it('should return an array containing children, when startContainer equals endContainer, is an Element node, and endOffset is NOT equal to or greater than the length of node', function () {
-        var range = new Range(),
-            grandparent = new TextOM.ParagraphNode(),
-            parent = grandparent.append(new TextOM.SentenceNode()),
-            child = parent.append(new TextOM.WordNode('alfred')),
-            child_ = parent.append(new TextOM.WordNode('bertrand')),
-            child__ = parent.append(new TextOM.WordNode('cees')),
-            child___ = parent.append(new TextOM.WordNode('dick')),
-            result;
-
-        range.setStart(parent);
-        range.setEnd(parent, 3);
-        result = range.getContent();
-        assert(result.length === 3);
-        assert(result[0] === child);
-        assert(result[1] === child_);
-        assert(result[2] === child__);
-
-        range.setStart(parent, 1);
-        result = range.getContent();
-        assert(result.length === 2);
-        assert(result[0] === child_);
-        assert(result[1] === child__);
-    });
-
-    it('should return an array containing children, when startContainer is an Element node, and endContainer is inside startContainer', function () {
-        var range = new Range(),
-            grandparent = new TextOM.ParagraphNode(),
-            parent = grandparent.append(new TextOM.SentenceNode()),
-            child = parent.append(new TextOM.WordNode('alfred')),
-            child_ = parent.append(new TextOM.WordNode('bertrand')),
-            child__ = parent.append(new TextOM.WordNode('cees')),
-            child___ = parent.append(new TextOM.WordNode('dick')),
-            result;
-
-        range.setStart(parent);
-        range.setEnd(child__);
-        result = range.getContent();
-        assert(result.length === 3);
-        assert(result[0] === child);
-        assert(result[1] === child_);
-        assert(result[2] === child__);
-
-        range.setStart(parent, 1);
-        result = range.getContent();
-        assert(result.length === 2);
-        assert(result[0] === child_);
-        assert(result[1] === child__);
-    });
-
-    it('should return an array containing children, when startContainer equals endContainer, is a grandparent, and endOffset is NOT equal to or greater than the length of node', function () {
-        var range = new Range(),
-            greatGrandparent = new TextOM.RootNode(),
-            grandparent = greatGrandparent.append(new TextOM.ParagraphNode()),
-            parent = grandparent.append(new TextOM.SentenceNode()),
-            parent_ = grandparent.append(new TextOM.SentenceNode()),
-            parent__ = grandparent.append(new TextOM.SentenceNode()),
-            parent___ = grandparent.append(new TextOM.SentenceNode()),
-            child = parent.append(new TextOM.WordNode('alfred')),
-            child_ = parent_.append(new TextOM.WordNode('bertrand')),
-            child__ = parent__.append(new TextOM.WordNode('cees')),
-            child___ = parent___.append(new TextOM.WordNode('dick')),
-            result;
-
-        range.setStart(grandparent);
-        range.setEnd(grandparent, 3);
-        result = range.getContent();
-        assert(result.length === 3);
-        assert(result[0] === parent);
-        assert(result[1] === parent_);
-        assert(result[2] === parent__);
-
-        range.setStart(grandparent, 1);
-        result = range.getContent();
-        assert(result.length === 2);
-        assert(result[0] === parent_);
-        assert(result[1] === parent__);
-    });
-
-    it('should return an array containing children, when startContainer is a Parent node, and endContainer is inside startContainer', function () {
-        var range = new Range(),
-            greatGrandparent = new TextOM.RootNode(),
-            grandparent = greatGrandparent.append(new TextOM.ParagraphNode()),
-            parent = grandparent.append(new TextOM.SentenceNode()),
-            parent_ = grandparent.append(new TextOM.SentenceNode()),
-            parent__ = grandparent.append(new TextOM.SentenceNode()),
-            parent___ = grandparent.append(new TextOM.SentenceNode()),
-            child = parent.append(new TextOM.WordNode('alfred')),
-            child_ = parent_.append(new TextOM.WordNode('bertrand')),
-            child__ = parent__.append(new TextOM.WordNode('cees')),
-            child___ = parent___.append(new TextOM.WordNode('dick')),
-            result;
-
-        range.setStart(grandparent);
-        range.setEnd(child___);
-        result = range.getContent();
-        assert(result.length === 4);
-        assert(result[0] === parent);
-        assert(result[1] === parent_);
-        assert(result[2] === parent__);
-        assert(result[3] === child___);
-
-        range.setStart(grandparent, 1);
-        result = range.getContent();
-        assert(result.length === 3);
-        assert(result[0] === parent_);
-        assert(result[1] === parent__);
-        assert(result[2] === child___);
-
-        range.setEnd(parent___);
-        result = range.getContent();
-        assert(result.length === 3);
-        assert(result[0] === parent_);
-        assert(result[1] === parent__);
-        assert(result[2] === parent___);
-    });
-
-    it('should return an array containing children but excluding startContainer, when startOffset is more than the length of startContainer', function () {
-        var range = new Range(),
-            greatGrandparent = new TextOM.RootNode(),
-            grandparent = greatGrandparent.append(new TextOM.ParagraphNode()),
-            grandparent_ = greatGrandparent.append(new TextOM.ParagraphNode()),
-            parent = grandparent.append(new TextOM.SentenceNode()),
-            parent_ = grandparent.append(new TextOM.SentenceNode()),
-            parent__ = grandparent_.append(new TextOM.SentenceNode()),
-            parent___ = grandparent_.append(new TextOM.SentenceNode()),
-            child = parent.append(new TextOM.WordNode('alfred')),
-            child_ = parent_.append(new TextOM.WordNode('bertrand')),
-            child__ = parent__.append(new TextOM.WordNode('cees')),
-            child___ = parent___.append(new TextOM.WordNode('dick')),
-            result;
-
-        range.setStart(grandparent, Infinity);
-        range.setEnd(child___);
-        result = range.getContent();
-        assert(result.length === 2);
-        assert(result[0] === parent__);
-        assert(result[1] === child___);
-
-        range.setStart(parent, Infinity);
-        result = range.getContent();
-        assert(result.length === 3);
-        assert(result[0] === parent_);
-        assert(result[1] === parent__);
-        assert(result[2] === child___);
-
-
-        range = new Range();
-        greatGrandparent = new TextOM.RootNode();
-        grandparent = greatGrandparent.append(new TextOM.ParagraphNode());
-        grandparent_ = greatGrandparent.append(new TextOM.ParagraphNode());
-        parent = grandparent.append(new TextOM.SentenceNode());
-        parent_ = grandparent_.append(new TextOM.SentenceNode());
-        parent__ = grandparent_.append(new TextOM.SentenceNode());
-
-        range.setStart(parent, Infinity);
-        range.setEnd(parent__);
-        result = range.getContent();
-        assert(result.length === 1);
-        assert(result[0] === grandparent_);
-    });
-
-    it('should return an array containing children, when endContainer is an element, and endOffset is equal to or greater than the length of node', function () {
-        var range = new Range(),
-            greatGrandparent = new TextOM.RootNode(),
-            grandparent = greatGrandparent.append(new TextOM.ParagraphNode()),
-            grandparent_ = greatGrandparent.append(new TextOM.ParagraphNode()),
-            parent = grandparent.append(new TextOM.SentenceNode()),
-            parent_ = grandparent.append(new TextOM.SentenceNode()),
-            parent__ = grandparent_.append(new TextOM.SentenceNode()),
-            parent___ = grandparent_.append(new TextOM.SentenceNode()),
-            child = parent.append(new TextOM.WordNode('alfred')),
-            child_ = parent_.append(new TextOM.WordNode('bertrand')),
-            child__ = parent__.append(new TextOM.WordNode('cees')),
-            child___ = parent___.append(new TextOM.WordNode('dick')),
-            result;
-
-        range.setStart(grandparent);
-        range.setEnd(parent___, Infinity);
-        result = range.getContent();
-        assert(result.length === 2);
-        assert(result[0] === grandparent);
-        assert(result[1] === grandparent_);
-
-        range.setEnd(grandparent_);
-        result = range.getContent();
-        assert(result.length === 2);
-        assert(result[0] === grandparent);
-        assert(result[1] === grandparent_);
-    });
-
-    it('should return an array containing children, when endContainer is an element, and endOffset is less than the length of node', function () {
-        var range = new Range(),
-            greatGrandparent = new TextOM.RootNode(),
-            grandparent = greatGrandparent.append(new TextOM.ParagraphNode()),
-            grandparent_ = greatGrandparent.append(new TextOM.ParagraphNode()),
-            parent = grandparent.append(new TextOM.SentenceNode()),
-            parent_ = grandparent.append(new TextOM.SentenceNode()),
-            parent__ = grandparent_.append(new TextOM.SentenceNode()),
-            parent___ = grandparent_.append(new TextOM.SentenceNode()),
-            child = parent.append(new TextOM.WordNode('alfred')),
-            child_ = parent.append(new TextOM.WordNode('bertrand')),
-            child__ = parent_.append(new TextOM.WordNode('cees')),
-            child___ = parent_.append(new TextOM.WordNode('dick')),
-            child____ = parent__.append(new TextOM.WordNode('eric')),
-            child_____ = parent__.append(new TextOM.WordNode('ferdinand')),
-            child______ = parent___.append(new TextOM.WordNode('gerard')),
-            child_______ = parent___.append(new TextOM.WordNode('hendrick')),
-            result;
-
-        range.setStart(grandparent);
-        range.setEnd(parent___, 1);
-        result = range.getContent();
-        assert(result.length === 3);
-        assert(result[0] === grandparent);
-        assert(result[1] === parent__);
-        assert(result[2] === child______);
-
-        range.setEnd(grandparent_, 1);
-        result = range.getContent();
-        assert(result.length === 2);
-        assert(result[0] === grandparent);
-        assert(result[1] === parent__);
-    });
+            range.setEnd(grandparent1, 1);
+            result = range.getContent();
+            assert(result.length === 2);
+            assert(result[0] === grandparent);
+            assert(result[1] === parent2);
+        }
+    );
 });
 
 describe('TextOM.RootNode()', function () {
@@ -3271,467 +3833,652 @@ describe('TextOM.WhiteSpaceNode()', function () {
 });
 
 describe('HierarchyError', function () {
-    it('should throw when appending a `RootNode` to a `RootNode`', function () {
-        assert.throws(function () {
-            (new TextOM.RootNode()).append(new TextOM.RootNode());
-        }, /HierarchyError/);
-    });
-    it('should NOT throw when appending a `ParagraphNode` to a `RootNode`', function () {
-        assert.doesNotThrow(function () {
-            (new TextOM.RootNode()).append(new TextOM.ParagraphNode());
-        }, /HierarchyError/);
-    });
-    it('should throw when appending a `SentenceNode` to a `RootNode`', function () {
-        assert.throws(function () {
-            (new TextOM.RootNode()).append(new TextOM.SentenceNode());
-        }, /HierarchyError/);
-    });
-    it('should throw when appending a `WordNode` to a `RootNode`', function () {
-        assert.throws(function () {
-            (new TextOM.RootNode()).append(new TextOM.WordNode());
-        }, /HierarchyError/);
-    });
-    it('should throw when appending a `PunctuationNode` to a `RootNode`', function () {
-        assert.throws(function () {
-            (new TextOM.RootNode()).append(new TextOM.PunctuationNode());
-        }, /HierarchyError/);
-    });
-    it('should NOT throw when appending a `WhiteSpaceNode` to a `RootNode`', function () {
-        assert.doesNotThrow(function () {
-            (new TextOM.RootNode()).append(new TextOM.WhiteSpaceNode());
-        }, /HierarchyError/);
-    });
+    it('should throw when appending a `RootNode` to a `RootNode`',
+        function () {
+            assert.throws(function () {
+                (new TextOM.RootNode()).append(new TextOM.RootNode());
+            }, /HierarchyError/);
+        }
+    );
 
-    it('should throw when appending a `RootNode` to a `ParagraphNode`', function () {
-        assert.throws(function () {
-            (new TextOM.ParagraphNode()).append(new TextOM.RootNode());
-        }, /HierarchyError/);
-    });
-    it('should throw when appending a `ParagraphNode` to a `ParagraphNode`', function () {
-        assert.throws(function () {
-            (new TextOM.ParagraphNode()).append(new TextOM.ParagraphNode());
-        }, /HierarchyError/);
-    });
-    it('should NOT throw when appending a `SentenceNode` to a `ParagraphNode`', function () {
-        assert.doesNotThrow(function () {
-            (new TextOM.ParagraphNode()).append(new TextOM.SentenceNode());
-        }, /HierarchyError/);
-    });
-    it('should throw when appending a `WordNode` to a `ParagraphNode`', function () {
-        assert.throws(function () {
-            (new TextOM.ParagraphNode()).append(new TextOM.WordNode());
-        }, /HierarchyError/);
-    });
-    it('should throw when appending a `PunctuationNode` to a `ParagraphNode`', function () {
-        assert.throws(function () {
-            (new TextOM.ParagraphNode()).append(new TextOM.PunctuationNode());
-        }, /HierarchyError/);
-    });
-    it('should NOT throw when appending a `WhiteSpaceNode` to a `ParagraphNode`', function () {
-        assert.doesNotThrow(function () {
-            (new TextOM.ParagraphNode()).append(new TextOM.WhiteSpaceNode());
-        }, /HierarchyError/);
-    });
+    it('should NOT throw when appending a `ParagraphNode` to a `RootNode`',
+        function () {
+            assert.doesNotThrow(function () {
+                (new TextOM.RootNode()).append(new TextOM.ParagraphNode());
+            }, /HierarchyError/);
+        }
+    );
 
-    it('should throw when appending a `RootNode` to a `SentenceNode`', function () {
-        assert.throws(function () {
-            (new TextOM.SentenceNode()).append(new TextOM.RootNode());
-        }, /HierarchyError/);
-    });
-    it('should throw when appending a `ParagraphNode` to a `SentenceNode`', function () {
-        assert.throws(function () {
-            (new TextOM.SentenceNode()).append(new TextOM.ParagraphNode());
-        }, /HierarchyError/);
-    });
-    it('should throw when appending a `SentenceNode` to a `SentenceNode`', function () {
-        assert.throws(function () {
-            (new TextOM.SentenceNode()).append(new TextOM.SentenceNode());
-        }, /HierarchyError/);
-    });
+    it('should throw when appending a `SentenceNode` to a `RootNode`',
+        function () {
+            assert.throws(function () {
+                (new TextOM.RootNode()).append(new TextOM.SentenceNode());
+            }, /HierarchyError/);
+        }
+    );
 
-    it('should NOT throw when appending a `PunctuationNode` to a `SentenceNode`', function () {
-        assert.doesNotThrow(function () {
-            (new TextOM.SentenceNode()).append(new TextOM.PunctuationNode());
-        }, /HierarchyError/);
-    });
-    it('should NOT throw when appending a `WordNode` to a `SentenceNode`', function () {
-        assert.doesNotThrow(function () {
-            (new TextOM.SentenceNode()).append(new TextOM.WordNode());
-        }, /HierarchyError/);
-    });
-    it('should NOT throw when appending a `WhiteSpaceNode` to a `SentenceNode`', function () {
-        assert.doesNotThrow(function () {
-            (new TextOM.SentenceNode()).append(new TextOM.WhiteSpaceNode());
-        }, /HierarchyError/);
-    });
+    it('should throw when appending a `WordNode` to a `RootNode`',
+        function () {
+            assert.throws(function () {
+                (new TextOM.RootNode()).append(new TextOM.WordNode());
+            }, /HierarchyError/);
+        }
+    );
+
+    it('should throw when appending a `PunctuationNode` to a `RootNode`',
+        function () {
+            assert.throws(function () {
+                (new TextOM.RootNode()).append(new TextOM.PunctuationNode());
+            }, /HierarchyError/);
+        }
+    );
+
+    it('should NOT throw when appending a `WhiteSpaceNode` to a `RootNode`',
+        function () {
+            assert.doesNotThrow(function () {
+                (new TextOM.RootNode()).append(new TextOM.WhiteSpaceNode());
+            }, /HierarchyError/);
+        }
+    );
+
+    it('should throw when appending a `RootNode` to a `ParagraphNode`',
+        function () {
+            assert.throws(function () {
+                (new TextOM.ParagraphNode()).append(new TextOM.RootNode());
+            }, /HierarchyError/);
+        }
+    );
+
+    it('should throw when appending a `ParagraphNode` to a `ParagraphNode`',
+        function () {
+            assert.throws(function () {
+                (new TextOM.ParagraphNode()).append(
+                    new TextOM.ParagraphNode()
+                );
+            }, /HierarchyError/);
+        }
+    );
+
+    it('should NOT throw when appending a `SentenceNode` to a ' +
+        '`ParagraphNode`', function () {
+            assert.doesNotThrow(function () {
+                (new TextOM.ParagraphNode()).append(
+                    new TextOM.SentenceNode()
+                );
+            }, /HierarchyError/);
+        }
+    );
+
+    it('should throw when appending a `WordNode` to a `ParagraphNode`',
+        function () {
+            assert.throws(function () {
+                (new TextOM.ParagraphNode()).append(new TextOM.WordNode());
+            }, /HierarchyError/);
+        }
+    );
+
+    it('should throw when appending a `PunctuationNode` to a ' +
+        '`ParagraphNode`', function () {
+            assert.throws(function () {
+                (new TextOM.ParagraphNode()).append(
+                    new TextOM.PunctuationNode()
+                );
+            }, /HierarchyError/);
+        }
+    );
+
+    it('should NOT throw when appending a `WhiteSpaceNode` to a ' +
+        '`ParagraphNode`', function () {
+            assert.doesNotThrow(function () {
+                (new TextOM.ParagraphNode()).append(
+                    new TextOM.WhiteSpaceNode()
+                );
+            }, /HierarchyError/);
+        }
+    );
+
+    it('should throw when appending a `RootNode` to a `SentenceNode`',
+        function () {
+            assert.throws(function () {
+                (new TextOM.SentenceNode()).append(new TextOM.RootNode());
+            }, /HierarchyError/);
+        }
+    );
+
+    it('should throw when appending a `ParagraphNode` to a `SentenceNode`',
+        function () {
+            assert.throws(function () {
+                (new TextOM.SentenceNode()).append(
+                    new TextOM.ParagraphNode()
+                );
+            }, /HierarchyError/);
+        }
+    );
+
+    it('should throw when appending a `SentenceNode` to a `SentenceNode`',
+        function () {
+            assert.throws(function () {
+                (new TextOM.SentenceNode()).append(new TextOM.SentenceNode());
+            }, /HierarchyError/);
+        }
+    );
+
+    it('should NOT throw when appending a `PunctuationNode` to a ' +
+        '`SentenceNode`', function () {
+            assert.doesNotThrow(function () {
+                (new TextOM.SentenceNode()).append(
+                    new TextOM.PunctuationNode()
+                );
+            }, /HierarchyError/);
+        }
+    );
+
+    it('should NOT throw when appending a `WordNode` to a `SentenceNode`',
+        function () {
+            assert.doesNotThrow(function () {
+                (new TextOM.SentenceNode()).append(new TextOM.WordNode());
+            }, /HierarchyError/);
+        }
+    );
+
+    it('should NOT throw when appending a `WhiteSpaceNode` to a ' +
+        '`SentenceNode`', function () {
+            assert.doesNotThrow(function () {
+                (new TextOM.SentenceNode()).append(
+                    new TextOM.WhiteSpaceNode()
+                );
+            }, /HierarchyError/);
+        }
+    );
 });
 
 describe('Events on TextOM.Parent', function () {
     describe('[insertinside]', function () {
-        it('emits on all `Child`s ancestors, with the current ancestor as the context, and the inserted child as an argument, when a Child is inserted', function () {
-            var rootNode = new TextOM.RootNode(),
-                paragraphNode = rootNode.append(new TextOM.ParagraphNode()),
-                sentenceNode = paragraphNode.append(new TextOM.SentenceNode()),
-                wordNode = new TextOM.WordNode('alfred'),
-                whiteSpaceNode = new TextOM.WhiteSpaceNode('\n\n'),
-                iterator = 0,
-                shouldBeChild = null;
+        it('emits on all `Child`s ancestors, with the current ancestor ' +
+            'as the context, and the inserted child as an argument, when ' +
+            'a Child is inserted', function () {
+                var rootNode = new TextOM.RootNode(),
+                    paragraphNode = rootNode.append(
+                        new TextOM.ParagraphNode()
+                    ),
+                    sentenceNode = paragraphNode.append(
+                        new TextOM.SentenceNode()
+                    ),
+                    wordNode = new TextOM.WordNode('alfred'),
+                    whiteSpaceNode = new TextOM.WhiteSpaceNode('\n\n'),
+                    iterator = 0,
+                    shouldBeChild = null;
 
-            function oninsertinsideFactory(context) {
-                return function (child) {
-                    iterator++;
-                    assert(this === context);
-                    assert(child === shouldBeChild);
-                };
+                function oninsertinsideFactory(context) {
+                    return function (child) {
+                        iterator++;
+                        assert(this === context);
+                        assert(child === shouldBeChild);
+                    };
+                }
+
+                rootNode.on('insertinside',
+                    oninsertinsideFactory(rootNode)
+                );
+                paragraphNode.on('insertinside',
+                    oninsertinsideFactory(paragraphNode)
+                );
+                sentenceNode.on('insertinside',
+                    oninsertinsideFactory(sentenceNode)
+                );
+                shouldBeChild = wordNode;
+
+                sentenceNode.append(wordNode);
+                assert(iterator === 3);
+
+                iterator = 0;
+                shouldBeChild = whiteSpaceNode;
+
+                rootNode.append(whiteSpaceNode);
+                assert(iterator === 1);
             }
+        );
 
-            rootNode.on('insertinside', oninsertinsideFactory(rootNode));
-            paragraphNode.on('insertinside', oninsertinsideFactory(paragraphNode));
-            sentenceNode.on('insertinside', oninsertinsideFactory(sentenceNode));
-            shouldBeChild = wordNode;
+        it('emits on all `Child`s ancestors constructors, with the ' +
+            'current ancestor as the context, and the inserted child ' +
+            'as an argument, when a Child is inserted', function () {
+                var rootNode = new TextOM.RootNode(),
+                    paragraphNode = rootNode.append(
+                        new TextOM.ParagraphNode()
+                    ),
+                    sentenceNode = paragraphNode.append(
+                        new TextOM.SentenceNode()
+                    ),
+                    wordNode = new TextOM.WordNode('alfred'),
+                    whiteSpaceNode = new TextOM.WhiteSpaceNode('\n\n'),
+                    iterator = 0,
+                    shouldBeChild = null;
 
-            sentenceNode.append(wordNode);
-            assert(iterator === 3);
+                function oninsertinsideFactory(context) {
+                    return function (child) {
+                        iterator++;
+                        assert(child === shouldBeChild);
+                        assert(this === context);
+                    };
+                }
 
-            iterator = 0;
-            shouldBeChild = whiteSpaceNode;
+                TextOM.RootNode.on('insertinside',
+                    oninsertinsideFactory(rootNode)
+                );
+                TextOM.ParagraphNode.on('insertinside',
+                    oninsertinsideFactory(paragraphNode)
+                );
+                TextOM.SentenceNode.on('insertinside',
+                    oninsertinsideFactory(sentenceNode)
+                );
+                shouldBeChild = wordNode;
 
-            rootNode.append(whiteSpaceNode);
-            assert(iterator === 1);
-        });
+                sentenceNode.append(wordNode);
+                assert(iterator === 3);
 
-        it('emits on all `Child`s ancestors constructors, with the current ancestor as the context, and the inserted child as an argument, when a Child is inserted', function () {
-            var rootNode = new TextOM.RootNode(),
-                paragraphNode = rootNode.append(new TextOM.ParagraphNode()),
-                sentenceNode = paragraphNode.append(new TextOM.SentenceNode()),
-                wordNode = new TextOM.WordNode('alfred'),
-                whiteSpaceNode = new TextOM.WhiteSpaceNode('\n\n'),
-                iterator = 0,
-                shouldBeChild = null;
+                iterator = 0;
+                shouldBeChild = whiteSpaceNode;
 
-            function oninsertinsideFactory(context) {
-                return function (child) {
-                    iterator++;
-                    assert(child === shouldBeChild);
-                    assert(this === context);
-                };
-            }
+                rootNode.append(whiteSpaceNode);
+                assert(iterator === 1);
 
-            TextOM.RootNode.on('insertinside', oninsertinsideFactory(rootNode));
-            TextOM.ParagraphNode.on('insertinside', oninsertinsideFactory(paragraphNode));
-            TextOM.SentenceNode.on('insertinside', oninsertinsideFactory(sentenceNode));
-            shouldBeChild = wordNode;
-
-            sentenceNode.append(wordNode);
-            assert(iterator === 3);
-
-            iterator = 0;
-            shouldBeChild = whiteSpaceNode;
-
-            rootNode.append(whiteSpaceNode);
-            assert(iterator === 1);
-
-            // Clean.
-            TextOM.RootNode.off('insertinside');
-            TextOM.ParagraphNode.off('insertinside');
-            TextOM.SentenceNode.off('insertinside');
-        });
-    });
+                // Clean.
+                TextOM.RootNode.off('insertinside');
+                TextOM.ParagraphNode.off('insertinside');
+                TextOM.SentenceNode.off('insertinside');
+            });
+        }
+    );
 
     describe('[removeinside]', function () {
-        it('emits on all `Child`s ancestors, with the current ancestor as the context, and the removed child as an argument, when a Child is removed', function () {
-            var rootNode = new TextOM.RootNode(),
-                paragraphNode = rootNode.append(new TextOM.ParagraphNode()),
-                sentenceNode = paragraphNode.append(new TextOM.SentenceNode()),
-                wordNode = sentenceNode.append(new TextOM.WordNode('alfred')),
-                whiteSpaceNode = rootNode.append(new TextOM.WhiteSpaceNode('\n\n')),
-                iterator = 0,
-                shouldBeChild = null;
+        it('emits on all `Child`s ancestors, with the current ancestor ' +
+            'as the context, and the removed child as an argument, when ' +
+            'a Child is removed', function () {
+                var rootNode = new TextOM.RootNode(),
+                    paragraphNode = rootNode.append(
+                        new TextOM.ParagraphNode()
+                    ),
+                    sentenceNode = paragraphNode.append(
+                        new TextOM.SentenceNode()
+                    ),
+                    wordNode = sentenceNode.append(
+                        new TextOM.WordNode('alfred')
+                    ),
+                    whiteSpaceNode = rootNode.append(
+                        new TextOM.WhiteSpaceNode('\n\n')
+                    ),
+                    iterator = 0,
+                    shouldBeChild = null;
 
-            function onremoveinsideFactory(context) {
-                return function (child) {
-                    iterator++;
-                    assert(child === shouldBeChild);
-                    assert(this === context);
-                };
+                function onremoveinsideFactory(context) {
+                    return function (child) {
+                        iterator++;
+                        assert(child === shouldBeChild);
+                        assert(this === context);
+                    };
+                }
+
+                rootNode.on('removeinside',
+                    onremoveinsideFactory(rootNode)
+                );
+                paragraphNode.on('removeinside',
+                    onremoveinsideFactory(paragraphNode)
+                );
+                sentenceNode.on('removeinside',
+                    onremoveinsideFactory(sentenceNode)
+                );
+                shouldBeChild = wordNode;
+
+                wordNode.remove();
+                assert(iterator === 3);
+
+                iterator = 0;
+                shouldBeChild = whiteSpaceNode;
+
+                whiteSpaceNode.remove();
+                assert(iterator === 1);
             }
+        );
 
-            rootNode.on('removeinside', onremoveinsideFactory(rootNode));
-            paragraphNode.on('removeinside', onremoveinsideFactory(paragraphNode));
-            sentenceNode.on('removeinside', onremoveinsideFactory(sentenceNode));
-            shouldBeChild = wordNode;
+        it('emits on all `Child`s ancestors constructors, with the ' +
+            'current ancestor as the context, and the removed child ' +
+            'as an argument, when a Child is removed', function () {
+                var rootNode = new TextOM.RootNode(),
+                    paragraphNode = rootNode.append(
+                        new TextOM.ParagraphNode()
+                    ),
+                    sentenceNode = paragraphNode.append(
+                        new TextOM.SentenceNode()
+                    ),
+                    wordNode = sentenceNode.append(
+                        new TextOM.WordNode('alfred')
+                    ),
+                    whiteSpaceNode = rootNode.append(
+                        new TextOM.WhiteSpaceNode('\n\n')
+                    ),
+                    iterator = 0,
+                    shouldBeChild = null;
 
-            wordNode.remove();
-            assert(iterator === 3);
+                function onremoveinsideFactory(context) {
+                    return function (child) {
+                        iterator++;
+                        assert(child === shouldBeChild);
+                        assert(this === context);
+                    };
+                }
 
-            iterator = 0;
-            shouldBeChild = whiteSpaceNode;
+                TextOM.RootNode.on('removeinside',
+                    onremoveinsideFactory(rootNode)
+                );
+                TextOM.ParagraphNode.on('removeinside',
+                    onremoveinsideFactory(paragraphNode)
+                );
+                TextOM.SentenceNode.on('removeinside',
+                    onremoveinsideFactory(sentenceNode)
+                );
+                shouldBeChild = wordNode;
 
-            whiteSpaceNode.remove();
-            assert(iterator === 1);
-        });
+                wordNode.remove();
+                assert(iterator === 3);
 
-        it('emits on all `Child`s ancestors constructors, with the current ancestor as the context, and the removed child as an argument, when a Child is removed', function () {
-            var rootNode = new TextOM.RootNode(),
-                paragraphNode = rootNode.append(new TextOM.ParagraphNode()),
-                sentenceNode = paragraphNode.append(new TextOM.SentenceNode()),
-                wordNode = sentenceNode.append(new TextOM.WordNode('alfred')),
-                whiteSpaceNode = rootNode.append(new TextOM.WhiteSpaceNode('\n\n')),
-                iterator = 0,
-                shouldBeChild = null;
+                iterator = 0;
+                shouldBeChild = whiteSpaceNode;
 
-            function onremoveinsideFactory(context) {
-                return function (child) {
-                    iterator++;
-                    assert(child === shouldBeChild);
-                    assert(this === context);
-                };
+                whiteSpaceNode.remove();
+                assert(iterator === 1);
+
+                // Clean.
+                TextOM.RootNode.off('removeinside');
+                TextOM.ParagraphNode.off('removeinside');
+                TextOM.SentenceNode.off('removeinside');
             }
-
-            TextOM.RootNode.on('removeinside', onremoveinsideFactory(rootNode));
-            TextOM.ParagraphNode.on('removeinside', onremoveinsideFactory(paragraphNode));
-            TextOM.SentenceNode.on('removeinside', onremoveinsideFactory(sentenceNode));
-            shouldBeChild = wordNode;
-
-            wordNode.remove();
-            assert(iterator === 3);
-
-            iterator = 0;
-            shouldBeChild = whiteSpaceNode;
-
-            whiteSpaceNode.remove();
-            assert(iterator === 1);
-
-            // Clean.
-            TextOM.RootNode.off('removeinside');
-            TextOM.ParagraphNode.off('removeinside');
-            TextOM.SentenceNode.off('removeinside');
-        });
+        );
     });
 
     describe('[changetextinside]', function () {
-        it('emits on all `Text`s ancestors, with the current ancestor as the context, and the changed child and the previous value as arguments, when a Text is changed', function () {
-            var rootNode = new TextOM.RootNode(),
-                paragraphNode = rootNode.append(new TextOM.ParagraphNode()),
-                sentenceNode = paragraphNode.append(new TextOM.SentenceNode()),
-                wordNode = sentenceNode.append(new TextOM.WordNode('alfred')),
-                whiteSpaceNode = rootNode.append(new TextOM.WhiteSpaceNode('\n\n')),
-                iterator = 0,
-                shouldBePreviousValue = null,
-                shouldBeChild = null;
+        it('emits on all `Text`s ancestors, with the current ancestor as ' +
+            'the context, and the changed child and the previous value as ' +
+            'arguments, when a Text is changed', function () {
+                var rootNode = new TextOM.RootNode(),
+                    paragraphNode = rootNode.append(
+                        new TextOM.ParagraphNode()
+                    ),
+                    sentenceNode = paragraphNode.append(
+                        new TextOM.SentenceNode()
+                    ),
+                    wordNode = sentenceNode.append(
+                        new TextOM.WordNode('alfred')
+                    ),
+                    whiteSpaceNode = rootNode.append(
+                        new TextOM.WhiteSpaceNode('\n\n')
+                    ),
+                    iterator = 0,
+                    shouldBePreviousValue = null,
+                    shouldBeChild = null;
 
-            function onchangetextinsideFactory(context) {
-                return function (child, value, previousValue) {
-                    iterator++;
-                    assert(this === context);
-                    assert(child === shouldBeChild);
-                    assert(value === child.toString());
-                    assert(previousValue === shouldBePreviousValue);
-                };
+                function onchangetextinsideFactory(context) {
+                    return function (child, value, previousValue) {
+                        iterator++;
+                        assert(this === context);
+                        assert(child === shouldBeChild);
+                        assert(value === child.toString());
+                        assert(previousValue === shouldBePreviousValue);
+                    };
+                }
+
+                rootNode.on('changetextinside',
+                    onchangetextinsideFactory(rootNode)
+                );
+                paragraphNode.on('changetextinside',
+                    onchangetextinsideFactory(paragraphNode)
+                );
+                sentenceNode.on('changetextinside',
+                    onchangetextinsideFactory(sentenceNode)
+                );
+                shouldBeChild = wordNode;
+                shouldBePreviousValue = wordNode.toString();
+
+                shouldBeChild.fromString('bertrand');
+                assert(iterator === 3);
+
+                iterator = 0;
+                shouldBeChild = whiteSpaceNode;
+                shouldBePreviousValue = whiteSpaceNode.toString();
+
+                shouldBeChild.fromString('\n');
+                assert(iterator === 1);
             }
+        );
 
-            rootNode.on('changetextinside', onchangetextinsideFactory(rootNode));
-            paragraphNode.on('changetextinside', onchangetextinsideFactory(paragraphNode));
-            sentenceNode.on('changetextinside', onchangetextinsideFactory(sentenceNode));
-            shouldBeChild = wordNode;
-            shouldBePreviousValue = wordNode.toString();
+        it('emits on all `Text`s ancestors, with the current ancestor as ' +
+            'the context, and the changed child and the previous value as ' +
+            'arguments, when a Text is changed', function () {
+                var rootNode = new TextOM.RootNode(),
+                    paragraphNode = rootNode.append(
+                        new TextOM.ParagraphNode()
+                    ),
+                    sentenceNode = paragraphNode.append(
+                        new TextOM.SentenceNode()
+                    ),
+                    wordNode = sentenceNode.append(
+                        new TextOM.WordNode('alfred')
+                    ),
+                    whiteSpaceNode = rootNode.append(
+                        new TextOM.WhiteSpaceNode('\n\n')
+                    ),
+                    iterator = 0,
+                    shouldBeChild = null,
+                    shouldBePreviousValue = null;
 
-            shouldBeChild.fromString('bertrand');
-            assert(iterator === 3);
+                function onchangetextinsideFactory(context) {
+                    return function (child, value, previousValue) {
+                        iterator++;
+                        assert(this === context);
+                        assert(child === shouldBeChild);
+                        assert(value === child.toString());
+                        assert(previousValue === shouldBePreviousValue);
+                    };
+                }
 
-            iterator = 0;
-            shouldBeChild = whiteSpaceNode;
-            shouldBePreviousValue = whiteSpaceNode.toString();
+                TextOM.RootNode.on('changetextinside',
+                    onchangetextinsideFactory(rootNode)
+                );
+                TextOM.ParagraphNode.on('changetextinside',
+                    onchangetextinsideFactory(paragraphNode)
+                );
+                TextOM.SentenceNode.on('changetextinside',
+                    onchangetextinsideFactory(sentenceNode)
+                );
+                shouldBeChild = wordNode;
+                shouldBePreviousValue = wordNode.toString();
 
-            shouldBeChild.fromString('\n');
-            assert(iterator === 1);
-        });
+                wordNode.fromString('bertrand');
+                assert(iterator === 3);
 
-        it('emits on all `Text`s ancestors, with the current ancestor as the context, and the changed child and the previous value as arguments, when a Text is changed', function () {
-            var rootNode = new TextOM.RootNode(),
-                paragraphNode = rootNode.append(new TextOM.ParagraphNode()),
-                sentenceNode = paragraphNode.append(new TextOM.SentenceNode()),
-                wordNode = sentenceNode.append(new TextOM.WordNode('alfred')),
-                whiteSpaceNode = rootNode.append(new TextOM.WhiteSpaceNode('\n\n')),
-                iterator = 0,
-                shouldBeChild = null,
-                shouldBePreviousValue = null;
+                iterator = 0;
+                shouldBeChild = whiteSpaceNode;
+                shouldBePreviousValue = whiteSpaceNode.toString();
 
-            function onchangetextinsideFactory(context) {
-                return function (child, value, previousValue) {
-                    iterator++;
-                    assert(this === context);
-                    assert(child === shouldBeChild);
-                    assert(value === child.toString());
-                    assert(previousValue === shouldBePreviousValue);
-                };
+                whiteSpaceNode.fromString('\n');
+                assert(iterator === 1);
+
+                TextOM.RootNode.off('changetextinside');
+                TextOM.ParagraphNode.off('changetextinside');
+                TextOM.SentenceNode.off('changetextinside');
             }
-
-            TextOM.RootNode.on('changetextinside', onchangetextinsideFactory(rootNode));
-            TextOM.ParagraphNode.on('changetextinside', onchangetextinsideFactory(paragraphNode));
-            TextOM.SentenceNode.on('changetextinside', onchangetextinsideFactory(sentenceNode));
-            shouldBeChild = wordNode;
-            shouldBePreviousValue = wordNode.toString();
-
-            wordNode.fromString('bertrand');
-            assert(iterator === 3);
-
-            iterator = 0;
-            shouldBeChild = whiteSpaceNode;
-            shouldBePreviousValue = whiteSpaceNode.toString();
-
-            whiteSpaceNode.fromString('\n');
-            assert(iterator === 1);
-
-            TextOM.RootNode.off('changetextinside');
-            TextOM.ParagraphNode.off('changetextinside');
-            TextOM.SentenceNode.off('changetextinside');
-        });
+        );
     });
 });
 
 describe('Events on TextOM.Child', function () {
     describe('[insert]', function () {
-        it('emits on child and all `child`s constructors, with `child` as the context, when `child` is inserted', function () {
-            var paragraphNode = new TextOM.ParagraphNode(),
-                sentenceNode = new TextOM.SentenceNode(),
-                wordNode = sentenceNode.append(new TextOM.WordNode('alfred')),
-                iterator = 0;
+        it('emits on child and all `child`s constructors, with `child` as ' +
+            'the context, when `child` is inserted', function () {
+                var paragraphNode = new TextOM.ParagraphNode(),
+                    sentenceNode = new TextOM.SentenceNode(),
+                    wordNode = sentenceNode.append(
+                        new TextOM.WordNode('alfred')
+                    ),
+                    iterator = 0;
 
-            function oninsert() {
-                iterator++;
-                assert(this === sentenceNode);
+                function oninsert() {
+                    iterator++;
+                    assert(this === sentenceNode);
+                }
+
+                sentenceNode.on('insert', oninsert);
+                TextOM.SentenceNode.on('insert', oninsert);
+                TextOM.Element.on('insert', oninsert);
+                TextOM.Child.on('insert', oninsert);
+                TextOM.Parent.on('insert', oninsert);
+                TextOM.Node.on('insert', oninsert);
+
+                paragraphNode.append(sentenceNode);
+                assert(iterator === 6);
+
+                TextOM.SentenceNode.off('insert');
+                TextOM.Element.off('insert');
+                TextOM.Child.off('insert');
+                TextOM.Parent.off('insert');
+                TextOM.Node.off('insert');
             }
-
-            sentenceNode.on('insert', oninsert);
-            TextOM.SentenceNode.on('insert', oninsert);
-            TextOM.Element.on('insert', oninsert);
-            TextOM.Child.on('insert', oninsert);
-            TextOM.Parent.on('insert', oninsert);
-            TextOM.Node.on('insert', oninsert);
-
-            paragraphNode.append(sentenceNode);
-            assert(iterator === 6);
-
-            TextOM.SentenceNode.off('insert');
-            TextOM.Element.off('insert');
-            TextOM.Child.off('insert');
-            TextOM.Parent.off('insert');
-            TextOM.Node.off('insert');
-        });
+        );
     });
 
     describe('[changenext]', function () {
-        it('emits on child and all childs constructors, with child as the context, and the new and the old next nodes as arguments, when the `next` attribute on child changes', function () {
-            var sentenceNode = new TextOM.SentenceNode(),
-                wordNode = sentenceNode.append(new TextOM.WordNode('alfred')),
-                whiteSpaceNode = sentenceNode.append(new TextOM.WhiteSpaceNode(' ')),
-                punctuationNode = new TextOM.PunctuationNode(','),
-                iterator = 0;
+        it('emits on child and all childs constructors, with child as the ' +
+            'context, and the new and the old next nodes as arguments, ' +
+            'when the `next` attribute on child changes', function () {
+                var sentenceNode = new TextOM.SentenceNode(),
+                    wordNode = sentenceNode.append(
+                        new TextOM.WordNode('alfred')
+                    ),
+                    whiteSpaceNode = sentenceNode.append(
+                        new TextOM.WhiteSpaceNode(' ')
+                    ),
+                    punctuationNode = new TextOM.PunctuationNode(','),
+                    iterator = 0;
 
-            function onchangenext(node, previousNode) {
-                iterator++;
-                assert(this === wordNode);
-                assert(node === punctuationNode);
-                assert(previousNode === whiteSpaceNode);
+                function onchangenext(node, previousNode) {
+                    iterator++;
+                    assert(this === wordNode);
+                    assert(node === punctuationNode);
+                    assert(previousNode === whiteSpaceNode);
+                }
+
+                wordNode.on('changenext', onchangenext);
+                TextOM.WordNode.on('changenext', onchangenext);
+
+                wordNode.after(punctuationNode);
+                assert(iterator === 2);
+
+                wordNode.off('changenext');
+                TextOM.WordNode.off('changenext');
             }
-
-            wordNode.on('changenext', onchangenext);
-            TextOM.WordNode.on('changenext', onchangenext);
-
-            wordNode.after(punctuationNode);
-            assert(iterator === 2);
-
-            wordNode.off('changenext');
-            TextOM.WordNode.off('changenext');
-        });
+        );
     });
 
     describe('[changeprev]', function () {
-        it('emits on child and all childs constructors, with child as the context, and the new and the old prev nodes as arguments, when the `prev` attribute on child changes', function () {
-            var sentenceNode = new TextOM.SentenceNode(),
-                wordNode = sentenceNode.append(new TextOM.WordNode('alfred')),
-                whiteSpaceNode = sentenceNode.append(new TextOM.WhiteSpaceNode(' ')),
-                punctuationNode = new TextOM.PunctuationNode(','),
-                iterator = 0;
+        it('emits on child and all childs constructors, with child as the ' +
+            'context, and the new and the old prev nodes as arguments, ' +
+            'when the `prev` attribute on child changes', function () {
+                var sentenceNode = new TextOM.SentenceNode(),
+                    wordNode = sentenceNode.append(
+                        new TextOM.WordNode('alfred')
+                    ),
+                    whiteSpaceNode = sentenceNode.append(
+                        new TextOM.WhiteSpaceNode(' ')
+                    ),
+                    punctuationNode = new TextOM.PunctuationNode(','),
+                    iterator = 0;
 
-            function onchangeprev(node, previousValue) {
-                iterator++;
-                assert(this === whiteSpaceNode);
-                assert(node === punctuationNode);
-                assert(previousValue === wordNode);
+                function onchangeprev(node, previousValue) {
+                    iterator++;
+                    assert(this === whiteSpaceNode);
+                    assert(node === punctuationNode);
+                    assert(previousValue === wordNode);
+                }
+
+                whiteSpaceNode.on('changeprev', onchangeprev);
+                TextOM.WhiteSpaceNode.on('changeprev', onchangeprev);
+
+                whiteSpaceNode.before(punctuationNode);
+                assert(iterator === 2);
+
+                whiteSpaceNode.off('changeprev');
+                TextOM.WhiteSpaceNode.off('changeprev');
             }
-
-            whiteSpaceNode.on('changeprev', onchangeprev);
-            TextOM.WhiteSpaceNode.on('changeprev', onchangeprev);
-
-            whiteSpaceNode.before(punctuationNode);
-            assert(iterator === 2);
-
-            whiteSpaceNode.off('changeprev');
-            TextOM.WhiteSpaceNode.off('changeprev');
-        });
+        );
     });
 
     describe('[remove]', function () {
-        it('emits on child and all `child`s constructors, with `child` as the context, and the previous parent as an argument, when `child` is removed', function () {
-            var paragraphNode = new TextOM.ParagraphNode(),
-                sentenceNode = paragraphNode.append(new TextOM.SentenceNode()),
-                iterator = 0;
+        it('emits on child and all `child`s constructors, with `child` as ' +
+            'the context, and the previous parent as an argument, when ' +
+            '`child` is removed', function () {
+                var paragraphNode = new TextOM.ParagraphNode(),
+                    sentenceNode = paragraphNode.append(
+                        new TextOM.SentenceNode()
+                    ),
+                    iterator = 0;
 
-            function onremove(parent) {
-                iterator++;
-                assert(this === sentenceNode);
-                assert(parent === paragraphNode);
+                function onremove(parent) {
+                    iterator++;
+                    assert(this === sentenceNode);
+                    assert(parent === paragraphNode);
+                }
+
+                sentenceNode.on('remove', onremove);
+                TextOM.SentenceNode.on('remove', onremove);
+                TextOM.Element.on('remove', onremove);
+                TextOM.Child.on('remove', onremove);
+                TextOM.Parent.on('remove', onremove);
+                TextOM.Node.on('remove', onremove);
+
+                sentenceNode.remove();
+                assert(iterator === 6);
+
+                TextOM.SentenceNode.off('remove');
+                TextOM.Element.off('remove');
+                TextOM.Child.off('remove');
+                TextOM.Parent.off('remove');
+                TextOM.Node.off('remove');
             }
-
-            sentenceNode.on('remove', onremove);
-            TextOM.SentenceNode.on('remove', onremove);
-            TextOM.Element.on('remove', onremove);
-            TextOM.Child.on('remove', onremove);
-            TextOM.Parent.on('remove', onremove);
-            TextOM.Node.on('remove', onremove);
-
-            sentenceNode.remove();
-            assert(iterator === 6);
-
-            TextOM.SentenceNode.off('remove');
-            TextOM.Element.off('remove');
-            TextOM.Child.off('remove');
-            TextOM.Parent.off('remove');
-            TextOM.Node.off('remove');
-        });
+        );
     });
 });
 
 describe('Events on TextOM.Text', function () {
     describe('[changetext]', function () {
-        it('emits on text and all `text`s constructors, with `text` as the context, and the current and previous values as arguments, when a `text` is changed', function () {
-            var sentenceNode = new TextOM.SentenceNode(),
-                wordNode = sentenceNode.append(new TextOM.WordNode('alfred')),
-                iterator = 0,
-                shouldBeValue = 'bertrand',
-                shouldBePreviousValue = wordNode.toString();
+        it('emits on text and all `text`s constructors, with `text` as the ' +
+            'context, and the current and previous values as arguments, ' +
+            'when a `text` is changed', function () {
+                var sentenceNode = new TextOM.SentenceNode(),
+                    wordNode = sentenceNode.append(
+                        new TextOM.WordNode('alfred')
+                    ),
+                    iterator = 0,
+                    shouldBeValue = 'bertrand',
+                    shouldBePreviousValue = wordNode.toString();
 
-            function onchangetext(value, previousValue) {
-                iterator++;
-                assert(this === wordNode);
-                assert(value === shouldBeValue);
-                assert(previousValue === shouldBePreviousValue);
-            }
+                function onchangetext(value, previousValue) {
+                    iterator++;
+                    assert(this === wordNode);
+                    assert(value === shouldBeValue);
+                    assert(previousValue === shouldBePreviousValue);
+                }
 
-            wordNode.on('changetext', onchangetext);
-            TextOM.WordNode.on('changetext', onchangetext);
-            TextOM.Child.on('changetext', onchangetext);
-            TextOM.Node.on('changetext', onchangetext);
+                wordNode.on('changetext', onchangetext);
+                TextOM.WordNode.on('changetext', onchangetext);
+                TextOM.Child.on('changetext', onchangetext);
+                TextOM.Node.on('changetext', onchangetext);
 
-            wordNode.fromString(shouldBeValue);
-            assert(iterator === 4);
+                wordNode.fromString(shouldBeValue);
+                assert(iterator === 4);
 
-            wordNode.off('changetext');
-            TextOM.WordNode.off('changetext');
-            TextOM.Child.off('changetext');
-            TextOM.Node.off('changetext');
-        });
+                wordNode.off('changetext');
+                TextOM.WordNode.off('changetext');
+                TextOM.Child.off('changetext');
+                TextOM.Node.off('changetext');
+            });
     });
 });
