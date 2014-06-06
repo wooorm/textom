@@ -1,5 +1,5 @@
 (function () {
-    /* jshint expr:true, boss:true, eqnull:true */
+    /* jshint expr:true, boss:true */
     /**
      * Utilities.
      */
@@ -358,8 +358,22 @@
         var self = this,
             callbacks;
 
-        if (name == null || callback == null) {
-            return self;
+        if (typeof name !== 'string') {
+            if (name === null || name === undefined) {
+                return self;
+            }
+
+            throw new TypeError('Illegal invocation: \'' + name +
+                ' is not a valid argument for \'listen\'');
+        }
+
+        if (typeof callback !== 'function') {
+            if (callback === null || callback === undefined) {
+                return self;
+            }
+
+            throw new TypeError('Illegal invocation: \'' + callback +
+                ' is not a valid argument for \'listen\'');
         }
 
         callbacks = self.callbacks || (self.callbacks = {});
@@ -373,16 +387,22 @@
         var self = this,
             callbacks, indice;
 
-        if (!(callbacks = self.callbacks)) {
-            return self;
-        }
-
-        if (name == null && callback == null) {
+        if ((name === null || name === undefined) &&
+            (callback === null || callback === undefined)) {
             self.callbacks = {};
             return self;
         }
 
-        if (name == null) {
+        if (typeof name !== 'string') {
+            if (name === null || name === undefined) {
+                return self;
+            }
+
+            throw new TypeError('Illegal invocation: \'' + name +
+                ' is not a valid argument for \'listen\'');
+        }
+
+        if (!(callbacks = self.callbacks)) {
             return self;
         }
 
@@ -390,9 +410,14 @@
             return self;
         }
 
-        if (callback == null) {
-            callbacks.length = 0;
-            return self;
+        if (typeof callback !== 'function') {
+            if (callback === null || callback === undefined) {
+                callbacks.length = 0;
+                return self;
+            }
+
+            throw new TypeError('Illegal invocation: \'' + callback +
+                ' is not a valid argument for \'listen\'');
         }
 
         if ((indice = callbacks.indexOf(callback)) !== -1) {
@@ -566,12 +591,14 @@
      * @api public
      */
     prototype.item = function (index) {
-        if (index != null && (typeof index !== 'number' || index !== index)) {
+        if (index === null || index === undefined) {
+            index = 0;
+        } else if (typeof index !== 'number' || index !== index) {
             throw new TypeError('\'' + index + ' is not a valid argument ' +
                 'for \'Parent.prototype.item\'');
         }
 
-        return this[index || 0] || null;
+        return this[index] || null;
     };
 
     /**
@@ -587,8 +614,8 @@
         var self = this,
             clone, cloneNode, iterator;
 
-        if (position == null || position !== position ||
-            position === -Infinity) {
+        if (position === null || position === undefined ||
+            position !== position || position === -Infinity) {
                 position = 0;
         } else if (position === Infinity) {
             position = self.length;
@@ -800,9 +827,15 @@
             previousValue = self.toString(),
             parent;
 
-        self.internalValue = value = value == null ? '' : value.toString();
+        if (value === null || value === undefined) {
+            value = '';
+        } else {
+            value = value.toString();
+        }
 
         if (value !== previousValue) {
+            self.internalValue = value;
+
             emit(self, 'changetext', value, previousValue);
 
             if (parent = self.parent) {
@@ -829,7 +862,9 @@
             value = self.internalValue,
             cloneNode;
 
-        if (position == null || position !== position ||
+        if (position === null ||
+            position === undefined ||
+            position !== position ||
             position === -Infinity) {
                 position = 0;
         } else if (position === Infinity) {
@@ -1062,7 +1097,7 @@
             wouldBeValid = false,
             endAncestors, node;
 
-        if (offset == null || offset !== offset) {
+        if (offset === null || offset === undefined || offset !== offset) {
             offset = 0;
             offsetIsDefault = true;
         } else if (typeof offset !== 'number' || offset < 0) {
@@ -1132,7 +1167,7 @@
             wouldBeValid = false,
             endAncestors, node;
 
-        if (offset == null || offset !== offset) {
+        if (offset === null || offset === undefined || offset !== offset) {
             offset = Infinity;
             offsetIsDefault = true;
         } else if (typeof offset !== 'number' || offset < 0) {
