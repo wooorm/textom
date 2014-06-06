@@ -1,5 +1,4 @@
 (function () {
-    /* jshint expr:true */
     /**
      * Utilities.
      */
@@ -500,8 +499,10 @@
      * @constructor
      */
     function Node() {
-        /** @member {Object} */
-        this.data || (this.data = {});
+        if (!this.data) {
+            /** @member {Object} */
+            this.data = {};
+        }
     }
 
     var prototype = Node.prototype;
