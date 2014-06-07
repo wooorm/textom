@@ -120,42 +120,48 @@ Every node contains a `TextOM` attribute linking back to the original TextOM.
 
 ##### TextOM\.Node#ROOT_NODE
 ```js
-root.type === root.ROOT_NODE === TextOM.ROOT_NODE; // true
+root.type === root.ROOT_NODE; // true
+root.type === TextOM.ROOT_NODE; // true
 ```
 
 Unique identifier for all instances of `RootNode`.
 
 ##### TextOM\.Node#PARAGRAPH_NODE
 ```js
-paragraph.type === paragraph.PARAGRAPH_NODE === TextOM.PARAGRAPH_NODE; // true
+paragraph.type === paragraph.PARAGRAPH_NODE; // true
+paragraph.type === TextOM.PARAGRAPH_NODE; // true
 ```
 
 Unique identifier for all instances of `ParagraphNode`.
 
 ##### TextOM\.Node#SENTENCE_NODE
 ```js
-sentence.type === sentence.SENTENCE_NODE === TextOM.SENTENCE_NODE; // true
+sentence.type === sentence.SENTENCE_NODE; // true
+sentence.type === TextOM.SENTENCE_NODE; // true
 ```
 
 Unique identifier for all instances of `SentenceNode`.
 
 ##### TextOM\.Node#WORD_NODE
 ```js
-dogs.type === dogs.WORD_NODE === TextOM.WORD_NODE; // true
+dogs.type === dogs.WORD_NODE; // true
+dogs.type === TextOM.WORD_NODE; // true
 ```
 
 Unique identifier for all instances of `WordNode`.
 
 ##### TextOM\.Node#PUNCTUATION_NODE
 ```js
-fullStop.type === fullStop.PUNCTUATION_NODE === TextOM.PUNCTUATION_NODE; // true
+fullStop.type === fullStop.PUNCTUATION_NODE; // true
+fullStop.type === TextOM.PUNCTUATION_NODE; // true
 ```
 
 Unique identifier for all instances of `PunctuationNode`.
 
 ##### TextOM\.Node#WHITE_SPACE_NODE
 ```js
-space0.type === space0.WHITE_SPACE_NODE === TextOM.WHITE_SPACE_NODE; // true
+space0.type === space0.WHITE_SPACE_NODE; // true
+space0.type === TextOM.WHITE_SPACE_NODE; // true
 ```
 
 Unique identifier for all instances of `WhiteSpaceNode`.
