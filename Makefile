@@ -8,7 +8,8 @@ watch:
 
 lint:
 	# Lint (passes when empty):
-	@./node_modules/.bin/jshint index.js spec/*.spec*.js
+	@./node_modules/.bin/eslint index.js --env node --rule 'new-cap: false, quotes: [2, single]'
+	@./node_modules/.bin/eslint spec/*.spec*.js --env node,mocha --rule 'quotes: [2, single]'
 	@./node_modules/.bin/jscs index.js spec/*.spec*.js --reporter=inline
 
 cover:
