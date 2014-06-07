@@ -691,8 +691,7 @@ Fired when a node is removed from an ancestor.
 ## Related
 
   * [parse-english](https://github.com/wooorm/parse-english "Parse English")
-
-More to come.
+  * [retext](https://github.com/wooorm/retext "Retext")
 
 ## License
 
