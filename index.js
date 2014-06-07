@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Utilities.
  */
@@ -6,6 +8,65 @@ var arrayPrototype = Array.prototype,
     arrayPush = arrayPrototype.push,
     arraySlice = arrayPrototype.slice,
     arraySplice = arrayPrototype.splice;
+
+function fire(context, callbacks, args) {
+    var iterator = -1;
+
+    if (!callbacks || !callbacks.length) {
+        return;
+    }
+
+    callbacks = callbacks.concat();
+
+    while (callbacks[++iterator]) {
+        callbacks[iterator].apply(context, args);
+    }
+
+    return;
+}
+
+function trigger(context, name) {
+    var args = arraySlice.call(arguments, 2),
+        callbacks;
+
+    while (context) {
+        callbacks = context.callbacks;
+        if (callbacks) {
+            fire(context, callbacks[name], args);
+        }
+
+        callbacks = context.constructor.callbacks;
+        if (callbacks) {
+            fire(context, callbacks[name], args);
+        }
+
+        context = context.parent;
+    }
+}
+
+function emit(context, name) {
+    var args = arraySlice.call(arguments, 2),
+        constructors = context.constructor.constructors,
+        iterator = -1,
+        callbacks = context.callbacks;
+
+    if (callbacks) {
+        fire(context, callbacks[name], args);
+    }
+
+    /* istanbul ignore if: Wrong-usage */
+    if (!constructors) {
+        return;
+    }
+
+    while (constructors[++iterator]) {
+        callbacks = constructors[iterator].callbacks;
+
+        if (callbacks) {
+            fire(context, callbacks[name], args);
+        }
+    }
+}
 
 /**
  * Return the index of a given node in a given parent, and -1
@@ -39,8 +100,7 @@ function at(parent, node) {
 function insertAfter(item, appendee) {
     /* Cache the items parent and the next item. */
     var parent = item.parent,
-        next = item.next,
-        position;
+        next = item.next;
 
     /* Detach the appendee. */
     appendee.remove();
@@ -294,21 +354,20 @@ function remove(node) {
  * @param {function} Super
  * @api private
  */
-function implements(Constructor, Super) {
-    var iterator = -1,
-        constructors = Super.constructors || [Super],
-        prototype, key, newPrototype;
+function implementsConstructor(Constructor, Super) {
+    var constructors = Super.constructors || [Super],
+        constructorPrototype, key, newPrototype;
 
     constructors = [Constructor].concat(constructors);
 
-    prototype = Constructor.prototype;
+    constructorPrototype = Constructor.prototype;
 
     function AltConstructor () {}
     AltConstructor.prototype = Super.prototype;
     newPrototype = new AltConstructor();
 
-    for (key in prototype) {
-        newPrototype[key] = prototype[key];
+    for (key in constructorPrototype) {
+        newPrototype[key] = constructorPrototype[key];
     }
 
     for (key in Super) {
@@ -323,11 +382,6 @@ function implements(Constructor, Super) {
     Constructor.prototype = newPrototype;
 }
 
-function findRoot(node) {
-    var result = findAncestors(node);
-    return result[result.length - 1].parent;
-}
-
 function findAncestors(node) {
     var result = [];
 
@@ -340,6 +394,11 @@ function findAncestors(node) {
 
         node = node.parent;
     }
+}
+
+function findRoot(node) {
+    var result = findAncestors(node);
+    return result[result.length - 1].parent;
 }
 
 function findNextAncestor(node) {
@@ -425,72 +484,6 @@ function ignore(name, callback) {
     return self;
 }
 
-function fire(context, callbacks, args) {
-    var iterator = -1;
-
-    if (!callbacks || !callbacks.length) {
-        return;
-    }
-
-    callbacks = callbacks.concat();
-
-    while (callbacks[++iterator]) {
-        callbacks[iterator].apply(context, args);
-    }
-
-    return;
-}
-
-function trigger(context, name) {
-    var args = arraySlice.call(arguments, 2),
-        callbacks, namedCallbacks;
-
-    while (context) {
-        callbacks = context.callbacks;
-        if (callbacks) {
-            fire(context, callbacks[name], args);
-        }
-
-        callbacks = context.constructor.callbacks;
-        if (callbacks) {
-            fire(context, callbacks[name], args);
-        }
-
-        context = context.parent;
-    }
-}
-
-function emit(context, name) {
-    var args = arraySlice.call(arguments, 2),
-        constructors = context.constructor.constructors,
-        iterator = -1,
-        callbacks = context.callbacks,
-        namedCallbacks;
-
-    if (callbacks) {
-        fire(context, callbacks[name], args);
-    }
-
-    /* istanbul ignore if: Wrong-usage */
-    if (!constructors) {
-        return;
-    }
-
-    while (constructors[++iterator]) {
-        callbacks = constructors[iterator].callbacks;
-
-        if (callbacks) {
-            fire(context, callbacks[name], args);
-        }
-    }
-}
-
-/**
- * Expose `TextOM`. Defined below, and used to instantiate a new
- * `RootNode`.
- */
-exports = module.exports = TextOM;
-
 /**
  * Expose `Node`. Initialises a new `Node` object.
  *
@@ -511,18 +504,13 @@ prototype.on = Node.on = listen;
 prototype.off = Node.off = ignore;
 
 /**
- * Expose `TextOM` on every instance of Node.
- */
-prototype.TextOM = TextOM;
-
-/**
  * Inherit the contexts' (Super) prototype into a given Constructor. E.g.,
  * Node is implemented by Parent, Parent is implemented by RootNode, &c.
  *
  * @api public
  */
 Node.isImplementedBy = function (Constructor) {
-    implements(Constructor, this);
+    implementsConstructor(Constructor, this);
 };
 
 /**
@@ -1474,6 +1462,11 @@ function TextOM() {
 var nodePrototype = Node.prototype;
 
 /**
+ * Expose `TextOM` on every instance of Node.
+ */
+nodePrototype.TextOM = TextOM;
+
+/**
  * Export all node types to `exports` (i.e. `TextOM`), and `Node#`.
  */
 TextOM.ROOT_NODE = nodePrototype.ROOT_NODE =
@@ -1503,3 +1496,9 @@ TextOM.SentenceNode = SentenceNode;
 TextOM.WordNode = WordNode;
 TextOM.PunctuationNode = PunctuationNode;
 TextOM.WhiteSpaceNode = WhiteSpaceNode;
+
+/**
+ * Expose `TextOM`. Defined below, and used to instantiate a new
+ * `RootNode`.
+ */
+exports = module.exports = TextOM;
