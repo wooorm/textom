@@ -6,18 +6,8 @@ Note: This project is **not** a parser for natural language, its rather the core
 
 ## Installation
 
-### With NPM
-
 ```sh
 $ npm install textom
-```
-
-### Git
-
-```sh
-git clone https://github.com/wooorm/textom.git
-cd textom
-npm install
 ```
 
 ## Usage
