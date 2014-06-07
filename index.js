@@ -1477,31 +1477,31 @@
     /**
      * Export all node types to `exports` (i.e. `TextOM`), and `Node#`.
      */
-    exports.ROOT_NODE = nodePrototype.ROOT_NODE =
+    TextOM.ROOT_NODE = nodePrototype.ROOT_NODE =
         RootNode.prototype.type;
-    exports.PARAGRAPH_NODE = nodePrototype.PARAGRAPH_NODE =
+    TextOM.PARAGRAPH_NODE = nodePrototype.PARAGRAPH_NODE =
         ParagraphNode.prototype.type;
-    exports.SENTENCE_NODE = nodePrototype.SENTENCE_NODE =
+    TextOM.SENTENCE_NODE = nodePrototype.SENTENCE_NODE =
         SentenceNode.prototype.type;
-    exports.WORD_NODE = nodePrototype.WORD_NODE = WordNode.prototype.type;
-    exports.PUNCTUATION_NODE = nodePrototype.PUNCTUATION_NODE =
+    TextOM.WORD_NODE = nodePrototype.WORD_NODE = WordNode.prototype.type;
+    TextOM.PUNCTUATION_NODE = nodePrototype.PUNCTUATION_NODE =
         PunctuationNode.prototype.type;
-    exports.WHITE_SPACE_NODE = nodePrototype.WHITE_SPACE_NODE =
+    TextOM.WHITE_SPACE_NODE = nodePrototype.WHITE_SPACE_NODE =
         WhiteSpaceNode.prototype.type;
 
     /**
      * Export all `Node`s and `Range` to `exports` (i.e. `TextOM`).
      */
-    exports.Node = Node;
-    exports.Parent = Parent;
-    exports.Child = Child;
-    exports.Element = Element;
-    exports.Text = Text;
-    exports.Range = Range;
-    exports.RootNode = RootNode;
-    exports.ParagraphNode = ParagraphNode;
-    exports.SentenceNode = SentenceNode;
-    exports.WordNode = WordNode;
-    exports.PunctuationNode = PunctuationNode;
-    exports.WhiteSpaceNode = WhiteSpaceNode;
+    TextOM.Node = Node;
+    TextOM.Parent = Parent;
+    TextOM.Child = Child;
+    TextOM.Element = Element;
+    TextOM.Text = Text;
+    TextOM.Range = Range;
+    TextOM.RootNode = RootNode;
+    TextOM.ParagraphNode = ParagraphNode;
+    TextOM.SentenceNode = SentenceNode;
+    TextOM.WordNode = WordNode;
+    TextOM.PunctuationNode = PunctuationNode;
+    TextOM.WhiteSpaceNode = WhiteSpaceNode;
 })();
