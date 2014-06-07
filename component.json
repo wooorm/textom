@@ -1,0 +1,17 @@
+{
+  "name": "textom",
+  "repository": "wooorm/textom",
+  "description": "Object model for natural languages",
+  "version": "0.0.12",
+  "keywords": [
+    "natural",
+    "language",
+    "object",
+    "model"
+  ],
+  "dependencies": {},
+  "scripts" : [
+    "index.js"
+  ],
+  "license": "MIT"
+}
