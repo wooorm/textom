@@ -367,7 +367,7 @@ range.setEnd(fullStop);
 range.toString(); // "Dogs & cats."
 ```
 
-Return the result of calling `toString` on each text node inside `range`, substringing when necessary;
+Return the result of calling `toString` on each text node inside `range`, sub-stringing when necessary;
 
 ##### TextOM\.Range#removeContent()
 ```js
