@@ -1,6 +1,5 @@
 # TextOM [![Build Status](https://travis-ci.org/wooorm/textom.svg?branch=master)](https://travis-ci.org/wooorm/textom) [![Coverage Status](https://img.shields.io/coveralls/wooorm/textom.svg)](https://coveralls.io/r/wooorm/textom?branch=master)
 
-
 **TextOM** provides an object model for natural language in JavaScript. No dependencies. NodeJS, and the browser. Lots of tests (280+), including 640+ assertions. 100% coverage.
 
 Note: This project is **not** a parser for natural language, or an extensible system for analysing and manipulating natural language, its rather the core that lies underneath such systems. Its like a simplified and modified version of the DOM, without any parsing capabilities, for natural language. If you need the above-mentioned functionalities, use the following project—both build on top of this module.
@@ -10,8 +9,14 @@ Note: This project is **not** a parser for natural language, or an extensible sy
 
 ## Installation
 
+NPM:
 ```sh
 $ npm install textom
+```
+
+Component.js:
+```sh
+$ component install wooorm/textom
 ```
 
 ## Usage
