@@ -13,6 +13,6 @@ lint:
 	@./node_modules/.bin/jscs index.js spec/*.spec*.js --reporter=inline
 
 cover:
-	@./node_modules/.bin/istanbul cover --report html ./node_modules/.bin/_mocha -- -- spec spec/textom.spec.js
+	@./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha -- -- spec spec/textom.spec.js
 
 .PHONY: make test watch lint cover
