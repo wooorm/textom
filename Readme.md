@@ -1,4 +1,5 @@
-# TextOM [![Build Status](https://travis-ci.org/wooorm/textom.png)](https://travis-ci.org/wooorm/textom)
+# TextOM [![Build Status](https://travis-ci.org/wooorm/textom.svg?branch=master)](https://travis-ci.org/wooorm/textom) [![Coverage Status](https://img.shields.io/coveralls/wooorm/textom.svg)](https://coveralls.io/r/wooorm/textom?branch=master)
+
 
 **TextOM** provides an object model for natural language in JavaScript. No dependencies. NodeJS, and the browser. Lots of tests (280+), including 640+ assertions. 100% coverage.
 
