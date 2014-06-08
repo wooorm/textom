@@ -347,41 +347,6 @@ function remove(node) {
     return node;
 }
 
-/**
- * Let the given `Constructor` inherit from `Super`s prototype.
- *
- * @param {function} Constructor
- * @param {function} Super
- * @api private
- */
-function implementsConstructor(Constructor, Super) {
-    var constructors = Super.constructors || [Super],
-        constructorPrototype, key, newPrototype;
-
-    constructors = [Constructor].concat(constructors);
-
-    constructorPrototype = Constructor.prototype;
-
-    function AltConstructor () {}
-    AltConstructor.prototype = Super.prototype;
-    newPrototype = new AltConstructor();
-
-    for (key in constructorPrototype) {
-        newPrototype[key] = constructorPrototype[key];
-    }
-
-    for (key in Super) {
-        /* istanbul ignore else */
-        if (Super.hasOwnProperty(key)) {
-            Constructor[key] = Super[key];
-        }
-    }
-
-    newPrototype.constructor = Constructor;
-    Constructor.constructors = constructors;
-    Constructor.prototype = newPrototype;
-}
-
 function findAncestors(node) {
     var result = [];
 
@@ -507,10 +472,36 @@ prototype.off = Node.off = ignore;
  * Inherit the contexts' (Super) prototype into a given Constructor. E.g.,
  * Node is implemented by Parent, Parent is implemented by RootNode, &c.
  *
+ * @param {function} Constructor
  * @api public
  */
 Node.isImplementedBy = function (Constructor) {
-    implementsConstructor(Constructor, this);
+    var self = this,
+        constructors = self.constructors || [self],
+        constructorPrototype, key, newPrototype;
+
+    constructors = [Constructor].concat(constructors);
+
+    constructorPrototype = Constructor.prototype;
+
+    function AltConstructor () {}
+    AltConstructor.prototype = self.prototype;
+    newPrototype = new AltConstructor();
+
+    for (key in constructorPrototype) {
+        newPrototype[key] = constructorPrototype[key];
+    }
+
+    for (key in self) {
+        /* istanbul ignore else */
+        if (self.hasOwnProperty(key)) {
+            Constructor[key] = self[key];
+        }
+    }
+
+    newPrototype.constructor = Constructor;
+    Constructor.constructors = constructors;
+    Constructor.prototype = newPrototype;
 };
 
 /**
