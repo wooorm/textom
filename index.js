@@ -70,124 +70,35 @@ function emit(context, name) {
 }
 
 /**
- * Inserts the given `appendee` after the given `item`.
- *
- * @param {Object} item
- * @param {Object} appendee
- * @api private
- */
-function insertAfter(item, appendee) {
-    /* Cache the items parent and the next item. */
-    var parent = item.parent,
-        next = item.next;
-
-    /* Detach the appendee. */
-    appendee.remove();
-
-    /* If item has a next node... */
-    if (next) {
-        /* ...link the appendee's next node, to items next node. */
-        appendee.next = next;
-
-        /* ...link the next nodes previous node, to the appendee. */
-        next.prev = appendee;
-    }
-
-    /* Set the appendee's previous node to item. */
-    appendee.prev = item;
-
-    /* Set the appendee's parent to items parent. */
-    appendee.parent = parent;
-
-    /* Set the next node of item to the appendee. */
-    item.next = appendee;
-
-    /* If the parent has no last node or if item is the parent last
-     * node, link the parents last node to the appendee. */
-    if (item === parent.tail || !parent.tail) {
-        parent.tail = appendee;
-        arrayPush.call(parent, appendee);
-    /* Else, insert the appendee into the parent after the items
-     * index. */
-    } else {
-        arraySplice.call(
-            parent, arrayIndexOf.call(parent, item) + 1, 0, appendee
-        );
-    }
-
-    /* Return the appendee. */
-    return appendee;
-}
-
-/**
- * Inserts the given `prependee` before the given `item` (which should
- * always be its parents head).
- *
- * @param {Object} head
- * @param {Object} prependee
- * @api private
- */
-function insertBeforeHead(head, prependee) {
-    /* Cache the heads parent. */
-    var parent = head.parent;
-
-    /* Detach the prependee. */
-    prependee.remove();
-
-    /* Set the prependee's next node to head. */
-    prependee.next = head;
-
-    /* Set the prependee's parent to heads parent. */
-    prependee.parent = parent;
-
-    /* Set the previous node of head to the prependee. */
-    head.prev = prependee;
-
-    /* Set the parents heads to the prependee. */
-    parent.head = prependee;
-
-    /* If the the parent has no last node, link the parents
-     * last node to head. */
-    if (!parent.tail) {
-        parent.tail = head;
-    }
-
-    arrayUnshift.call(parent, prependee);
-
-    /* Return the prependee. */
-    return prependee;
-}
-
-/**
- * Inserts the given `appendee` after (when given), the `item`, and
- * otherwise as the first item of the given parents.
+ * Inserts the given `child` after (when given), the `item`, and otherwise as
+ * the first item of the given parents.
  *
  * @param {Object} parent
  * @param {Object} item
- * @param {Object} appendee
+ * @param {Object} child
  * @api private
  */
-function append(parent, item, appendee) {
-    var result, next;
+function insert(parent, item, child) {
+    var next;
 
     if (!parent) {
         throw new TypeError('Illegal invocation: \'' + parent +
-            ' is not a valid argument for \'append\'');
+            ' is not a valid argument for \'insert\'');
     }
 
-    if (!appendee) {
-        throw new TypeError('\'' + appendee +
-            ' is not a valid argument for \'append\'');
+    if (!child) {
+        throw new TypeError('\'' + child +
+            ' is not a valid argument for \'insert\'');
     }
 
-    if ('hierarchy' in appendee && 'hierarchy' in parent) {
-        if (parent.hierarchy + 1 !== appendee.hierarchy) {
+    if ('hierarchy' in child && 'hierarchy' in parent) {
+        if (parent.hierarchy + 1 !== child.hierarchy) {
             throw new Error('HierarchyError: The operation would ' +
                 'yield an incorrect node tree');
         }
     }
 
-    if (typeof appendee.remove !== 'function') {
+    if (typeof child.remove !== 'function') {
         throw new Error('The operated on node did not have a ' +
             '`remove` method');
     }
@@ -206,45 +117,88 @@ function append(parent, item, appendee) {
                 'was attached to its parent, but the parent has no ' +
                 'indice corresponding to the item');
         }
-
-        result = insertAfter(item, appendee);
-    /* If parent has a first node... */
-    } else if (parent.head) {
-        result = insertBeforeHead(parent.head, appendee);
-    /* Prepend. There is no `head` (or `tail`) node yet. */
-    } else {
-        /* Detach the prependee. */
-        appendee.remove();
-
-        /* Set the prependee's parent to reference parent. */
-        appendee.parent = parent;
-
-        /* Set parent's first node to the prependee and return the
-         * appendee. */
-        parent.head = appendee;
-        parent[0] = appendee;
-        parent.length = 1;
-
-        result = appendee;
     }
 
-    next = appendee.next;
+    /* Detach the child. */
+    child.remove();
 
-    emit(appendee, 'insert');
+    /* Set the child's parent to items parent. */
+    child.parent = parent;
 
     if (item) {
-        emit(item, 'changenext', appendee, next);
-        emit(appendee, 'changeprev', item, null);
+        next = item.next;
+
+        /* If item has a next node... */
+        if (next) {
+            /* ...link the child's next node, to items next node. */
+            child.next = next;
+
+            /* ...link the next nodes previous node, to the child. */
+            next.prev = child;
+        }
+
+        /* Set the child's previous node to item. */
+        child.prev = item;
+
+        /* Set the next node of item to the child. */
+        item.next = child;
+
+        /* If the parent has no last node or if item is the parent last node,
+         * link the parents last node to the child. */
+        if (item === parent.tail || !parent.tail) {
+            parent.tail = child;
+            arrayPush.call(parent, child);
+        /* Else, insert the child into the parent after the items index. */
+        } else {
+            arraySplice.call(
+                parent, arrayIndexOf.call(parent, item) + 1, 0, child
+            );
+        }
+    /* If parent has a first node... */
+    } else if (parent.head) {
+        next = parent.head;
+
+        /* Set the child's next node to head. */
+        child.next = next;
+
+        /* Set the previous node of head to the child. */
+        next.prev = child;
+
+        /* Set the parents heads to the child. */
+        parent.head = child;
+
+        /* If the the parent has no last node, link the parents last node to
+         * head. */
+        if (!parent.tail) {
+            parent.tail = next;
+        }
+
+        arrayUnshift.call(parent, child);
+    /* Prepend. There is no `head` (or `tail`) node yet. */
+    } else {
+        /* Set parent's first node to the prependee and return the child. */
+        parent.head = child;
+        parent[0] = child;
+        parent.length = 1;
+    }
+
+    next = child.next;
+
+    emit(child, 'insert');
+
+    if (item) {
+        emit(item, 'changenext', child, next);
+        emit(child, 'changeprev', item, null);
     }
 
     if (next) {
-        emit(next, 'changeprev', appendee, item);
-        emit(appendee, 'changenext', next, null);
+        emit(next, 'changeprev', child, item);
+        emit(child, 'changenext', next, null);
     }
 
-    trigger(parent, 'insertinside', appendee);
+    trigger(parent, 'insertinside', child);
 
-    return result;
+    return child;
 }
 
 /**
@@ -534,7 +488,7 @@ function TextOMConstructor() {
      * @api public
      */
     prototype.prepend = function (child) {
-        return append(this, null, child);
+        return insert(this, null, child);
     };
 
     /**
@@ -545,7 +499,7 @@ function TextOMConstructor() {
      * @api public
      */
     prototype.append = function (child) {
-        return append(this, this.tail || this.head, child);
+        return insert(this, this.tail || this.head, child);
     };
 
     /**
@@ -593,7 +547,7 @@ function TextOMConstructor() {
         }
 
         /* This throws if we're not attached, thus preventing appending. */
-        cloneNode = append(self.parent, self.prev, new self.constructor());
+        cloneNode = insert(self.parent, self.prev, new self.constructor());
 
         clone = arraySlice.call(self);
         iterator = -1;
@@ -684,7 +638,7 @@ function TextOMConstructor() {
      * @api public
      */
     prototype.before = function (child) {
-        return append(this.parent, this.prev, child);
+        return insert(this.parent, this.prev, child);
     };
 
     /**
@@ -695,7 +649,7 @@ function TextOMConstructor() {
      * @api public
      */
     prototype.after = function (child) {
-        return append(this.parent, this, child);
+        return insert(this.parent, this, child);
     };
 
     /**
@@ -707,7 +661,7 @@ function TextOMConstructor() {
      * @api public
      */
     prototype.replace = function (child) {
-        var result = append(this.parent, this, child);
+        var result = insert(this.parent, this, child);
 
         remove(this);
 
@@ -844,7 +798,7 @@ function TextOMConstructor() {
         }
 
         /* This throws if we're not attached, thus preventing substringing. */
-        cloneNode = append(self.parent, self.prev, new self.constructor());
+        cloneNode = insert(self.parent, self.prev, new self.constructor());
 
         self.fromString(value.slice(position));
         cloneNode.fromString(value.slice(0, position));
