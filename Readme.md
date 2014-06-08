@@ -13,6 +13,7 @@ $ npm install textom
 ## Usage
 
 ```js
+TextOM = require('textom')();
 var root = new TextOM();
 ```
 
@@ -22,7 +23,7 @@ See below for an abbreviated IDL definition.
 Lets say all the following examples start with this code. Any changes made by below examples are discarded upon their ending.
 ```js
 // Import TextOM.
-var TextOM = require('textom');
+var TextOM = require('textom')();
 
 // Create a root.
 var root = new TextOM();
