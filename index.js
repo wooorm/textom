@@ -622,7 +622,7 @@ prototype.split = function (position) {
     /* This throws if we're not attached, thus preventing appending. */
     cloneNode = append(self.parent, self.prev, new self.constructor());
 
-    clone = [].slice.call(self);
+    clone = arraySlice.call(self);
     iterator = -1;
 
     while (++iterator < position && clone[iterator]) {
