@@ -547,7 +547,9 @@ function TextOMConstructor() {
         }
 
         /* This throws if we're not attached, thus preventing appending. */
+        /*eslint-disable new-cap */
         cloneNode = insert(self.parent, self.prev, new self.constructor());
+        /*eslint-enable new-cap */
 
         clone = arraySlice.call(self);
         iterator = -1;
@@ -798,7 +800,9 @@ function TextOMConstructor() {
         }
 
         /* This throws if we're not attached, thus preventing substringing. */
+        /*eslint-disable new-cap */
         cloneNode = insert(self.parent, self.prev, new self.constructor());
+        /*eslint-enable new-cap */
 
         self.fromString(value.slice(position));
         cloneNode.fromString(value.slice(0, position));
@@ -1139,7 +1143,9 @@ function TextOMConstructor() {
 
     prototype.cloneRange = function () {
         var self = this,
+            /*eslint-disable new-cap */
             range = new self.constructor();
+            /*eslint-enable new-cap */
 
         range.startContainer = self.startContainer;
         range.startOffset = self.startOffset;
