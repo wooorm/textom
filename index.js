@@ -1467,7 +1467,7 @@ var nodePrototype = Node.prototype;
 nodePrototype.TextOM = TextOM;
 
 /**
- * Export all node types to `exports` (i.e. `TextOM`), and `Node#`.
+ * Export all node types to `TextOM` and `Node#`.
  */
 TextOM.ROOT_NODE = nodePrototype.ROOT_NODE =
     RootNode.prototype.type;
@@ -1482,7 +1482,7 @@ TextOM.WHITE_SPACE_NODE = nodePrototype.WHITE_SPACE_NODE =
     WhiteSpaceNode.prototype.type;
 
 /**
- * Export all `Node`s and `Range` to `exports` (i.e. `TextOM`).
+ * Export all `Node`s and `Range` to `TextOM`.
  */
 TextOM.Node = Node;
 TextOM.Parent = Parent;
@@ -1498,7 +1498,6 @@ TextOM.PunctuationNode = PunctuationNode;
 TextOM.WhiteSpaceNode = WhiteSpaceNode;
 
 /**
- * Expose `TextOM`. Defined below, and used to instantiate a new
- * `RootNode`.
+ * Expose `TextOM`. Used to instantiate a new `RootNode`.
  */
 exports = module.exports = TextOM;
