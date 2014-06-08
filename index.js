@@ -7,6 +7,7 @@ var arrayPrototype = Array.prototype,
     arrayUnshift = arrayPrototype.unshift,
     arrayPush = arrayPrototype.push,
     arraySlice = arrayPrototype.slice,
+    arrayIndexOf = arrayPrototype.indexOf,
     arraySplice = arrayPrototype.splice;
 
 function fire(context, callbacks, args) {
@@ -69,28 +70,6 @@ function emit(context, name) {
 }
 
 /**
- * Return the index of a given node in a given parent, and -1
- * otherwise.
- *
- * @param {Object} parent
- * @param {Object} node
- * @api private
- */
-function at(parent, node) {
-    var iterator = -1,
-        length = parent.length;
-
-    while (++iterator < length) {
-        if (node === parent[iterator]) {
-            return iterator;
-        }
-    }
-
-    /* istanbul ignore next: Wrong-usage */
-    return -1;
-}
-
-/**
  * Inserts the given `appendee` after the given `item`.
  *
  * @param {Object} item
@@ -131,7 +110,9 @@ function insertAfter(item, appendee) {
     /* Else, insert the appendee into the parent after the items
      * index. */
     } else {
-        arraySplice.call(parent, at(parent, item) + 1, 0, appendee);
+        arraySplice.call(
+            parent, arrayIndexOf.call(parent, item) + 1, 0, appendee
+        );
     }
 
     /* Return the appendee. */
@@ -220,7 +201,7 @@ function append(parent, item, appendee) {
         }
 
         /* istanbul ignore if: Wrong-usage */
-        if (at(parent, item) === -1) {
+        if (arrayIndexOf.call(parent, item) === -1) {
             throw new Error('The operated on node (the "pointer") ' +
                 'was attached to its parent, but the parent has no ' +
                 'indice corresponding to the item');
@@ -321,7 +302,7 @@ function remove(node) {
     }
 
     /* istanbul ignore else: Wrong-usage */
-    if ((indice = at(parent, node)) !== -1) {
+    if ((indice = arrayIndexOf.call(parent, node)) !== -1) {
         arraySplice.call(parent, indice, 1);
     }
 
