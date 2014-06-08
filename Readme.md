@@ -20,6 +20,8 @@ TextOM = require('textom')();
 var root = new TextOM();
 ```
 
+Note that the exported object is a function, which in turn returns brand-new TextOM objects. There’s whole slew of issues that can arise from extending prototypes like (DOM) Node, NodeList, or Array—this feature however allows for multiple sandboxed environments (i.e., prototypes) without those disadvantages.
+
 ## API
 See below for an abbreviated IDL definition.
 
