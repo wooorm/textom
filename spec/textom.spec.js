@@ -1,6 +1,6 @@
 'use strict';
 
-var TextOM = require('..'),
+var textom = require('..'),
     assert = require('assert');
 
 /* istanbul ignore next: noop */
@@ -9,7 +9,8 @@ function noop() {}
 /* istanbul ignore next: noop */
 function altNoop() {}
 
-var Node = TextOM.Node,
+var TextOM = textom(),
+    Node = TextOM.Node,
     nodePrototype = Node.prototype,
     Parent = TextOM.Parent,
     parentPrototype = Parent.prototype,
@@ -27,6 +28,23 @@ var Node = TextOM.Node,
     WordNode = TextOM.WordNode,
     PunctuationNode = TextOM.PunctuationNode,
     WhiteSpaceNode = TextOM.WhiteSpaceNode;
+
+describe('textom', function () {
+    it('should be of type `function`', function () {
+        assert(typeof textom === 'function');
+    });
+
+    it('should create a new TextOM when called', function () {
+        var TextOM2 = textom(),
+            node1 = new TextOM.Node(),
+            node2 = new TextOM2.Node();
+
+        assert(node1 instanceof node1.constructor);
+        assert(!(node1 instanceof node2.constructor));
+        assert(node2 instanceof node2.constructor);
+        assert(!(node2 instanceof node1.constructor));
+    });
+});
 
 describe('TextOM', function () {
     it('should have a `ROOT_NODE` property, equal to the `type` property ' +
