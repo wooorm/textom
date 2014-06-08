@@ -3,6 +3,9 @@ make: lint cover
 test:
 	@./node_modules/.bin/mocha --reporter spec --check-leaks -u exports spec/*.spec*.js
 
+travis:
+	@./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha --report lcovonly -- --reporter spec --check-leaks -u exports spec/textom.spec.js
+
 watch:
 	@./node_modules/.bin/mocha --reporter min --check-leaks --watch spec/*.spec*.js
 
