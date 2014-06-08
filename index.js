@@ -449,1046 +449,1050 @@ function ignore(name, callback) {
     return self;
 }
 
-/**
- * Expose `Node`. Initialises a new `Node` object.
- *
- * @api public
- * @constructor
- */
-function Node() {
-    if (!this.data) {
-        /** @member {Object} */
-        this.data = {};
-    }
-}
-
-var prototype = Node.prototype;
-
-prototype.on = Node.on = listen;
-
-prototype.off = Node.off = ignore;
-
-/**
- * Inherit the contexts' (Super) prototype into a given Constructor. E.g.,
- * Node is implemented by Parent, Parent is implemented by RootNode, &c.
- *
- * @param {function} Constructor
- * @api public
- */
-Node.isImplementedBy = function (Constructor) {
-    var self = this,
-        constructors = self.constructors || [self],
-        constructorPrototype, key, newPrototype;
-
-    constructors = [Constructor].concat(constructors);
-
-    constructorPrototype = Constructor.prototype;
-
-    function AltConstructor () {}
-    AltConstructor.prototype = self.prototype;
-    newPrototype = new AltConstructor();
-
-    for (key in constructorPrototype) {
-        newPrototype[key] = constructorPrototype[key];
-    }
-
-    for (key in self) {
-        /* istanbul ignore else */
-        if (self.hasOwnProperty(key)) {
-            Constructor[key] = self[key];
+function TextOMConstructor() {
+    /**
+     * Expose `Node`. Initialises a new `Node` object.
+     *
+     * @api public
+     * @constructor
+     */
+    function Node() {
+        if (!this.data) {
+            /** @member {Object} */
+            this.data = {};
         }
     }
 
-    newPrototype.constructor = Constructor;
-    Constructor.constructors = constructors;
-    Constructor.prototype = newPrototype;
-};
+    var prototype = Node.prototype;
 
-/**
- * Expose Parent. Constructs a new Parent node;
- *
- * @api public
- * @constructor
- */
-function Parent() {
-    Node.apply(this, arguments);
-}
+    prototype.on = Node.on = listen;
 
-prototype = Parent.prototype;
+    prototype.off = Node.off = ignore;
 
-/**
- * The first child of a parent, null otherwise.
- *
- * @api public
- * @type {?Child}
- * @readonly
- */
-prototype.head = null;
+    /**
+     * Inherit the contexts' (Super) prototype into a given Constructor. E.g.,
+     * Node is implemented by Parent, Parent is implemented by RootNode, &c.
+     *
+     * @param {function} Constructor
+     * @api public
+     */
+    Node.isImplementedBy = function (Constructor) {
+        var self = this,
+            constructors = self.constructors || [self],
+            constructorPrototype, key, newPrototype;
 
-/**
- * The last child of a parent (unless the last child is also the first
- * child), null otherwise.
- *
- * @api public
- * @type {?Child}
- * @readonly
- */
-prototype.tail = null;
+        constructors = [Constructor].concat(constructors);
 
-/**
- * The number of children in a parent.
- *
- * @api public
- * @type {number}
- * @readonly
- */
-prototype.length = 0;
+        constructorPrototype = Constructor.prototype;
 
-/**
- * Insert a child at the beginning of the list (like Array#unshift).
- *
- * @param {Child} child - the child to insert as the (new) FIRST child
- * @return {Child} - the given child.
- * @api public
- */
-prototype.prepend = function (child) {
-    return append(this, null, child);
-};
+        function AltConstructor () {}
+        AltConstructor.prototype = self.prototype;
+        newPrototype = new AltConstructor();
 
-/**
- * Insert a child at the end of the list (like Array#push).
- *
- * @param {Child} child - the child to insert as the (new) LAST child
- * @return {Child} - the given child.
- * @api public
- */
-prototype.append = function (child) {
-    return append(this, this.tail || this.head, child);
-};
+        for (key in constructorPrototype) {
+            newPrototype[key] = constructorPrototype[key];
+        }
 
-/**
- * Return a child at given position in parent, and null otherwise. (like
- * NodeList#item).
- *
- * @param {?number} [index=0] - the position to find a child at.
- * @return {Child?} - the found child, or null.
- * @api public
- */
-prototype.item = function (index) {
-    if (index === null || index === undefined) {
-        index = 0;
-    } else if (typeof index !== 'number' || index !== index) {
-        throw new TypeError('\'' + index + ' is not a valid argument ' +
-            'for \'Parent.prototype.item\'');
+        for (key in self) {
+            /* istanbul ignore else */
+            if (self.hasOwnProperty(key)) {
+                Constructor[key] = self[key];
+            }
+        }
+
+        newPrototype.constructor = Constructor;
+        Constructor.constructors = constructors;
+        Constructor.prototype = newPrototype;
+    };
+
+    /**
+     * Expose Parent. Constructs a new Parent node;
+     *
+     * @api public
+     * @constructor
+     */
+    function Parent() {
+        Node.apply(this, arguments);
     }
 
-    return this[index] || null;
-};
+    prototype = Parent.prototype;
 
-/**
- * Split the Parent into two, dividing the children from 0–position (NOT
- * including the character at `position`), and position–length (including
- * the character at `position`).
- *
- * @param {?number} [position=0] - the position to split at.
- * @return {Parent} - the prepended parent.
- * @api public
- */
-prototype.split = function (position) {
-    var self = this,
-        clone, cloneNode, iterator;
+    /**
+     * The first child of a parent, null otherwise.
+     *
+     * @api public
+     * @type {?Child}
+     * @readonly
+     */
+    prototype.head = null;
 
-    if (position === null || position === undefined ||
-        position !== position || position === -Infinity) {
-            position = 0;
-    } else if (position === Infinity) {
-        position = self.length;
-    } else if (typeof position !== 'number') {
-        throw new TypeError('\'' + position + ' is not a valid ' +
-            'argument for \'Parent.prototype.split\'');
-    } else if (position < 0) {
-        position = Math.abs((self.length + position) % self.length);
-    }
+    /**
+     * The last child of a parent (unless the last child is also the first
+     * child), null otherwise.
+     *
+     * @api public
+     * @type {?Child}
+     * @readonly
+     */
+    prototype.tail = null;
 
-    /* This throws if we're not attached, thus preventing appending. */
-    cloneNode = append(self.parent, self.prev, new self.constructor());
+    /**
+     * The number of children in a parent.
+     *
+     * @api public
+     * @type {number}
+     * @readonly
+     */
+    prototype.length = 0;
 
-    clone = arraySlice.call(self);
-    iterator = -1;
+    /**
+     * Insert a child at the beginning of the list (like Array#unshift).
+     *
+     * @param {Child} child - the child to insert as the (new) FIRST child
+     * @return {Child} - the given child.
+     * @api public
+     */
+    prototype.prepend = function (child) {
+        return append(this, null, child);
+    };
 
-    while (++iterator < position && clone[iterator]) {
-        cloneNode.append(clone[iterator]);
-    }
+    /**
+     * Insert a child at the end of the list (like Array#push).
+     *
+     * @param {Child} child - the child to insert as the (new) LAST child
+     * @return {Child} - the given child.
+     * @api public
+     */
+    prototype.append = function (child) {
+        return append(this, this.tail || this.head, child);
+    };
 
-    return cloneNode;
-};
+    /**
+     * Return a child at given position in parent, and null otherwise. (like
+     * NodeList#item).
+     *
+     * @param {?number} [index=0] - the position to find a child at.
+     * @return {Child?} - the found child, or null.
+     * @api public
+     */
+    prototype.item = function (index) {
+        if (index === null || index === undefined) {
+            index = 0;
+        } else if (typeof index !== 'number' || index !== index) {
+            throw new TypeError('\'' + index + ' is not a valid argument ' +
+                'for \'Parent.prototype.item\'');
+        }
 
-/**
- * Return the result of calling `toString` on each of `Parent`s children.
- *
- * NOTE The `toString` method is intentionally generic; It can be
- * transferred to other kinds of (linked-list-like) objects for use as a
- * method.
- *
- * @return {String}
- * @api public
- */
-prototype.toString = function () {
-    var value, node;
+        return this[index] || null;
+    };
 
-    value = '';
-    node = this.head;
+    /**
+     * Split the Parent into two, dividing the children from 0–position (NOT
+     * including the character at `position`), and position–length (including
+     * the character at `position`).
+     *
+     * @param {?number} [position=0] - the position to split at.
+     * @return {Parent} - the prepended parent.
+     * @api public
+     */
+    prototype.split = function (position) {
+        var self = this,
+            clone, cloneNode, iterator;
 
-    while (node) {
-        value += node;
-        node = node.next;
-    }
+        if (position === null || position === undefined ||
+            position !== position || position === -Infinity) {
+                position = 0;
+        } else if (position === Infinity) {
+            position = self.length;
+        } else if (typeof position !== 'number') {
+            throw new TypeError('\'' + position + ' is not a valid ' +
+                'argument for \'Parent.prototype.split\'');
+        } else if (position < 0) {
+            position = Math.abs((self.length + position) % self.length);
+        }
 
-    return value;
-};
+        /* This throws if we're not attached, thus preventing appending. */
+        cloneNode = append(self.parent, self.prev, new self.constructor());
 
-/**
- * Inherit from `Node.prototype`.
- */
-Node.isImplementedBy(Parent);
+        clone = arraySlice.call(self);
+        iterator = -1;
 
-/**
- * Expose Child. Constructs a new Child node;
- *
- * @api public
- * @constructor
- */
-function Child() {
-    Node.apply(this, arguments);
-}
+        while (++iterator < position && clone[iterator]) {
+            cloneNode.append(clone[iterator]);
+        }
 
-prototype = Child.prototype;
+        return cloneNode;
+    };
 
-/**
- * The parent node, null otherwise (when the child is detached).
- *
- * @api public
- * @type {?Parent}
- * @readonly
- */
-prototype.parent = null;
+    /**
+     * Return the result of calling `toString` on each of `Parent`s children.
+     *
+     * NOTE The `toString` method is intentionally generic; It can be
+     * transferred to other kinds of (linked-list-like) objects for use as a
+     * method.
+     *
+     * @return {String}
+     * @api public
+     */
+    prototype.toString = function () {
+        var value, node;
 
-/**
- * The next node, null otherwise (when `child` is the parents last child
- * or detached).
- *
- * @api public
- * @type {?Child}
- * @readonly
- */
-prototype.next = null;
-
-/**
- * The previous node, null otherwise (when `child` is the parents first
- * child or detached).
- *
- * @api public
- * @type {?Child}
- * @readonly
- */
-prototype.prev = null;
-
-/**
- * Insert a given child before the operated on child in the parent.
- *
- * @param {Child} child - the child to insert before the operated on
- *                        child.
- * @return {Child} - the given child.
- * @api public
- */
-prototype.before = function (child) {
-    return append(this.parent, this.prev, child);
-};
-
-/**
- * Insert a given child after the operated on child in the parent.
- *
- * @param {Child} child - the child to insert after the operated on child.
- * @return {Child} - the given child.
- * @api public
- */
-prototype.after = function (child) {
-    return append(this.parent, this, child);
-};
-
-/**
- * Remove the operated on child, and insert a given child at its previous
- * position in the parent.
- *
- * @param {Child} child - the child to replace the operated on child with.
- * @return {Child} - the given child.
- * @api public
- */
-prototype.replace = function (child) {
-    var result = append(this.parent, this, child);
-
-    remove(this);
-
-    return result;
-};
-
-/**
- * Remove the operated on child.
- *
- * @return {Child} - the operated on child.
- * @api public
- */
-prototype.remove = function () {
-    return remove(this);
-};
-
-/**
- * Inherit from `Node.prototype`.
- */
-Node.isImplementedBy(Child);
-
-/**
- * Expose Element. Constructs a new Element node;
- *
- * @api public
- * @constructor
- */
-function Element() {
-    Parent.apply(this, arguments);
-    Child.apply(this, arguments);
-}
-
-/**
- * Inherit from `Parent.prototype` and `Child.prototype`.
- */
-Parent.isImplementedBy(Element);
-Child.isImplementedBy(Element);
-
-/* Add Parent as a constructor (which it is) */
-Element.constructors.splice(2, 0, Parent);
-
-/**
- * Expose Text. Constructs a new Text node;
- *
- * @api public
- * @constructor
- */
-function Text(value) {
-    Child.apply(this, arguments);
-
-    this.fromString(value);
-}
-
-prototype = Text.prototype;
-
-/**
- * The internal value.
- *
- * @api private
- */
-prototype.internalValue = '';
-
-/**
- * Return the internal value of a Text;
- *
- * @return {String}
- * @api public
- */
-prototype.toString = function () {
-    return this.internalValue;
-};
-
-/**
- * (Re)sets and returns the internal value of a Text with the stringified
- * version of the given value.
- *
- * @param {?String} [value=''] - the value to set
- * @return {String}
- * @api public
- */
-prototype.fromString = function (value) {
-    var self = this,
-        previousValue = self.toString(),
-        parent;
-
-    if (value === null || value === undefined) {
         value = '';
-    } else {
-        value = value.toString();
-    }
+        node = this.head;
 
-    if (value !== previousValue) {
-        self.internalValue = value;
-
-        emit(self, 'changetext', value, previousValue);
-
-        parent = self.parent;
-        if (parent) {
-            trigger(
-                parent, 'changetextinside', self, value, previousValue
-            );
-        }
-    }
-
-    return value;
-};
-
-/**
- * Split the Text into two, dividing the internal value from 0–position
- * (NOT including the character at `position`), and position–length
- * (including the character at `position`).
- *
- * @param {?number} [position=0] - the position to split at.
- * @return {Child} - the prepended child.
- * @api public
- */
-prototype.split = function (position) {
-    var self = this,
-        value = self.internalValue,
-        cloneNode;
-
-    if (position === null ||
-        position === undefined ||
-        position !== position ||
-        position === -Infinity) {
-            position = 0;
-    } else if (position === Infinity) {
-        position = value.length;
-    } else if (typeof position !== 'number') {
-        throw new TypeError('\'' + position + ' is not a valid ' +
-            'argument for \'Text.prototype.split\'');
-    } else if (position < 0) {
-        position = Math.abs((value.length + position) % value.length);
-    }
-
-    /* This throws if we're not attached, thus preventing substringing. */
-    cloneNode = append(self.parent, self.prev, new self.constructor());
-
-    self.fromString(value.slice(position));
-    cloneNode.fromString(value.slice(0, position));
-
-    return cloneNode;
-};
-
-/**
- * Inherit from `Child.prototype`.
- */
-Child.isImplementedBy(Text);
-
-/**
- * Expose RootNode. Constructs a new RootNode (inheriting from Parent);
- *
- * @api public
- * @constructor
- */
-function RootNode() {
-    Parent.apply(this, arguments);
-}
-
-/**
- * The type of an instance of RootNode.
- *
- * @api public
- * @readonly
- * @static
- */
-RootNode.prototype.type = 1;
-RootNode.prototype.hierarchy = 1;
-
-/**
- * Inherit from `Parent.prototype`.
- */
-Parent.isImplementedBy(RootNode);
-
-/**
- * Expose ParagraphNode. Constructs a new ParagraphNode (inheriting from
- * both Parent and Child);
- *
- * @api public
- * @constructor
- */
-function ParagraphNode() {
-    Element.apply(this, arguments);
-}
-
-/**
- * The type of an instance of ParagraphNode.
- *
- * @api public
- * @readonly
- * @static
- */
-ParagraphNode.prototype.type = 2;
-ParagraphNode.prototype.hierarchy = 2;
-
-/**
- * Inherit from `Parent.prototype` and `Child.prototype`.
- */
-Element.isImplementedBy(ParagraphNode);
-
-/**
- * Expose SentenceNode. Constructs a new SentenceNode (inheriting from
- * both Parent and Child);
- *
- * @api public
- * @constructor
- */
-function SentenceNode() {
-    Element.apply(this, arguments);
-}
-
-/**
- * The type of an instance of SentenceNode.
- *
- * @api public
- * @readonly
- * @static
- */
-SentenceNode.prototype.type = 3;
-SentenceNode.prototype.hierarchy = 3;
-
-/**
- * Inherit from `Parent.prototype` and `Child.prototype`.
- */
-Element.isImplementedBy(SentenceNode);
-
-/**
- * Expose WordNode.
- */
-function WordNode() {
-    Text.apply(this, arguments);
-}
-
-/**
- * The type of an instance of WordNode.
- *
- * @api public
- * @readonly
- * @static
- */
-WordNode.prototype.type = 4;
-WordNode.prototype.hierarchy = 4;
-
-/**
- * Inherit from `Text.prototype`.
- */
-Text.isImplementedBy(WordNode);
-
-/**
- * Expose WhiteSpaceNode.
- */
-function WhiteSpaceNode() {
-    Text.apply(this, arguments);
-}
-
-/**
- * The type of an instance of WhiteSpaceNode.
- *
- * @api public
- * @readonly
- * @static
- */
-WhiteSpaceNode.prototype.type = 5;
-
-/**
- * Inherit from `Text.prototype`.
- */
-Text.isImplementedBy(WhiteSpaceNode);
-
-/**
- * Expose PunctuationNode.
- */
-function PunctuationNode() {
-    Text.apply(this, arguments);
-}
-
-/**
- * The type of an instance of PunctuationNode.
- *
- * @api public
- * @readonly
- * @static
- */
-PunctuationNode.prototype.type = 6;
-PunctuationNode.prototype.hierarchy = 4;
-
-/**
- * Inherit from `Text.prototype`.
- */
-Text.isImplementedBy(PunctuationNode);
-
-/**
- * Expose Range.
- */
-function Range() {}
-
-prototype = Range.prototype;
-
-/**
- * The starting node of a range, null otherwise.
- *
- * @api public
- * @type {?Node}
- * @readonly
- */
-prototype.startContainer = null;
-
-/**
- * The starting offset of a range `null` when not existing.
- *
- * @api public
- * @type {?number}
- * @readonly
- */
-prototype.startOffset = null;
-
-/**
- * The ending node of a range, null otherwise.
- *
- * @api public
- * @type {?Node}
- * @readonly
- */
-prototype.endContainer = null;
-
-/**
- * The ending offset of a range, `null` when not existing.
- *
- * @api public
- * @type {?number}
- * @readonly
- */
-prototype.endOffset = null;
-
-/**
- * Set the start container and offset of a range.
- *
- * @param {Node} startContainer - the start container to start the range
- *                                at.
- * @param {?number} offset - (integer) the start offset of the container
- *                           to start the range at;
- * @api public
- */
-prototype.setStart = function (startContainer, offset) {
-    if (!startContainer) {
-        throw new TypeError('\'' + startContainer + ' is not a valid ' +
-            'argument for \'Range.prototype.setStart\'');
-    }
-
-    var self = this,
-        endContainer = self.endContainer,
-        endOffset = self.endOffset,
-        offsetIsDefault = false,
-        wouldBeValid = false,
-        endAncestors, node;
-
-    if (offset === null || offset === undefined || offset !== offset) {
-        offset = 0;
-        offsetIsDefault = true;
-    } else if (typeof offset !== 'number' || offset < 0) {
-        throw new TypeError('\'' + offset + ' is not a valid argument ' +
-            'for \'Range.prototype.setStart\'');
-    }
-
-    if (!endContainer) {
-        wouldBeValid = true;
-    } else {
-        if (findRoot(endContainer) !== findRoot(startContainer)) {
-            throw new Error('WrongRootError: The given startContainer ' +
-                'is in the wrong document.');
+        while (node) {
+            value += node;
+            node = node.next;
         }
 
-        /* When startContainer is also the endContainer; */
-        if (endContainer === startContainer) {
-            wouldBeValid = endOffset >= offset;
+        return value;
+    };
+
+    /**
+     * Inherit from `Node.prototype`.
+     */
+    Node.isImplementedBy(Parent);
+
+    /**
+     * Expose Child. Constructs a new Child node;
+     *
+     * @api public
+     * @constructor
+     */
+    function Child() {
+        Node.apply(this, arguments);
+    }
+
+    prototype = Child.prototype;
+
+    /**
+     * The parent node, null otherwise (when the child is detached).
+     *
+     * @api public
+     * @type {?Parent}
+     * @readonly
+     */
+    prototype.parent = null;
+
+    /**
+     * The next node, null otherwise (when `child` is the parents last child
+     * or detached).
+     *
+     * @api public
+     * @type {?Child}
+     * @readonly
+     */
+    prototype.next = null;
+
+    /**
+     * The previous node, null otherwise (when `child` is the parents first
+     * child or detached).
+     *
+     * @api public
+     * @type {?Child}
+     * @readonly
+     */
+    prototype.prev = null;
+
+    /**
+     * Insert a given child before the operated on child in the parent.
+     *
+     * @param {Child} child - the child to insert before the operated on
+     *                        child.
+     * @return {Child} - the given child.
+     * @api public
+     */
+    prototype.before = function (child) {
+        return append(this.parent, this.prev, child);
+    };
+
+    /**
+     * Insert a given child after the operated on child in the parent.
+     *
+     * @param {Child} child - the child to insert after the operated on child.
+     * @return {Child} - the given child.
+     * @api public
+     */
+    prototype.after = function (child) {
+        return append(this.parent, this, child);
+    };
+
+    /**
+     * Remove the operated on child, and insert a given child at its previous
+     * position in the parent.
+     *
+     * @param {Child} child - the child to replace the operated on child with.
+     * @return {Child} - the given child.
+     * @api public
+     */
+    prototype.replace = function (child) {
+        var result = append(this.parent, this, child);
+
+        remove(this);
+
+        return result;
+    };
+
+    /**
+     * Remove the operated on child.
+     *
+     * @return {Child} - the operated on child.
+     * @api public
+     */
+    prototype.remove = function () {
+        return remove(this);
+    };
+
+    /**
+     * Inherit from `Node.prototype`.
+     */
+    Node.isImplementedBy(Child);
+
+    /**
+     * Expose Element. Constructs a new Element node;
+     *
+     * @api public
+     * @constructor
+     */
+    function Element() {
+        Parent.apply(this, arguments);
+        Child.apply(this, arguments);
+    }
+
+    /**
+     * Inherit from `Parent.prototype` and `Child.prototype`.
+     */
+    Parent.isImplementedBy(Element);
+    Child.isImplementedBy(Element);
+
+    /* Add Parent as a constructor (which it is) */
+    Element.constructors.splice(2, 0, Parent);
+
+    /**
+     * Expose Text. Constructs a new Text node;
+     *
+     * @api public
+     * @constructor
+     */
+    function Text(value) {
+        Child.apply(this, arguments);
+
+        this.fromString(value);
+    }
+
+    prototype = Text.prototype;
+
+    /**
+     * The internal value.
+     *
+     * @api private
+     */
+    prototype.internalValue = '';
+
+    /**
+     * Return the internal value of a Text;
+     *
+     * @return {String}
+     * @api public
+     */
+    prototype.toString = function () {
+        return this.internalValue;
+    };
+
+    /**
+     * (Re)sets and returns the internal value of a Text with the stringified
+     * version of the given value.
+     *
+     * @param {?String} [value=''] - the value to set
+     * @return {String}
+     * @api public
+     */
+    prototype.fromString = function (value) {
+        var self = this,
+            previousValue = self.toString(),
+            parent;
+
+        if (value === null || value === undefined) {
+            value = '';
         } else {
-            endAncestors = findAncestors(endContainer);
-            node = startContainer;
+            value = value.toString();
+        }
 
-            while (node) {
-                if (node === endContainer) {
-                    wouldBeValid = true;
-                    break;
-                }
+        if (value !== previousValue) {
+            self.internalValue = value;
 
-                if (endAncestors.indexOf(node) === -1) {
-                    node = node.next || findNextAncestor(node);
-                } else {
-                    node = node.head;
+            emit(self, 'changetext', value, previousValue);
+
+            parent = self.parent;
+            if (parent) {
+                trigger(
+                    parent, 'changetextinside', self, value, previousValue
+                );
+            }
+        }
+
+        return value;
+    };
+
+    /**
+     * Split the Text into two, dividing the internal value from 0–position
+     * (NOT including the character at `position`), and position–length
+     * (including the character at `position`).
+     *
+     * @param {?number} [position=0] - the position to split at.
+     * @return {Child} - the prepended child.
+     * @api public
+     */
+    prototype.split = function (position) {
+        var self = this,
+            value = self.internalValue,
+            cloneNode;
+
+        if (position === null ||
+            position === undefined ||
+            position !== position ||
+            position === -Infinity) {
+                position = 0;
+        } else if (position === Infinity) {
+            position = value.length;
+        } else if (typeof position !== 'number') {
+            throw new TypeError('\'' + position + ' is not a valid ' +
+                'argument for \'Text.prototype.split\'');
+        } else if (position < 0) {
+            position = Math.abs((value.length + position) % value.length);
+        }
+
+        /* This throws if we're not attached, thus preventing substringing. */
+        cloneNode = append(self.parent, self.prev, new self.constructor());
+
+        self.fromString(value.slice(position));
+        cloneNode.fromString(value.slice(0, position));
+
+        return cloneNode;
+    };
+
+    /**
+     * Inherit from `Child.prototype`.
+     */
+    Child.isImplementedBy(Text);
+
+    /**
+     * Expose RootNode. Constructs a new RootNode (inheriting from Parent);
+     *
+     * @api public
+     * @constructor
+     */
+    function RootNode() {
+        Parent.apply(this, arguments);
+    }
+
+    /**
+     * The type of an instance of RootNode.
+     *
+     * @api public
+     * @readonly
+     * @static
+     */
+    RootNode.prototype.type = 1;
+    RootNode.prototype.hierarchy = 1;
+
+    /**
+     * Inherit from `Parent.prototype`.
+     */
+    Parent.isImplementedBy(RootNode);
+
+    /**
+     * Expose ParagraphNode. Constructs a new ParagraphNode (inheriting from
+     * both Parent and Child);
+     *
+     * @api public
+     * @constructor
+     */
+    function ParagraphNode() {
+        Element.apply(this, arguments);
+    }
+
+    /**
+     * The type of an instance of ParagraphNode.
+     *
+     * @api public
+     * @readonly
+     * @static
+     */
+    ParagraphNode.prototype.type = 2;
+    ParagraphNode.prototype.hierarchy = 2;
+
+    /**
+     * Inherit from `Parent.prototype` and `Child.prototype`.
+     */
+    Element.isImplementedBy(ParagraphNode);
+
+    /**
+     * Expose SentenceNode. Constructs a new SentenceNode (inheriting from
+     * both Parent and Child);
+     *
+     * @api public
+     * @constructor
+     */
+    function SentenceNode() {
+        Element.apply(this, arguments);
+    }
+
+    /**
+     * The type of an instance of SentenceNode.
+     *
+     * @api public
+     * @readonly
+     * @static
+     */
+    SentenceNode.prototype.type = 3;
+    SentenceNode.prototype.hierarchy = 3;
+
+    /**
+     * Inherit from `Parent.prototype` and `Child.prototype`.
+     */
+    Element.isImplementedBy(SentenceNode);
+
+    /**
+     * Expose WordNode.
+     */
+    function WordNode() {
+        Text.apply(this, arguments);
+    }
+
+    /**
+     * The type of an instance of WordNode.
+     *
+     * @api public
+     * @readonly
+     * @static
+     */
+    WordNode.prototype.type = 4;
+    WordNode.prototype.hierarchy = 4;
+
+    /**
+     * Inherit from `Text.prototype`.
+     */
+    Text.isImplementedBy(WordNode);
+
+    /**
+     * Expose WhiteSpaceNode.
+     */
+    function WhiteSpaceNode() {
+        Text.apply(this, arguments);
+    }
+
+    /**
+     * The type of an instance of WhiteSpaceNode.
+     *
+     * @api public
+     * @readonly
+     * @static
+     */
+    WhiteSpaceNode.prototype.type = 5;
+
+    /**
+     * Inherit from `Text.prototype`.
+     */
+    Text.isImplementedBy(WhiteSpaceNode);
+
+    /**
+     * Expose PunctuationNode.
+     */
+    function PunctuationNode() {
+        Text.apply(this, arguments);
+    }
+
+    /**
+     * The type of an instance of PunctuationNode.
+     *
+     * @api public
+     * @readonly
+     * @static
+     */
+    PunctuationNode.prototype.type = 6;
+    PunctuationNode.prototype.hierarchy = 4;
+
+    /**
+     * Inherit from `Text.prototype`.
+     */
+    Text.isImplementedBy(PunctuationNode);
+
+    /**
+     * Expose Range.
+     */
+    function Range() {}
+
+    prototype = Range.prototype;
+
+    /**
+     * The starting node of a range, null otherwise.
+     *
+     * @api public
+     * @type {?Node}
+     * @readonly
+     */
+    prototype.startContainer = null;
+
+    /**
+     * The starting offset of a range `null` when not existing.
+     *
+     * @api public
+     * @type {?number}
+     * @readonly
+     */
+    prototype.startOffset = null;
+
+    /**
+     * The ending node of a range, null otherwise.
+     *
+     * @api public
+     * @type {?Node}
+     * @readonly
+     */
+    prototype.endContainer = null;
+
+    /**
+     * The ending offset of a range, `null` when not existing.
+     *
+     * @api public
+     * @type {?number}
+     * @readonly
+     */
+    prototype.endOffset = null;
+
+    /**
+     * Set the start container and offset of a range.
+     *
+     * @param {Node} startContainer - the start container to start the range
+     *                                at.
+     * @param {?number} offset - (integer) the start offset of the container
+     *                           to start the range at;
+     * @api public
+     */
+    prototype.setStart = function (startContainer, offset) {
+        if (!startContainer) {
+            throw new TypeError('\'' + startContainer + ' is not a valid ' +
+                'argument for \'Range.prototype.setStart\'');
+        }
+
+        var self = this,
+            endContainer = self.endContainer,
+            endOffset = self.endOffset,
+            offsetIsDefault = false,
+            wouldBeValid = false,
+            endAncestors, node;
+
+        if (offset === null || offset === undefined || offset !== offset) {
+            offset = 0;
+            offsetIsDefault = true;
+        } else if (typeof offset !== 'number' || offset < 0) {
+            throw new TypeError('\'' + offset + ' is not a valid argument ' +
+                'for \'Range.prototype.setStart\'');
+        }
+
+        if (!endContainer) {
+            wouldBeValid = true;
+        } else {
+            if (findRoot(endContainer) !== findRoot(startContainer)) {
+                throw new Error('WrongRootError: The given startContainer ' +
+                    'is in the wrong document.');
+            }
+
+            /* When startContainer is also the endContainer; */
+            if (endContainer === startContainer) {
+                wouldBeValid = endOffset >= offset;
+            } else {
+                endAncestors = findAncestors(endContainer);
+                node = startContainer;
+
+                while (node) {
+                    if (node === endContainer) {
+                        wouldBeValid = true;
+                        break;
+                    }
+
+                    if (endAncestors.indexOf(node) === -1) {
+                        node = node.next || findNextAncestor(node);
+                    } else {
+                        node = node.head;
+                    }
                 }
             }
         }
-    }
 
-    if (wouldBeValid) {
-        self.startContainer = startContainer;
-        self.startOffset = offset;
-    } else {
-        self.endContainer = startContainer;
-        self.endOffset = offsetIsDefault ? Infinity : offset;
-        self.startContainer = endContainer;
-        self.startOffset = endOffset;
-    }
-};
+        if (wouldBeValid) {
+            self.startContainer = startContainer;
+            self.startOffset = offset;
+        } else {
+            self.endContainer = startContainer;
+            self.endOffset = offsetIsDefault ? Infinity : offset;
+            self.startContainer = endContainer;
+            self.startOffset = endOffset;
+        }
+    };
 
-/**
- * Set the end container and offset of a range.
- *
- * @param {Node} endContainer - the end container to start the range at.
- * @param {?number} offset - (integer) the end offset of the container to
- *                           end the range at;
- * @api public
- */
-prototype.setEnd = function (endContainer, offset) {
-    if (!endContainer) {
-        throw new TypeError('\'' + endContainer + ' is not a valid ' +
-            'argument for \'Range.prototype.setEnd\'');
-    }
-
-    var self = this,
-        startContainer = self.startContainer,
-        startOffset = self.startOffset,
-        offsetIsDefault = false,
-        wouldBeValid = false,
-        endAncestors, node;
-
-    if (offset === null || offset === undefined || offset !== offset) {
-        offset = Infinity;
-        offsetIsDefault = true;
-    } else if (typeof offset !== 'number' || offset < 0) {
-        throw new TypeError('\'' + offset + ' is not a valid argument ' +
-            'for \'Range.prototype.setEnd\'');
-    }
-
-    if (!startContainer) {
-        wouldBeValid = true;
-    } else {
-        if (findRoot(startContainer) !== findRoot(endContainer)) {
-            throw new Error('WrongRootError: The given endContainer ' +
-                'is in the wrong document.');
+    /**
+     * Set the end container and offset of a range.
+     *
+     * @param {Node} endContainer - the end container to start the range at.
+     * @param {?number} offset - (integer) the end offset of the container to
+     *                           end the range at;
+     * @api public
+     */
+    prototype.setEnd = function (endContainer, offset) {
+        if (!endContainer) {
+            throw new TypeError('\'' + endContainer + ' is not a valid ' +
+                'argument for \'Range.prototype.setEnd\'');
         }
 
-        /* When endContainer is also the startContainer; */
-        if (startContainer === endContainer) {
-            wouldBeValid = startOffset <= offset;
+        var self = this,
+            startContainer = self.startContainer,
+            startOffset = self.startOffset,
+            offsetIsDefault = false,
+            wouldBeValid = false,
+            endAncestors, node;
+
+        if (offset === null || offset === undefined || offset !== offset) {
+            offset = Infinity;
+            offsetIsDefault = true;
+        } else if (typeof offset !== 'number' || offset < 0) {
+            throw new TypeError('\'' + offset + ' is not a valid argument ' +
+                'for \'Range.prototype.setEnd\'');
+        }
+
+        if (!startContainer) {
+            wouldBeValid = true;
         } else {
-            endAncestors = findAncestors(endContainer);
-            node = startContainer;
+            if (findRoot(startContainer) !== findRoot(endContainer)) {
+                throw new Error('WrongRootError: The given endContainer ' +
+                    'is in the wrong document.');
+            }
 
-            while (node) {
-                if (node === endContainer) {
-                    wouldBeValid = true;
-                    break;
-                }
+            /* When endContainer is also the startContainer; */
+            if (startContainer === endContainer) {
+                wouldBeValid = startOffset <= offset;
+            } else {
+                endAncestors = findAncestors(endContainer);
+                node = startContainer;
 
-                if (endAncestors.indexOf(node) === -1) {
-                    node = node.next || findNextAncestor(node);
-                } else {
-                    node = node.head;
+                while (node) {
+                    if (node === endContainer) {
+                        wouldBeValid = true;
+                        break;
+                    }
+
+                    if (endAncestors.indexOf(node) === -1) {
+                        node = node.next || findNextAncestor(node);
+                    } else {
+                        node = node.head;
+                    }
                 }
             }
         }
-    }
 
-    if (wouldBeValid) {
-        self.endContainer = endContainer;
-        self.endOffset = offset;
-    } else {
-        self.startContainer = endContainer;
-        self.startOffset = offsetIsDefault ? 0 : offset;
-        self.endContainer = startContainer;
-        self.endOffset = startOffset;
-    }
-};
+        if (wouldBeValid) {
+            self.endContainer = endContainer;
+            self.endOffset = offset;
+        } else {
+            self.startContainer = endContainer;
+            self.startOffset = offsetIsDefault ? 0 : offset;
+            self.endContainer = startContainer;
+            self.endOffset = startOffset;
+        }
+    };
 
-prototype.cloneRange = function () {
-    var self = this,
-        range = new self.constructor();
+    prototype.cloneRange = function () {
+        var self = this,
+            range = new self.constructor();
 
-    range.startContainer = self.startContainer;
-    range.startOffset = self.startOffset;
-    range.endContainer = self.endContainer;
-    range.endOffset = self.endOffset;
+        range.startContainer = self.startContainer;
+        range.startOffset = self.startOffset;
+        range.endContainer = self.endContainer;
+        range.endOffset = self.endOffset;
 
-    return range;
-};
+        return range;
+    };
 
-/**
- * Return the result of calling `toString` on each of Text node inside
- * `range`, substringing when necessary;
- *
- * @return {String}
- * @api public
- */
-prototype.toString = function () {
-    var content = this.getContent(),
-        startOffset = this.startOffset,
-        endOffset = this.endOffset,
-        startContainer = this.startContainer,
-        endContainer = this.endContainer,
-        startIsText, index;
+    /**
+     * Return the result of calling `toString` on each of Text node inside
+     * `range`, substringing when necessary;
+     *
+     * @return {String}
+     * @api public
+     */
+    prototype.toString = function () {
+        var content = this.getContent(),
+            startOffset = this.startOffset,
+            endOffset = this.endOffset,
+            startContainer = this.startContainer,
+            endContainer = this.endContainer,
+            startIsText, index;
 
-    if (content.length === 0) {
-        return '';
-    }
+        if (content.length === 0) {
+            return '';
+        }
 
-    startIsText = !('length' in startContainer);
+        startIsText = !('length' in startContainer);
 
-    if (startContainer === endContainer && startIsText) {
-        return startContainer.toString().slice(startOffset, endOffset);
-    }
+        if (startContainer === endContainer && startIsText) {
+            return startContainer.toString().slice(startOffset, endOffset);
+        }
 
-    if (startIsText) {
-        content[0] = content[0].toString().slice(startOffset);
-    }
+        if (startIsText) {
+            content[0] = content[0].toString().slice(startOffset);
+        }
 
-    if (!('length' in endContainer)) {
-        index = content.length - 1;
-        content[index] = content[index].toString().slice(0, endOffset);
-    }
+        if (!('length' in endContainer)) {
+            index = content.length - 1;
+            content[index] = content[index].toString().slice(0, endOffset);
+        }
 
-    return content.join('');
-};
+        return content.join('');
+    };
 
-/**
- * Removes all nodes completely covered by `range` and removes the parts
- * covered by `range` in partial covered nodes.
- *
- * @return {Node[]} content - The removed nodes.
- * @api public
- */
-prototype.removeContent = function () {
-    var content = this.getContent(),
-        startOffset = this.startOffset,
-        endOffset = this.endOffset,
-        startContainer = this.startContainer,
-        endContainer = this.endContainer,
-        iterator = -1,
-        startIsText, middle;
+    /**
+     * Removes all nodes completely covered by `range` and removes the parts
+     * covered by `range` in partial covered nodes.
+     *
+     * @return {Node[]} content - The removed nodes.
+     * @api public
+     */
+    prototype.removeContent = function () {
+        var content = this.getContent(),
+            startOffset = this.startOffset,
+            endOffset = this.endOffset,
+            startContainer = this.startContainer,
+            endContainer = this.endContainer,
+            iterator = -1,
+            startIsText, middle;
 
-    if (content.length === 0) {
+        if (content.length === 0) {
+            return content;
+        }
+
+        startIsText = !('length' in startContainer);
+
+        if (startContainer === endContainer && startIsText) {
+            if (startOffset === endOffset) {
+                return [];
+            }
+
+            if (startOffset === 0 && endOffset >=
+                startContainer.toString().length) {
+                    return content;
+            }
+
+            if (startOffset !== 0) {
+                startContainer.split(startOffset);
+                endOffset -= startOffset;
+            }
+
+            if (endOffset < startContainer.toString().length) {
+                middle = startContainer.split(endOffset);
+            }
+
+            return [middle || startContainer];
+        }
+
+        if (startIsText) {
+            startContainer.split(startOffset);
+            content[0] = startContainer;
+        }
+
+        if (!('length' in endContainer)) {
+            content[content.length - 1] =
+                endContainer.split(endOffset);
+        }
+
+        while (content[++iterator]) {
+            content[iterator].remove();
+        }
+
         return content;
-    }
+    };
 
-    startIsText = !('length' in startContainer);
+    /**
+     * Return the nodes in a range as an array. If a nodes parent is
+     * completely encapsulated by the range, returns that parent. Ignores
+     * startOffset (i.e., treats as `0`) when startContainer is a text node.
+     * Ignores endOffset (i.e., treats as `Infinity`) when endContainer is a
+     * text node.
+     *
+     * @return {Node[]} content - The nodes completely encapsulated by
+     *                            the range.
+     * @api public
+     */
+    prototype.getContent = function () {
+        var content = [],
+            self = this,
+            startContainer = self.startContainer,
+            startOffset = self.startOffset,
+            endContainer = self.endContainer,
+            endOffset = self.endOffset,
+            endAncestors, node;
 
-    if (startContainer === endContainer && startIsText) {
-        if (startOffset === endOffset) {
-            return [];
-        }
-
-        if (startOffset === 0 && endOffset >=
-            startContainer.toString().length) {
+        /*
+         * Return an empty array when either:
+         * - startContainer or endContainer are not set;
+         * - startContainer or endContainer are not attached;
+         * - startContainer does not share a root with endContainer.
+         */
+        if (!startContainer || !endContainer || !startContainer.parent ||
+            !endContainer.parent || findRoot(startContainer) !==
+            findRoot(endContainer)) {
                 return content;
         }
 
-        if (startOffset !== 0) {
-            startContainer.split(startOffset);
-            endOffset -= startOffset;
-        }
-
-        if (endOffset < startContainer.toString().length) {
-            middle = startContainer.split(endOffset);
-        }
-
-        return [middle || startContainer];
-    }
-
-    if (startIsText) {
-        startContainer.split(startOffset);
-        content[0] = startContainer;
-    }
-
-    if (!('length' in endContainer)) {
-        content[content.length - 1] =
-            endContainer.split(endOffset);
-    }
-
-    while (content[++iterator]) {
-        content[iterator].remove();
-    }
-
-    return content;
-};
-
-/**
- * Return the nodes in a range as an array. If a nodes parent is
- * completely encapsulated by the range, returns that parent. Ignores
- * startOffset (i.e., treats as `0`) when startContainer is a text node.
- * Ignores endOffset (i.e., treats as `Infinity`) when endContainer is a
- * text node.
- *
- * @return {Node[]} content - The nodes completely encapsulated by
- *                            the range.
- * @api public
- */
-prototype.getContent = function () {
-    var content = [],
-        self = this,
-        startContainer = self.startContainer,
-        startOffset = self.startOffset,
-        endContainer = self.endContainer,
-        endOffset = self.endOffset,
-        endAncestors, node;
-
-    /*
-     * Return an empty array when either:
-     * - startContainer or endContainer are not set;
-     * - startContainer or endContainer are not attached;
-     * - startContainer does not share a root with endContainer.
-     */
-    if (!startContainer || !endContainer || !startContainer.parent ||
-        !endContainer.parent || findRoot(startContainer) !==
-        findRoot(endContainer)) {
-            return content;
-    }
-
-    /* If startContainer equals endContainer... */
-    if (startContainer === endContainer) {
-        /* Return an array containing startContainer when startContainer
-         * either:
-         * - does not accept children;
-         * - starts and ends so range contains all its children.
-         */
-        if (!('length' in startContainer) ||
-            (startOffset === 0 && endOffset >= startContainer.length)) {
-                return [startContainer];
-        }
-
-        /* Return an array containing the children of startContainer
-         * between startOffset and endOffset. */
-        return arraySlice.call(startContainer, startOffset, endOffset);
-    }
-
-    /* If startOffset isn't `0` and startContainer accepts children... */
-    if (startOffset && ('length' in startContainer)) {
-        /* If a child exists at startOffset, let startContainer be that
-         * child. */
-        if (startOffset in startContainer) {
-            startContainer = startContainer[startOffset];
-        /* Otherwise, let startContainer be a following node of
-         * startContainer. */
-        } else {
-            startContainer = startContainer.next || findNextAncestor(
-                startContainer
-            );
-        }
-    }
-
-    /* If the whole endNode is in the range... */
-    if (endOffset >= endContainer.length) {
-        /* While endContainer is the last child of its parent... */
-        while (endContainer.parent.tail === endContainer) {
-            /* Let endContainer be its parent. */
-            endContainer = endContainer.parent;
-
-            /* Break when the new endContainer has no parent. */
-            if (!endContainer.parent) {
-                break;
-            }
-        }
-    }
-
-    /* Find all ancestors of endContainer. */
-    endAncestors = findAncestors(endContainer);
-
-    /* While node is truthy... */
-    node = startContainer;
-
-    while (node) {
-        /* If node equals endContainer... */
-        if (node === endContainer) {
-            /* Add endContainer to content, if either:
-             * - endContainer does not accept children;
-             * - ends so range contains all its children.
+        /* If startContainer equals endContainer... */
+        if (startContainer === endContainer) {
+            /* Return an array containing startContainer when startContainer
+             * either:
+             * - does not accept children;
+             * - starts and ends so range contains all its children.
              */
-            if (!('length' in endContainer) ||
-                endOffset >= endContainer.length) {
-                    content.push(node);
-            /* Add the children of endContainer to content from its start
-             * until its endOffset. */
+            if (!('length' in startContainer) ||
+                (startOffset === 0 && endOffset >= startContainer.length)) {
+                    return [startContainer];
+            }
+
+            /* Return an array containing the children of startContainer
+             * between startOffset and endOffset. */
+            return arraySlice.call(startContainer, startOffset, endOffset);
+        }
+
+        /* If startOffset isn't `0` and startContainer accepts children... */
+        if (startOffset && ('length' in startContainer)) {
+            /* If a child exists at startOffset, let startContainer be that
+             * child. */
+            if (startOffset in startContainer) {
+                startContainer = startContainer[startOffset];
+            /* Otherwise, let startContainer be a following node of
+             * startContainer. */
             } else {
-                content = content.concat(
-                    arraySlice.call(endContainer, 0, endOffset)
+                startContainer = startContainer.next || findNextAncestor(
+                    startContainer
                 );
             }
-
-            /* Stop iterating. */
-            break;
         }
 
-        /* If node is not an ancestor of endContainer... */
-        if (endAncestors.indexOf(node) === -1) {
-            /* Add node to content */
-            content.push(node);
+        /* If the whole endNode is in the range... */
+        if (endOffset >= endContainer.length) {
+            /* While endContainer is the last child of its parent... */
+            while (endContainer.parent.tail === endContainer) {
+                /* Let endContainer be its parent. */
+                endContainer = endContainer.parent;
 
-            /* Let the next node to iterate over be either its next
-             * sibling, or a following ancestor. */
-            node = node.next || findNextAncestor(node);
-        /* Otherwise, let the next node to iterate over be either its
-         * first child, its next sibling, or a following ancestor. */
-        } else {
-            /* Note that a `head` always exists on a parent of
-             * `endContainer`, thus we do not check for `next`, or a next
-             * ancestor. */
-            node = node.head;
+                /* Break when the new endContainer has no parent. */
+                if (!endContainer.parent) {
+                    break;
+                }
+            }
         }
+
+        /* Find all ancestors of endContainer. */
+        endAncestors = findAncestors(endContainer);
+
+        /* While node is truthy... */
+        node = startContainer;
+
+        while (node) {
+            /* If node equals endContainer... */
+            if (node === endContainer) {
+                /* Add endContainer to content, if either:
+                 * - endContainer does not accept children;
+                 * - ends so range contains all its children.
+                 */
+                if (!('length' in endContainer) ||
+                    endOffset >= endContainer.length) {
+                        content.push(node);
+                /* Add the children of endContainer to content from its start
+                 * until its endOffset. */
+                } else {
+                    content = content.concat(
+                        arraySlice.call(endContainer, 0, endOffset)
+                    );
+                }
+
+                /* Stop iterating. */
+                break;
+            }
+
+            /* If node is not an ancestor of endContainer... */
+            if (endAncestors.indexOf(node) === -1) {
+                /* Add node to content */
+                content.push(node);
+
+                /* Let the next node to iterate over be either its next
+                 * sibling, or a following ancestor. */
+                node = node.next || findNextAncestor(node);
+            /* Otherwise, let the next node to iterate over be either its
+             * first child, its next sibling, or a following ancestor. */
+            } else {
+                /* Note that a `head` always exists on a parent of
+                 * `endContainer`, thus we do not check for `next`, or a next
+                 * ancestor. */
+                node = node.head;
+            }
+        }
+
+        /* Return content. */
+        return content;
+    };
+
+    /**
+     * Define `TextOM`. Exported above, and used to instantiate a new
+     * `RootNode`.
+     *
+     * @api public
+     * @constructor
+     */
+    function TextOM() {
+        return new RootNode();
     }
 
-    /* Return content. */
-    return content;
-};
+    var nodePrototype = Node.prototype;
 
-/**
- * Define `TextOM`. Exported above, and used to instantiate a new
- * `RootNode`.
- *
- * @api public
- * @constructor
- */
-function TextOM() {
-    return new RootNode();
+    /**
+     * Expose `TextOM` on every instance of Node.
+     */
+    nodePrototype.TextOM = TextOM;
+
+    /**
+     * Export all node types to `TextOM` and `Node#`.
+     */
+    TextOM.ROOT_NODE = nodePrototype.ROOT_NODE =
+        RootNode.prototype.type;
+    TextOM.PARAGRAPH_NODE = nodePrototype.PARAGRAPH_NODE =
+        ParagraphNode.prototype.type;
+    TextOM.SENTENCE_NODE = nodePrototype.SENTENCE_NODE =
+        SentenceNode.prototype.type;
+    TextOM.WORD_NODE = nodePrototype.WORD_NODE = WordNode.prototype.type;
+    TextOM.PUNCTUATION_NODE = nodePrototype.PUNCTUATION_NODE =
+        PunctuationNode.prototype.type;
+    TextOM.WHITE_SPACE_NODE = nodePrototype.WHITE_SPACE_NODE =
+        WhiteSpaceNode.prototype.type;
+
+    /**
+     * Export all `Node`s and `Range` to `TextOM`.
+     */
+    TextOM.Node = Node;
+    TextOM.Parent = Parent;
+    TextOM.Child = Child;
+    TextOM.Element = Element;
+    TextOM.Text = Text;
+    TextOM.Range = Range;
+    TextOM.RootNode = RootNode;
+    TextOM.ParagraphNode = ParagraphNode;
+    TextOM.SentenceNode = SentenceNode;
+    TextOM.WordNode = WordNode;
+    TextOM.PunctuationNode = PunctuationNode;
+    TextOM.WhiteSpaceNode = WhiteSpaceNode;
+
+    /**
+     * Expose `TextOM`. Used to instantiate a new `RootNode`.
+     */
+    return TextOM;
 }
 
-var nodePrototype = Node.prototype;
-
-/**
- * Expose `TextOM` on every instance of Node.
- */
-nodePrototype.TextOM = TextOM;
-
-/**
- * Export all node types to `TextOM` and `Node#`.
- */
-TextOM.ROOT_NODE = nodePrototype.ROOT_NODE =
-    RootNode.prototype.type;
-TextOM.PARAGRAPH_NODE = nodePrototype.PARAGRAPH_NODE =
-    ParagraphNode.prototype.type;
-TextOM.SENTENCE_NODE = nodePrototype.SENTENCE_NODE =
-    SentenceNode.prototype.type;
-TextOM.WORD_NODE = nodePrototype.WORD_NODE = WordNode.prototype.type;
-TextOM.PUNCTUATION_NODE = nodePrototype.PUNCTUATION_NODE =
-    PunctuationNode.prototype.type;
-TextOM.WHITE_SPACE_NODE = nodePrototype.WHITE_SPACE_NODE =
-    WhiteSpaceNode.prototype.type;
-
-/**
- * Export all `Node`s and `Range` to `TextOM`.
- */
-TextOM.Node = Node;
-TextOM.Parent = Parent;
-TextOM.Child = Child;
-TextOM.Element = Element;
-TextOM.Text = Text;
-TextOM.Range = Range;
-TextOM.RootNode = RootNode;
-TextOM.ParagraphNode = ParagraphNode;
-TextOM.SentenceNode = SentenceNode;
-TextOM.WordNode = WordNode;
-TextOM.PunctuationNode = PunctuationNode;
-TextOM.WhiteSpaceNode = WhiteSpaceNode;
-
-/**
- * Expose `TextOM`. Used to instantiate a new `RootNode`.
- */
-exports = module.exports = TextOM;
+module.exports = TextOMConstructor;
