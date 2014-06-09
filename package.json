@@ -27,5 +27,21 @@
     "lint": "node_modules/.bin/eslint index.js --env node --env browser --rule 'quotes: [2, single]' && node_modules/.bin/eslint spec/textom.spec.js --env node --env mocha --rule 'quotes: [2, single]' && node_modules/.bin/jscs index.js spec/textom.spec.js --reporter=inline",
     "coverage": "node_modules/.bin/istanbul cover node_modules/.bin/_mocha -- -- spec spec/textom.spec.js",
     "make": "npm run-script lint && npm run-script coverage"
+  },
+  "testling": {
+    "files": "spec/textom.spec.js",
+    "harness": "mocha",
+    "browsers": [
+      "iexplore/latest",
+      "chrome/latest",
+      "chrome/canary",
+      "firefox/latest",
+      "firefox/nightly",
+      "opera/latest",
+      "opera/next",
+      "safari/latest",
+      "iphone/latest",
+      "android-browser/latest"
+    ]
   }
 }
