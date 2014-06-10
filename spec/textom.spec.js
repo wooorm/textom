@@ -331,6 +331,7 @@ describe('TextOM.Node#off(name?, callback?)', function () {
         'but return the current context', function () {
             var node = new Node();
             node.on('test', noop);
+
             assert.doesNotThrow(function () {
                 assert(node.off('test2') === node);
             });
@@ -469,19 +470,19 @@ describe('TextOM.Parent#prepend(childNode)', function () {
 
         assert.throws(function () {
             parent.prepend();
-        }, /undefined/);
+        }, 'undefined');
 
         assert.throws(function () {
             parent.prepend(null);
-        }, /null/);
+        }, 'null');
 
         assert.throws(function () {
             parent.prepend(undefined);
-        }, /undefined/);
+        }, 'undefined');
 
         assert.throws(function () {
             parent.prepend(false);
-        }, /false/);
+        }, 'false');
     });
 
     it('should throw when non-removable nodes are prepended (e.g., not ' +
@@ -490,11 +491,11 @@ describe('TextOM.Parent#prepend(childNode)', function () {
 
             assert.throws(function () {
                 parent.prepend(new Node());
-            }, /remove/);
+            }, 'remove');
 
             assert.throws(function () {
                 parent.prepend({});
-            }, /remove/);
+            }, 'remove');
         }
     );
 
@@ -651,19 +652,19 @@ describe('TextOM.Parent#append(childNode)', function () {
 
         assert.throws(function () {
             parent.append();
-        }, /undefined/);
+        }, 'undefined');
 
         assert.throws(function () {
             parent.append(null);
-        }, /null/);
+        }, 'null');
 
         assert.throws(function () {
             parent.append(undefined);
-        }, /undefined/);
+        }, 'undefined');
 
         assert.throws(function () {
             parent.append(false);
-        }, /false/);
+        }, 'false');
     });
 
     it('should throw when non-removable nodes are appended (e.g., not ' +
@@ -672,11 +673,11 @@ describe('TextOM.Parent#append(childNode)', function () {
 
             assert.throws(function () {
                 parent.append(new Node());
-            }, /remove/);
+            }, 'remove');
 
             assert.throws(function () {
                 parent.append({});
-            }, /remove/);
+            }, 'remove');
         }
     );
 
@@ -820,15 +821,15 @@ describe('TextOM.Parent#item(index?)', function () {
 
             assert.throws(function () {
                 parent.item('string');
-            }, /string/);
+            }, 'string');
 
             assert.throws(function () {
                 parent.item(0 / 0);
-            }, /NaN/);
+            }, 'NaN');
 
             assert.throws(function () {
                 parent.item(true);
-            }, /true/);
+            }, 'true');
         }
     );
 
@@ -861,7 +862,7 @@ describe('TextOM.Parent#split(position)', function () {
 
             assert.throws(function () {
                 parent.split();
-            }, /undefined/);
+            }, 'undefined');
         }
     );
 
@@ -872,7 +873,7 @@ describe('TextOM.Parent#split(position)', function () {
 
             assert.throws(function () {
                 element.split('failure');
-            }, /failure/);
+            }, 'failure');
         }
     );
 
@@ -1126,7 +1127,7 @@ describe('TextOM.Child#before(childNode)', function () {
     it('should throw when not attached', function () {
         assert.throws(function () {
             (new Child()).before(new Child());
-        }, /Illegal invocation/);
+        }, 'Illegal invocation');
     });
 
     it('should throw when falsey values are provided', function () {
@@ -1134,19 +1135,19 @@ describe('TextOM.Child#before(childNode)', function () {
 
         assert.throws(function () {
             child.before();
-        }, /undefined/);
+        }, 'undefined');
 
         assert.throws(function () {
             child.before(null);
-        }, /null/);
+        }, 'null');
 
         assert.throws(function () {
             child.before(undefined);
-        }, /undefined/);
+        }, 'undefined');
 
         assert.throws(function () {
             child.before(false);
-        }, /false/);
+        }, 'false');
     });
 
     it('should throw when non-removable nodes are prepended (e.g., not ' +
@@ -1155,11 +1156,11 @@ describe('TextOM.Child#before(childNode)', function () {
 
         assert.throws(function () {
             child.before(new Node());
-        }, /remove/);
+        }, 'remove');
 
         assert.throws(function () {
             child.before({});
-        }, /remove/);
+        }, 'remove');
     });
 
     it('should call the `remove` method on the prependee', function () {
@@ -1299,7 +1300,7 @@ describe('TextOM.Child#after(childNode)', function () {
     it('should throw when not attached', function () {
         assert.throws(function () {
             (new Child()).after(new Child());
-        }, /Illegal invocation/);
+        }, 'Illegal invocation');
     });
 
     it('should throw when falsey values are provided', function () {
@@ -1307,19 +1308,19 @@ describe('TextOM.Child#after(childNode)', function () {
 
         assert.throws(function () {
             child.after();
-        }, /undefined/);
+        }, 'undefined');
 
         assert.throws(function () {
             child.after(null);
-        }, /null/);
+        }, 'null');
 
         assert.throws(function () {
             child.after(undefined);
-        }, /undefined/);
+        }, 'undefined');
 
         assert.throws(function () {
             child.after(false);
-        }, /false/);
+        }, 'false');
     });
 
     it('should throw when non-removable nodes are appended (e.g., not' +
@@ -1328,11 +1329,11 @@ describe('TextOM.Child#after(childNode)', function () {
 
         assert.throws(function () {
             child.after(new Node());
-        }, /remove/);
+        }, 'remove');
 
         assert.throws(function () {
             child.after({});
-        }, /remove/);
+        }, 'remove');
     });
 
     it('should call the `remove` method on the appendee', function () {
@@ -1636,7 +1637,7 @@ describe('TextOM.Child#replace(childNode)', function () {
     it('should throw when not attached', function () {
         assert.throws(function () {
             (new Child()).replace(new Child());
-        }, /Illegal invocation/);
+        }, 'Illegal invocation');
     });
 
     it('should throw when falsey values are provided', function () {
@@ -1644,19 +1645,19 @@ describe('TextOM.Child#replace(childNode)', function () {
 
         assert.throws(function () {
             child.replace();
-        }, /undefined/);
+        }, 'undefined');
 
         assert.throws(function () {
             child.replace(null);
-        }, /null/);
+        }, 'null');
 
         assert.throws(function () {
             child.replace(undefined);
-        }, /undefined/);
+        }, 'undefined');
 
         assert.throws(function () {
             child.replace(false);
-        }, /false/);
+        }, 'false');
     });
 
     it('should throw when non-removable nodes are given (e.g., not ' +
@@ -1665,11 +1666,11 @@ describe('TextOM.Child#replace(childNode)', function () {
 
         assert.throws(function () {
             child.replace(new Node());
-        }, /remove/);
+        }, 'remove');
 
         assert.throws(function () {
             child.replace({});
-        }, /remove/);
+        }, 'remove');
     });
 
     it('should call the `remove` method on the replacee', function () {
@@ -1835,25 +1836,38 @@ describe('TextOM.Element()', function () {
     // - Second, istanbul overwrites methods on prototypes to detect if their
     //   called. Thus, what used to be the same method, is now overwritten.
     it('should inherit from `Child`', function () {
-        var element = new Element();
-        Object.keys(childPrototype).forEach(function (key) {
+        var element = new Element(),
+            key;
+
+        for (key in childPrototype) {
+            if (!childPrototype.hasOwnProperty(key)) {
+                continue;
+            }
+
             if (typeof childPrototype[key] === 'function') {
                 assert(key in element);
             } else {
                 assert(element[key] === childPrototype[key]);
             }
-        });
+        }
     });
 
     it('should inherit from `Parent`', function () {
-        var element = new Element();
-        Object.keys(parentPrototype).forEach(function (key) {
+        var element = new Element(),
+            key;
+
+        for (key in childPrototype) {
+            if (!parentPrototype.hasOwnProperty(key)) {
+                continue;
+            }
+
+            /* istanbul ignore else: maybe in the future? */
             if (typeof parentPrototype[key] === 'function') {
                 assert(key in element);
             } else {
                 assert(element[key] === parentPrototype[key]);
             }
-        });
+        }
     });
 });
 
@@ -1908,7 +1922,7 @@ describe('TextOM.Text#split(position)', function () {
 
         assert.throws(function () {
             box.split();
-        }, /Illegal invocation/);
+        }, 'Illegal invocation');
     });
 
     it('should throw when a position was given, not of type number',
@@ -1918,7 +1932,7 @@ describe('TextOM.Text#split(position)', function () {
 
             assert.throws(function () {
                 box.split('failure');
-            }, /failure/);
+            }, 'failure');
         }
     );
 
@@ -2046,11 +2060,11 @@ describe('TextOM.Range#setStart(node, offset?)', function () {
 
         assert.throws(function () {
             range.setStart();
-        }, /undefined/);
+        }, 'undefined');
 
         assert.throws(function () {
             range.setStart(false);
-        }, /false/);
+        }, 'false');
     });
 
     it('should NOT throw when an unattached node is given', function () {
@@ -2070,11 +2084,11 @@ describe('TextOM.Range#setStart(node, offset?)', function () {
 
         assert.throws(function () {
             (new Range()).setStart(child, -1);
-        }, /-1/);
+        }, '-1');
 
         assert.throws(function () {
             (new Range()).setStart(child, -Infinity);
-        }, /-Infinity/);
+        }, '-Infinity');
     });
 
     it('should NOT throw when NaN is given, but treat it as `0`',
@@ -2096,7 +2110,7 @@ describe('TextOM.Range#setStart(node, offset?)', function () {
 
             assert.throws(function () {
                 (new Range()).setStart(child, 'failure');
-            }, /failure/);
+            }, 'failure');
         }
     );
 
@@ -2135,7 +2149,7 @@ describe('TextOM.Range#setStart(node, offset?)', function () {
 
         assert.throws(function () {
             range.setStart(child);
-        }, /WrongRootError/);
+        }, 'WrongRootError');
     });
 
     it('should not throw when an offset is given, but no length property ' +
@@ -2338,11 +2352,11 @@ describe('TextOM.Range#setEnd(node, offset?)', function () {
 
         assert.throws(function () {
             range.setEnd();
-        }, /undefined/);
+        }, 'undefined');
 
         assert.throws(function () {
             range.setEnd(false);
-        }, /false/);
+        }, 'false');
     });
 
     it('should NOT throw when an unattached node is given', function () {
@@ -2362,11 +2376,11 @@ describe('TextOM.Range#setEnd(node, offset?)', function () {
 
         assert.throws(function () {
             (new Range()).setEnd(child, -1);
-        }, /-1/);
+        }, '-1');
 
         assert.throws(function () {
             (new Range()).setEnd(child, -Infinity);
-        }, /-Infinity/);
+        }, '-Infinity');
     });
 
     it('should NOT throw when NaN is given, but treat it as `0`',
@@ -2388,7 +2402,7 @@ describe('TextOM.Range#setEnd(node, offset?)', function () {
 
             assert.throws(function () {
                 (new Range()).setStart(child, 'failure');
-            }, /failure/);
+            }, 'failure');
         }
     );
 
@@ -2427,7 +2441,7 @@ describe('TextOM.Range#setEnd(node, offset?)', function () {
 
         assert.throws(function () {
             range.setEnd(child1);
-        }, /WrongRootError/);
+        }, 'WrongRootError');
     });
 
     it('should not throw when an offset is given, but no length property ' +
@@ -3943,7 +3957,7 @@ describe('HierarchyError', function () {
         function () {
             assert.throws(function () {
                 (new RootNode()).append(new RootNode());
-            }, /HierarchyError/);
+            }, 'HierarchyError');
         }
     );
 
@@ -3951,7 +3965,7 @@ describe('HierarchyError', function () {
         function () {
             assert.doesNotThrow(function () {
                 (new RootNode()).append(new ParagraphNode());
-            }, /HierarchyError/);
+            }, 'HierarchyError');
         }
     );
 
@@ -3959,7 +3973,7 @@ describe('HierarchyError', function () {
         function () {
             assert.throws(function () {
                 (new RootNode()).append(new SentenceNode());
-            }, /HierarchyError/);
+            }, 'HierarchyError');
         }
     );
 
@@ -3967,7 +3981,7 @@ describe('HierarchyError', function () {
         function () {
             assert.throws(function () {
                 (new RootNode()).append(new WordNode());
-            }, /HierarchyError/);
+            }, 'HierarchyError');
         }
     );
 
@@ -3975,7 +3989,7 @@ describe('HierarchyError', function () {
         function () {
             assert.throws(function () {
                 (new RootNode()).append(new PunctuationNode());
-            }, /HierarchyError/);
+            }, 'HierarchyError');
         }
     );
 
@@ -3983,7 +3997,7 @@ describe('HierarchyError', function () {
         function () {
             assert.doesNotThrow(function () {
                 (new RootNode()).append(new WhiteSpaceNode());
-            }, /HierarchyError/);
+            }, 'HierarchyError');
         }
     );
 
@@ -3991,7 +4005,7 @@ describe('HierarchyError', function () {
         function () {
             assert.throws(function () {
                 (new ParagraphNode()).append(new RootNode());
-            }, /HierarchyError/);
+            }, 'HierarchyError');
         }
     );
 
@@ -4001,7 +4015,7 @@ describe('HierarchyError', function () {
                 (new ParagraphNode()).append(
                     new ParagraphNode()
                 );
-            }, /HierarchyError/);
+            }, 'HierarchyError');
         }
     );
 
@@ -4011,7 +4025,7 @@ describe('HierarchyError', function () {
                 (new ParagraphNode()).append(
                     new SentenceNode()
                 );
-            }, /HierarchyError/);
+            }, 'HierarchyError');
         }
     );
 
@@ -4019,7 +4033,7 @@ describe('HierarchyError', function () {
         function () {
             assert.throws(function () {
                 (new ParagraphNode()).append(new WordNode());
-            }, /HierarchyError/);
+            }, 'HierarchyError');
         }
     );
 
@@ -4029,7 +4043,7 @@ describe('HierarchyError', function () {
                 (new ParagraphNode()).append(
                     new PunctuationNode()
                 );
-            }, /HierarchyError/);
+            }, 'HierarchyError');
         }
     );
 
@@ -4039,7 +4053,7 @@ describe('HierarchyError', function () {
                 (new ParagraphNode()).append(
                     new WhiteSpaceNode()
                 );
-            }, /HierarchyError/);
+            }, 'HierarchyError');
         }
     );
 
@@ -4047,7 +4061,7 @@ describe('HierarchyError', function () {
         function () {
             assert.throws(function () {
                 (new SentenceNode()).append(new RootNode());
-            }, /HierarchyError/);
+            }, 'HierarchyError');
         }
     );
 
@@ -4057,7 +4071,7 @@ describe('HierarchyError', function () {
                 (new SentenceNode()).append(
                     new ParagraphNode()
                 );
-            }, /HierarchyError/);
+            }, 'HierarchyError');
         }
     );
 
@@ -4065,7 +4079,7 @@ describe('HierarchyError', function () {
         function () {
             assert.throws(function () {
                 (new SentenceNode()).append(new SentenceNode());
-            }, /HierarchyError/);
+            }, 'HierarchyError');
         }
     );
 
@@ -4075,7 +4089,7 @@ describe('HierarchyError', function () {
                 (new SentenceNode()).append(
                     new PunctuationNode()
                 );
-            }, /HierarchyError/);
+            }, 'HierarchyError');
         }
     );
 
@@ -4083,7 +4097,7 @@ describe('HierarchyError', function () {
         function () {
             assert.doesNotThrow(function () {
                 (new SentenceNode()).append(new WordNode());
-            }, /HierarchyError/);
+            }, 'HierarchyError');
         }
     );
 
@@ -4093,7 +4107,7 @@ describe('HierarchyError', function () {
                 (new SentenceNode()).append(
                     new WhiteSpaceNode()
                 );
-            }, /HierarchyError/);
+            }, 'HierarchyError');
         }
     );
 });
