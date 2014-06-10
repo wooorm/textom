@@ -1,6 +1,7 @@
 # TextOM [![Build Status](https://travis-ci.org/wooorm/textom.svg?branch=master)](https://travis-ci.org/wooorm/textom) [![Coverage Status](https://img.shields.io/coveralls/wooorm/textom.svg)](https://coveralls.io/r/wooorm/textom?branch=master)
 
 [![browser support](https://ci.testling.com/wooorm/textom.png) ](https://ci.testling.com/wooorm/textom)
+See [Browser Support](#browsersupport) for more information (a.k.a. don’t worry about those grey icons above).
 
 ---
 
@@ -699,6 +700,9 @@ Fired when a node is removed from an ancestor.
 - this: an ancestor in which the change happened;
 - arguments:
   - node: the removed node;
+
+## Browser Support
+Pretty much every browser (available through browserstack) runs all TextOM unit tests; just make sure `Array#indexOf()` is [polyfill](mzl.la/19ZfdDP)’d in browser that need it.
 
 ## Related
 
