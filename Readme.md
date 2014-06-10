@@ -2,7 +2,7 @@
 
 [![browser support](https://ci.testling.com/wooorm/textom.png) ](https://ci.testling.com/wooorm/textom)
 
-See [Browser Support](#browsersupport) for more information (a.k.a. don’t worry about those grey icons above).
+See [Browser Support](#browser-support) for more information (a.k.a. don’t worry about those grey icons above).
 
 ---
 
