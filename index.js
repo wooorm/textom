@@ -10,6 +10,11 @@ var arrayPrototype = Array.prototype,
     arrayIndexOf = arrayPrototype.indexOf,
     arraySplice = arrayPrototype.splice;
 
+/* istanbul ignore if: User forgot a polyfill much? */
+if (!arrayIndexOf) {
+    throw new Error('Missing Array#indexOf() method for TextOM');
+}
+
 function fire(context, callbacks, args) {
     var iterator = -1;
 
