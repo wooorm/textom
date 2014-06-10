@@ -1,6 +1,7 @@
 # TextOM [![Build Status](https://travis-ci.org/wooorm/textom.svg?branch=master)](https://travis-ci.org/wooorm/textom) [![Coverage Status](https://img.shields.io/coveralls/wooorm/textom.svg)](https://coveralls.io/r/wooorm/textom?branch=master)
 
 [![browser support](https://ci.testling.com/wooorm/textom.png) ](https://ci.testling.com/wooorm/textom)
+
 See [Browser Support](#browsersupport) for more information (a.k.a. don’t worry about those grey icons above).
 
 ---
