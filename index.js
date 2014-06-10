@@ -428,6 +428,10 @@ function TextOMConstructor() {
             newPrototype[key] = constructorPrototype[key];
         }
 
+        if (constructorPrototype.toString !== {}.toString) {
+            newPrototype.toString = constructorPrototype.toString;
+        }
+
         for (key in self) {
             /* istanbul ignore else */
             if (self.hasOwnProperty(key)) {
