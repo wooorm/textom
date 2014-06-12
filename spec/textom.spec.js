@@ -1,44 +1,5 @@
 'use strict';
 
-/* Array#indexOf polyfill from MDN: mzl.la/19ZfdDP */
-/* istanbul ignore next: polyfill */
-if (!Array.prototype.indexOf) {
-    /*eslint-disable no-extend-native */
-    Array.prototype.indexOf = function (searchElement, fromIndex) {
-        if (this === undefined || this === null) {
-            throw new TypeError('TypeError: `' + this + '` is not an object');
-        }
-
-        /* Hack to convert object.length to a UInt32 */
-        var length = this.length >>> 0;
-
-        fromIndex = Number(fromIndex) || 0;
-
-        if (Math.abs(fromIndex) === Infinity) {
-            fromIndex = 0;
-        }
-
-        if (fromIndex < 0) {
-            fromIndex += length;
-
-            if (fromIndex < 0) {
-                fromIndex = 0;
-            }
-        }
-
-        while (fromIndex < length) {
-            if (this[fromIndex] === searchElement) {
-                return fromIndex;
-            }
-
-            fromIndex++;
-        }
-
-        return -1;
-    };
-    /*eslint-enable no-extend-native */
-}
-
 var textom = require('..'),
     assert = require('assert');
 
