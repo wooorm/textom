@@ -338,91 +338,6 @@ cats.split(2);
 
 Split the node into two nodes, prepends a new node (an instance of the operated on `text`s constructor), moving the internal value from 0–position to the prepended node, and removing it from the operated on node.
 
-#### TextOM.Range()
-Constructor. Creates a new Range (an object allowing for cross-tree manipulation).
-
-##### TextOM\.Range#setStart(node, offset?)
-```js
-var range = new Range();
-range.setStart(dogs, 1);
-range.startContainer; // dogs
-range.startOffset; // 1
-```
-
-Set the start container and offset of a range.
-
-##### TextOM\.Range#setEnd(node, offset?)
-```js
-var range = new Range();
-range.setEnd(fullStop, 2);
-range.endContainer; // fullStop
-range.endOffset; // 2
-```
-
-Set the end container and offset of a range.
-
-##### TextOM\.Range#cloneRange()
-Clones the range into a new range object.
-
-##### TextOM\.Range#toString()
-```js
-var range = new Range();
-range.setStart(space0);
-range.setEnd(space1);
-range.toString(); // " & "
-
-range.setStart(dogs);
-range.toString(); // "Dogs & "
-
-range.setEnd(cats, 2);
-range.toString(); // "Dogs & ca"
-
-range.setEnd(fullStop);
-range.toString(); // "Dogs & cats."
-```
-
-Return the result of calling `toString` on each text node inside `range`, sub-stringing when necessary;
-
-##### TextOM\.Range#removeContent()
-```js
-var range = new Range();
-range.setStart(space0);
-range.setEnd(space1);
-range.removeContent(); // [space0, ampersand, space1]
-range.toString(); // [dogs, cats, fullStop]
-```
-
-Or with partial covered nodes...
-
-```js
-var range = new Range();
-range.setStart(dogs, 2);
-range.setEnd(cats, 2);
-range.removeContent(); // [gs, space0, ampersand, space1, ca]
-range.toString(); // [do, ts, fullStop]
-```
-
-Removes all nodes completely covered by `range` and removes the parts covered by `range` in partial covered nodes.
-
-##### TextOM\.Range#getContent()
-```js
-var range = new Range();
-range.setStart(space0);
-range.setEnd(space1);
-range.getContent(); // [space0, ampersand, space1]
-
-range.setStart(dogs, 2);
-range.getContent(); // [dogs, space0, ampersand, space1]
-
-range.setEnd(cats, 1);
-range.getContent(); // [dogs, space0, ampersand, space1, cats]
-
-range.setEnd(fullStop);
-range.getContent(); // [dogs, space0, ampersand, space1, cats, fullStop]
-```
-
-Return the nodes in a range as an array. If a nodes parent is completely encapsulated by the range, returns that parent. Ignores startOffset (i.e., treats as `0`) when startContainer is a text node. Ignores endOffset (i.e., treats as `Infinity`) when endContainer is a text node.
-
 ### IDL
 The following IDL document gives a short view of the defined interfaces by TextOM. Note: It not might be that valid in the eyes of W3C standardistas, buts its pretty readable for us simple developers :).
 
@@ -527,22 +442,6 @@ module textom
     readonly attribute unsigned long hierarchy = 4;
   };
   PunctuationNode implements Text;
-
-  [Constructor]
-  interface Range {
-    readonly attribute Node? startContainer;
-    readonly attribute unsigned long? startOffset;
-    readonly attribute Node? endContainer;
-    readonly attribute unsigned long? endOffset;
-    void setStart(Node node, unsigned long offset);
-    void setEnd(Node node, unsigned long offset);
-  
-    [NewObject] Range cloneRange();
-  
-    string toString();
-    Array getContent();
-    Array removeContent();
-  };
 }
 ```
 
