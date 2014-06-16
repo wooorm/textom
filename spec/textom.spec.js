@@ -112,6 +112,107 @@ describe('TextOM.Node', function () {
     );
 });
 
+describe('TextOM.Node.isImplementedBy', function () {
+    it('should be of type `function`', function () {
+        assert(typeof Node.isImplementedBy === 'function');
+    });
+
+    it('should add the properties of the operated on context ' +
+        'to the given constructor', function () {
+            var property;
+
+            /* istanbul ignore next */
+            function Constructor () {}
+
+            Node.isImplementedBy(Constructor);
+
+            for (property in Node) {
+                /* istanbul ignore else */
+                if (Node.hasOwnProperty(property)) {
+                    assert(property in Constructor);
+                    assert(Constructor[property] === Node[property]);
+                }
+            }
+        }
+    );
+
+    it('should add the operated on context as a prototype to the given ' +
+        'constructor', function () {
+            /* istanbul ignore next */
+            function Constructor () {}
+
+            Node.isImplementedBy(Constructor);
+
+            assert(new Constructor() instanceof Node);
+        }
+    );
+
+    it('should not remove properties defined on the given constructor',
+        function () {
+            /* istanbul ignore next */
+            function Constructor () {}
+
+            /* istanbul ignore next */
+            function someFunction () {}
+
+            Constructor.test = 'test';
+            Constructor.someFunction = someFunction;
+
+            Node.isImplementedBy(Constructor);
+
+            assert(Constructor.test === 'test');
+            assert(Constructor.someFunction === someFunction);
+        }
+    );
+
+    it('should not remove properties defined on the given constructors ' +
+        'prototype', function () {
+            /* istanbul ignore next */
+            function Constructor () {}
+
+            /* istanbul ignore next */
+            function someFunction () {}
+
+            Constructor.prototype.test = 'test';
+            Constructor.prototype.someFunction = someFunction;
+
+            Node.isImplementedBy(Constructor);
+
+            assert(Constructor.prototype.test === 'test');
+            assert(Constructor.prototype.someFunction === someFunction);
+        }
+    );
+
+    it('should not change the `constructor` property on the given ' +
+        'constructors prototype', function () {
+            var constructor;
+
+            /* istanbul ignore next */
+            function Constructor () {}
+
+            constructor = Constructor.prototype.constructor;
+
+            Node.isImplementedBy(Constructor);
+
+            assert(Constructor.prototype.constructor === constructor);
+        }
+    );
+
+    it('should add a `constructors` array to the given constructor, filled ' +
+        'with the given constructor, and the operated on context',
+        function () {
+            /* istanbul ignore next */
+            function Constructor () {}
+
+            Node.isImplementedBy(Constructor);
+
+            assert(Constructor.constructors.length === 2);
+            assert(Constructor.constructors[0] === Constructor);
+            assert(Constructor.constructors[1] === Node);
+        }
+    );
+});
+
 describe('TextOM.Node.on', function () {
     it('should be of type `function`', function () {
         assert(typeof Node.on === 'function');
