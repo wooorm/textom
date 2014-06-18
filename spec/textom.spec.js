@@ -25,7 +25,8 @@ var TextOM = textom(),
     SentenceNode = TextOM.SentenceNode,
     WordNode = TextOM.WordNode,
     PunctuationNode = TextOM.PunctuationNode,
-    WhiteSpaceNode = TextOM.WhiteSpaceNode;
+    WhiteSpaceNode = TextOM.WhiteSpaceNode,
+    SourceNode = TextOM.SourceNode;
 
 describe('textom', function () {
     it('should be of type `function`', function () {
@@ -84,6 +85,12 @@ describe('TextOM', function () {
             assert(
                 TextOM.WHITE_SPACE_NODE === (new WhiteSpaceNode()).type
             );
+        }
+    );
+
+    it('should have a `SOURCE_NODE` property, equal to the `type` property ' +
+        'on an instance of `SourceNode`', function () {
+            assert(TextOM.SOURCE_NODE === (new SourceNode()).type);
         }
     );
 });
@@ -276,6 +283,14 @@ describe('TextOM.Node#WHITE_SPACE_NODE', function () {
                 nodePrototype.WHITE_SPACE_NODE ===
                 (new WhiteSpaceNode()).type
             );
+        }
+    );
+});
+
+describe('TextOM.Node#SOURCE_NODE', function () {
+    it('should be equal to the `type` property on an instance of ' +
+        '`SourceNode`', function () {
+            assert(nodePrototype.SOURCE_NODE === (new SourceNode()).type);
         }
     );
 });
@@ -2157,6 +2172,16 @@ describe('TextOM.WhiteSpaceNode()', function () {
     });
 });
 
+describe('TextOM.SourceNode()', function () {
+    it('should be of type `function`', function () {
+        assert(typeof SourceNode === 'function');
+    });
+
+    it('should inherit from `Text`', function () {
+        assert((new SourceNode()) instanceof Text);
+    });
+});
+
 describe('HierarchyError', function () {
     it('should throw when appending a `RootNode` to a `RootNode`',
         function () {
@@ -2202,6 +2227,14 @@ describe('HierarchyError', function () {
         function () {
             assert.doesNotThrow(function () {
                 (new RootNode()).append(new WhiteSpaceNode());
+            }, 'HierarchyError');
+        }
+    );
+
+    it('should NOT throw when appending a `SourceNode` to a `RootNode`',
+        function () {
+            assert.doesNotThrow(function () {
+                (new RootNode()).append(new SourceNode());
             }, 'HierarchyError');
         }
     );
@@ -2262,6 +2295,16 @@ describe('HierarchyError', function () {
         }
     );
 
+    it('should NOT throw when appending a `SourceNode` to a ' +
+        '`ParagraphNode`', function () {
+            assert.doesNotThrow(function () {
+                (new ParagraphNode()).append(
+                    new SourceNode()
+                );
+            }, 'HierarchyError');
+        }
+    );
+
     it('should throw when appending a `RootNode` to a `SentenceNode`',
         function () {
             assert.throws(function () {
@@ -2311,6 +2354,16 @@ describe('HierarchyError', function () {
             assert.doesNotThrow(function () {
                 (new SentenceNode()).append(
                     new WhiteSpaceNode()
+                );
+            }, 'HierarchyError');
+        }
+    );
+
+    it('should NOT throw when appending a `SourceNode` to a ' +
+        '`SentenceNode`', function () {
+            assert.doesNotThrow(function () {
+                (new SentenceNode()).append(
+                    new SourceNode()
                 );
             }, 'HierarchyError');
         }
