@@ -169,6 +169,10 @@ space0.type === TextOM.WHITE_SPACE_NODE; // true
 
 Unique identifier for all instances of `WhiteSpaceNode`.
 
+##### TextOM\.Node#SOURCE_NODE
+
+Unique identifier for all instances of `SourceNode`.
+
 #### TextOM.Parent
 Constructor. Creates a new Parent. Inherits from Node (i.e., a node accepting children).
 
@@ -437,6 +441,12 @@ module textom
     readonly attribute unsigned long hierarchy = 4;
   };
   PunctuationNode implements Text;
+
+  [Constructor(optional String value = "")]
+  interface SourceNode {
+    readonly attribute unsigned long type = 7;
+  };
+  SourceNode implements Text;
 }
 ```
 
@@ -505,7 +515,7 @@ dogs.on('changetext', function (value, previousValue) {
 dogs.fromString('Poodles');
 ```
 
-Fired when the internal value of an instance of Text (i.e., WhiteSpaceNode, PunctuationNode, or WordNode) changes.
+Fired when the internal value of an instance of Text (i.e., WhiteSpaceNode, PunctuationNode, WordNode, or SourceNode) changes.
 
 - this: the node which text changed;
 - arguments:
