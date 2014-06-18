@@ -115,15 +115,15 @@ describe('TextOM.Node.isImplementedBy', function () {
             var property;
 
             /* istanbul ignore next */
-            function Constructor () {}
+            function CustomNode() {}
 
-            Node.isImplementedBy(Constructor);
+            Node.isImplementedBy(CustomNode);
 
             for (property in Node) {
                 /* istanbul ignore else */
                 if (Node.hasOwnProperty(property)) {
-                    assert(property in Constructor);
-                    assert(Constructor[property] === Node[property]);
+                    assert(property in CustomNode);
+                    assert(CustomNode[property] === Node[property]);
                 }
             }
         }
@@ -132,47 +132,47 @@ describe('TextOM.Node.isImplementedBy', function () {
     it('should add the operated on context as a prototype to the given ' +
         'constructor', function () {
             /* istanbul ignore next */
-            function Constructor () {}
+            function CustomNode() {}
 
-            Node.isImplementedBy(Constructor);
+            Node.isImplementedBy(CustomNode);
 
-            assert(new Constructor() instanceof Node);
+            assert(new CustomNode() instanceof Node);
         }
     );
 
     it('should not remove properties defined on the given constructor',
         function () {
             /* istanbul ignore next */
-            function Constructor () {}
+            function CustomNode() {}
 
             /* istanbul ignore next */
-            function someFunction () {}
+            function someFunction() {}
 
-            Constructor.test = 'test';
-            Constructor.someFunction = someFunction;
+            CustomNode.test = 'test';
+            CustomNode.someFunction = someFunction;
 
-            Node.isImplementedBy(Constructor);
+            Node.isImplementedBy(CustomNode);
 
-            assert(Constructor.test === 'test');
-            assert(Constructor.someFunction === someFunction);
+            assert(CustomNode.test === 'test');
+            assert(CustomNode.someFunction === someFunction);
         }
     );
 
     it('should not remove properties defined on the given constructors ' +
         'prototype', function () {
             /* istanbul ignore next */
-            function Constructor () {}
+            function CustomNode() {}
 
             /* istanbul ignore next */
-            function someFunction () {}
+            function someFunction() {}
 
-            Constructor.prototype.test = 'test';
-            Constructor.prototype.someFunction = someFunction;
+            CustomNode.prototype.test = 'test';
+            CustomNode.prototype.someFunction = someFunction;
 
-            Node.isImplementedBy(Constructor);
+            Node.isImplementedBy(CustomNode);
 
-            assert(Constructor.prototype.test === 'test');
-            assert(Constructor.prototype.someFunction === someFunction);
+            assert(CustomNode.prototype.test === 'test');
+            assert(CustomNode.prototype.someFunction === someFunction);
         }
     );
 
@@ -181,13 +181,13 @@ describe('TextOM.Node.isImplementedBy', function () {
             var constructor;
 
             /* istanbul ignore next */
-            function Constructor () {}
+            function CustomNode() {}
 
-            constructor = Constructor.prototype.constructor;
+            constructor = CustomNode.prototype.constructor;
 
-            Node.isImplementedBy(Constructor);
+            Node.isImplementedBy(CustomNode);
 
-            assert(Constructor.prototype.constructor === constructor);
+            assert(CustomNode.prototype.constructor === constructor);
         }
     );
 
@@ -195,13 +195,13 @@ describe('TextOM.Node.isImplementedBy', function () {
         'with the given constructor, and the operated on context',
         function () {
             /* istanbul ignore next */
-            function Constructor () {}
+            function CustomNode() {}
 
-            Node.isImplementedBy(Constructor);
+            Node.isImplementedBy(CustomNode);
 
-            assert(Constructor.constructors.length === 2);
-            assert(Constructor.constructors[0] === Constructor);
-            assert(Constructor.constructors[1] === Node);
+            assert(CustomNode.constructors.length === 2);
+            assert(CustomNode.constructors[0] === CustomNode);
+            assert(CustomNode.constructors[1] === Node);
         }
     );
 });
