@@ -86,13 +86,6 @@ describe('TextOM', function () {
             );
         }
     );
-
-    it('should return a newly initialised `RootNode` object when invoked',
-        function () {
-            assert(new TextOM() instanceof RootNode);
-            assert(TextOM() instanceof RootNode);
-        }
-    );
 });
 
 describe('TextOM.Node', function () {
