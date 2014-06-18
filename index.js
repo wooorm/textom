@@ -937,6 +937,27 @@ function TextOMConstructor() {
      */
     Text.isImplementedBy(PunctuationNode);
 
+    /**
+     * Expose SourceNode.
+     */
+    function SourceNode() {
+        Text.apply(this, arguments);
+    }
+
+    /**
+     * The type of an instance of SourceNode.
+     *
+     * @api public
+     * @readonly
+     * @static
+     */
+    SourceNode.prototype.type = 7;
+
+    /**
+     * Inherit from `Text.prototype`.
+     */
+    Text.isImplementedBy(SourceNode);
+
     var nodePrototype = Node.prototype,
         TextOM;
 
@@ -962,6 +983,8 @@ function TextOMConstructor() {
         PunctuationNode.prototype.type;
     TextOM.WHITE_SPACE_NODE = nodePrototype.WHITE_SPACE_NODE =
         WhiteSpaceNode.prototype.type;
+    TextOM.SOURCE_NODE = nodePrototype.SOURCE_NODE =
+        SourceNode.prototype.type;
 
     /**
      * Export all `Node`s to `TextOM`.
@@ -977,6 +1000,7 @@ function TextOMConstructor() {
     TextOM.WordNode = WordNode;
     TextOM.PunctuationNode = PunctuationNode;
     TextOM.WhiteSpaceNode = WhiteSpaceNode;
+    TextOM.SourceNode = SourceNode;
 
     /**
      * Expose `TextOM`. Used to instantiate a new `RootNode`.
