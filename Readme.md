@@ -29,7 +29,7 @@ $ component install wooorm/textom
 
 ```js
 TextOM = require('textom')();
-var root = new TextOM();
+var root = new TextOM.RootNode();
 ```
 
 Note that the exported object is a function, which in turn returns brand-new TextOM objects. There’s whole slew of issues that can arise from extending prototypes like (DOM) Node, NodeList, or Array—this feature however allows for multiple sandboxed environments (i.e., prototypes) without those disadvantages.
@@ -43,7 +43,7 @@ Lets say all the following examples start with this code. Any changes made by be
 var TextOM = require('textom')();
 
 // Create a root.
-var root = new TextOM();
+var root = new TextOM.RootNode();
 
 // Add a paragraph.
 var paragraph = new TextOM.ParagraphNode();
@@ -70,11 +70,6 @@ sentence.append(fullStop);
 ```
 
 ### TextOM
-```js
-new TextOM(); // An instance of RootNode.
-```
-
-Returns a new RootNode (the same as `new TextOM.RootNode()`);
 
 #### TextOM.Node
 Constructor. Creates a new Node.
