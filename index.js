@@ -937,23 +937,16 @@ function TextOMConstructor() {
      */
     Text.isImplementedBy(PunctuationNode);
 
+    var nodePrototype = Node.prototype,
+        TextOM;
+
     /**
-     * Define `TextOM`. Exported above, and used to instantiate a new
-     * `RootNode`.
+     * Define the `TextOM` object.
+     * Expose `TextOM` on every instance of Node.
      *
      * @api public
-     * @constructor
      */
-    function TextOM() {
-        return new RootNode();
-    }
-
-    var nodePrototype = Node.prototype;
-
-    /**
-     * Expose `TextOM` on every instance of Node.
-     */
-    nodePrototype.TextOM = TextOM;
+    nodePrototype.TextOM = TextOM = {};
 
     /**
      * Export all node types to `TextOM` and `Node#`.
