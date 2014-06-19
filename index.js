@@ -281,7 +281,7 @@ function remove(node) {
         emit(prev, 'changenext', next || null, node);
     }
 
-    trigger(parent, 'removeinside', node);
+    trigger(parent, 'removeinside', node, parent);
 
     /* Return node. */
     return node;
