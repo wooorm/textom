@@ -31,7 +31,7 @@
     "prepublish": "npm run-script build-browser",
     "build-browser": "node_modules/.bin/browserify spec/textom.spec.js -o spec/browser.spec.js",
     "coverage": "node_modules/.bin/istanbul cover node_modules/.bin/_mocha -- -- spec/textom.spec.js",
-    "make": "build-browser && npm run-script lint && npm run-script coverage"
+    "make": "npm run-script build-browser && npm run-script lint && npm run-script coverage"
   },
   "testling": {
     "files": "spec/textom.spec.js",
