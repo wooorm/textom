@@ -2470,8 +2470,8 @@ describe('Events on TextOM.Parent', function () {
 
     describe('[removeinside]', function () {
         it('emits on all `Child`s ancestors, with the current ancestor ' +
-            'as the context, and the removed child as an argument, when ' +
-            'a Child is removed', function () {
+            'as the context, and the removed child and the previous parent ' +
+            'as arguments, when a Child is removed', function () {
                 var rootNode = new RootNode(),
                     paragraphNode = rootNode.append(
                         new ParagraphNode()
@@ -2486,12 +2486,14 @@ describe('Events on TextOM.Parent', function () {
                         new WhiteSpaceNode('\n\n')
                     ),
                     iterator = 0,
-                    shouldBeChild = null;
+                    shouldBeChild = null,
+                    shouldBeParent = null;
 
                 function onremoveinsideFactory(context) {
-                    return function (child) {
+                    return function (child, parent) {
                         iterator++;
                         assert(child === shouldBeChild);
+                        assert(parent === shouldBeParent);
                         assert(this === context);
                     };
                 }
@@ -2506,12 +2508,14 @@ describe('Events on TextOM.Parent', function () {
                     onremoveinsideFactory(sentenceNode)
                 );
                 shouldBeChild = wordNode;
+                shouldBeParent = sentenceNode;
 
                 wordNode.remove();
                 assert(iterator === 3);
 
                 iterator = 0;
                 shouldBeChild = whiteSpaceNode;
+                shouldBeParent = rootNode;
 
                 whiteSpaceNode.remove();
                 assert(iterator === 1);
@@ -2520,7 +2524,8 @@ describe('Events on TextOM.Parent', function () {
 
         it('emits on all `Child`s ancestors constructors, with the ' +
             'current ancestor as the context, and the removed child ' +
-            'as an argument, when a Child is removed', function () {
+            'and the previous parent as an arguments, when a Child is ' +
+            'removed', function () {
                 var rootNode = new RootNode(),
                     paragraphNode = rootNode.append(
                         new ParagraphNode()
@@ -2535,12 +2540,14 @@ describe('Events on TextOM.Parent', function () {
                         new WhiteSpaceNode('\n\n')
                     ),
                     iterator = 0,
-                    shouldBeChild = null;
+                    shouldBeChild = null,
+                    shouldBeParent = null;
 
                 function onremoveinsideFactory(context) {
-                    return function (child) {
+                    return function (child, parent) {
                         iterator++;
                         assert(child === shouldBeChild);
+                        assert(parent === shouldBeParent);
                         assert(this === context);
                     };
                 }
@@ -2555,12 +2562,14 @@ describe('Events on TextOM.Parent', function () {
                     onremoveinsideFactory(sentenceNode)
                 );
                 shouldBeChild = wordNode;
+                shouldBeParent = sentenceNode;
 
                 wordNode.remove();
                 assert(iterator === 3);
 
                 iterator = 0;
                 shouldBeChild = whiteSpaceNode;
+                shouldBeParent = rootNode;
 
                 whiteSpaceNode.remove();
                 assert(iterator === 1);
