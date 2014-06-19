@@ -593,8 +593,9 @@ Fired when a node is inserted inside an ancestor.
 
 #### removeinside
 ```js
-root.on('removeinside', function (node) {
+root.on('removeinside', function (node, parent) {
   this === root; // true
+  parent === sentence; // true;
   node === dogs; // true
 })
 dogs.remove();
@@ -605,6 +606,7 @@ Fired when a node is removed from an ancestor.
 - this: an ancestor in which the change happened;
 - arguments:
   - node: the removed node;
+  - parent: the previous parent.
 
 ## Browser Support
 Pretty much every browser (available through browserstack) runs all TextOM unit tests; just make sure `Array#indexOf()` is [polyfill](mzl.la/19ZfdDP)’d in browser that need it.
