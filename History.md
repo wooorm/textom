@@ -1,7 +1,15 @@
 
-n.n.n / 2014-06-25
+0.1.0-rc.1 / 2014-07-03
 ==================
 
+ * Added documentation for 8bdab19
+ * Added initial unit tests for 8bdab19
+ * API now exposes the event triggering mechanisms (fixes #7)
+ * Added unit test for changes in fd13b95
+ * WhiteSpace inherits from Punctuation (fixes #5)
+ * Throwing hierarchy errors no longer happends based on whether or not the property exists, but on its value
+ * Removed functionality to browserify unit tests by default
+ * Filled changelog
  * Add History.md
 
 0.0.20 / 2014-06-25

@@ -462,6 +462,18 @@ describe('TextOM.Node#off(name?, callback?)', function () {
     );
 });
 
+describe('TextOM.Node#emit(name, values...)', function () {
+    it('should be of type `function`', function () {
+        assert(typeof nodePrototype.emit === 'function');
+    });
+});
+
+describe('TextOM.Node#trigger(name, values...)', function () {
+    it('should be of type `function`', function () {
+        assert(typeof nodePrototype.trigger === 'function');
+    });
+});
+
 describe('TextOM.Parent', function () {
     it('should be of type `function`', function () {
         assert(typeof Parent === 'function');
@@ -2169,6 +2181,10 @@ describe('TextOM.WhiteSpaceNode()', function () {
 
     it('should inherit from `Text`', function () {
         assert((new WhiteSpaceNode()) instanceof Text);
+    });
+
+    it('should inherit from `PunctuationNode`', function () {
+        assert((new WhiteSpaceNode()) instanceof PunctuationNode);
     });
 });
 

@@ -1,6 +1,6 @@
 {
   "name": "textom",
-  "version": "0.0.20",
+  "version": "0.1.0-rc.1",
   "description": "Object model for natural languages",
   "keywords": [
     "natural",
@@ -12,7 +12,6 @@
   "license": "MIT",
   "dependencies": {},
   "devDependencies": {
-    "browserify": "^4.1.11",
     "eslint": "^0.6.2",
     "istanbul": "~0.2.11",
     "jscs": "^1.5.3",
@@ -28,10 +27,10 @@
     "lint": "npm run-script lint-api && npm run-script lint-test",
     "lint-api": "node_modules/.bin/eslint index.js --env node --env browser --rule 'quotes: [2, single]'",
     "lint-test": "node_modules/.bin/eslint spec/textom.spec.js --env node --env mocha --rule 'quotes: [2, single]' && node_modules/.bin/jscs index.js spec/textom.spec.js",
-    "prepublish": "npm run-script build-browser",
-    "build-browser": "node_modules/.bin/browserify spec/textom.spec.js -o spec/browser.spec.js",
+    "install-browser-test": "npm install browserify",
+    "build-browser-test": "node_modules/.bin/browserify spec/textom.spec.js -o spec/browser.spec.js",
     "coverage": "node_modules/.bin/istanbul cover node_modules/.bin/_mocha -- -- spec/textom.spec.js",
-    "make": "npm run-script build-browser && npm run-script lint && npm run-script coverage"
+    "make": "npm run-script lint && npm run-script coverage"
   },
   "testling": {
     "files": "spec/textom.spec.js",

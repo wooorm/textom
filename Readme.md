@@ -114,6 +114,26 @@ If no listener is given, removes all listeners to events of the given type.
 If no name and node listener are given, removes all listeners to all events.
 Returns self.
 
+##### TextOM\.Node#emit(name, values...)
+```js
+TextOM.WordNode.on('custom-emitted-event', function () {
+    this; // dogs
+})
+dogs.trigger('custom-emitted-event');
+```
+
+Fire's an event of name `name` on the node, and bubbles up through its constructors.
+
+##### TextOM\.Node#trigger(name, values...)
+```js
+root.on('custom-triggered-event', function () {
+    this; // dogs
+})
+dogs.trigger('custom-triggered-event');
+```
+
+Fire's an event of name `name` on the node, and bubbles up through its parents.
+
 ##### TextOM\.Node#TextOM
 ```js
 root.TextOM === TextOM; // true

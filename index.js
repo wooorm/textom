@@ -31,33 +31,35 @@ function fire(context, callbacks, args) {
     return;
 }
 
-function trigger(context, name) {
-    var args = arraySlice.call(arguments, 2),
+function trigger(name) {
+    var self = this,
+        args = arraySlice.call(arguments, 1),
         callbacks;
 
-    while (context) {
-        callbacks = context.callbacks;
+    while (self) {
+        callbacks = self.callbacks;
         if (callbacks) {
-            fire(context, callbacks[name], args);
+            fire(self, callbacks[name], args);
         }
 
-        callbacks = context.constructor.callbacks;
+        callbacks = self.constructor.callbacks;
         if (callbacks) {
-            fire(context, callbacks[name], args);
+            fire(self, callbacks[name], args);
         }
 
-        context = context.parent;
+        self = self.parent;
     }
 }
 
-function emit(context, name) {
-    var args = arraySlice.call(arguments, 2),
-        constructors = context.constructor.constructors,
+function emit(name) {
+    var self = this,
+        args = arraySlice.call(arguments, 1),
+        constructors = self.constructor.constructors,
         iterator = -1,
-        callbacks = context.callbacks;
+        callbacks = self.callbacks;
 
     if (callbacks) {
-        fire(context, callbacks[name], args);
+        fire(self, callbacks[name], args);
     }
 
     /* istanbul ignore if: Wrong-usage */
@@ -69,7 +71,7 @@ function emit(context, name) {
         callbacks = constructors[iterator].callbacks;
 
         if (callbacks) {
-            fire(context, callbacks[name], args);
+            fire(self, callbacks[name], args);
         }
     }
 }
@@ -96,7 +98,7 @@ function insert(parent, item, child) {
             ' is not a valid argument for \'insert\'');
     }
 
-    if ('hierarchy' in child && 'hierarchy' in parent) {
+    if (child.hierarchy > -1 && parent.hierarchy > -1) {
         if (parent.hierarchy + 1 !== child.hierarchy) {
             throw new Error('HierarchyError: The operation would ' +
                 'yield an incorrect node tree');
@@ -189,19 +191,19 @@ function insert(parent, item, child) {
 
     next = child.next;
 
-    emit(child, 'insert');
+    child.emit('insert');
 
     if (item) {
-        emit(item, 'changenext', child, next);
-        emit(child, 'changeprev', item, null);
+        item.emit('changenext', child, next);
+        child.emit('changeprev', item, null);
     }
 
     if (next) {
-        emit(next, 'changeprev', child, item);
-        emit(child, 'changenext', next, null);
+        next.emit('changeprev', child, item);
+        child.emit('changenext', next, null);
     }
 
-    trigger(parent, 'insertinside', child);
+    parent.trigger('insertinside', child);
 
     return child;
 }
@@ -269,19 +271,19 @@ function remove(node) {
      * and to the parent. */
     node.prev = node.next = node.parent = null;
 
-    emit(node, 'remove', parent);
+    node.emit('remove', parent);
 
     if (next) {
-        emit(next, 'changeprev', prev || null, node);
-        emit(node, 'changenext', null, next);
+        next.emit('changeprev', prev || null, node);
+        node.emit('changenext', null, next);
     }
 
     if (prev) {
-        emit(node, 'changeprev', null, prev);
-        emit(prev, 'changenext', next || null, node);
+        node.emit('changeprev', null, prev);
+        prev.emit('changenext', next || null, node);
     }
 
-    trigger(parent, 'removeinside', node, parent);
+    parent.trigger('removeinside', node, parent);
 
     /* Return node. */
     return node;
@@ -379,6 +381,10 @@ function TextOMConstructor() {
     prototype.on = Node.on = listen;
 
     prototype.off = Node.off = ignore;
+
+    prototype.emit = emit;
+
+    prototype.trigger = trigger;
 
     /**
      * Inherit the contexts' (Super) prototype into a given Constructor. E.g.,
@@ -738,12 +744,12 @@ function TextOMConstructor() {
         if (value !== previousValue) {
             self.internalValue = value;
 
-            emit(self, 'changetext', value, previousValue);
+            self.emit('changetext', value, previousValue);
 
             parent = self.parent;
             if (parent) {
-                trigger(
-                    parent, 'changetextinside', self, value, previousValue
+                parent.trigger(
+                    'changetextinside', self, value, previousValue
                 );
             }
         }
@@ -895,27 +901,6 @@ function TextOMConstructor() {
     Text.isImplementedBy(WordNode);
 
     /**
-     * Expose WhiteSpaceNode.
-     */
-    function WhiteSpaceNode() {
-        Text.apply(this, arguments);
-    }
-
-    /**
-     * The type of an instance of WhiteSpaceNode.
-     *
-     * @api public
-     * @readonly
-     * @static
-     */
-    WhiteSpaceNode.prototype.type = 5;
-
-    /**
-     * Inherit from `Text.prototype`.
-     */
-    Text.isImplementedBy(WhiteSpaceNode);
-
-    /**
      * Expose PunctuationNode.
      */
     function PunctuationNode() {
@@ -936,6 +921,28 @@ function TextOMConstructor() {
      * Inherit from `Text.prototype`.
      */
     Text.isImplementedBy(PunctuationNode);
+
+    /**
+     * Expose WhiteSpaceNode.
+     */
+    function WhiteSpaceNode() {
+        PunctuationNode.apply(this, arguments);
+    }
+
+    /**
+     * The type of an instance of WhiteSpaceNode.
+     *
+     * @api public
+     * @readonly
+     * @static
+     */
+    WhiteSpaceNode.prototype.type = 5;
+    WhiteSpaceNode.prototype.hierarchy = -1;
+
+    /**
+     * Inherit from `Text.prototype`.
+     */
+    PunctuationNode.isImplementedBy(WhiteSpaceNode);
 
     /**
      * Expose SourceNode.
