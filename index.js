@@ -96,7 +96,7 @@ function insert(parent, item, child) {
             ' is not a valid argument for \'insert\'');
     }
 
-    if ('hierarchy' in child && 'hierarchy' in parent) {
+    if (child.hierarchy > -1 && parent.hierarchy > -1) {
         if (parent.hierarchy + 1 !== child.hierarchy) {
             throw new Error('HierarchyError: The operation would ' +
                 'yield an incorrect node tree');
