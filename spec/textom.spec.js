@@ -2170,6 +2170,10 @@ describe('TextOM.WhiteSpaceNode()', function () {
     it('should inherit from `Text`', function () {
         assert((new WhiteSpaceNode()) instanceof Text);
     });
+
+    it('should inherit from `PunctuationNode`', function () {
+        assert((new WhiteSpaceNode()) instanceof PunctuationNode);
+    });
 });
 
 describe('TextOM.SourceNode()', function () {
