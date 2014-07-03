@@ -895,27 +895,6 @@ function TextOMConstructor() {
     Text.isImplementedBy(WordNode);
 
     /**
-     * Expose WhiteSpaceNode.
-     */
-    function WhiteSpaceNode() {
-        Text.apply(this, arguments);
-    }
-
-    /**
-     * The type of an instance of WhiteSpaceNode.
-     *
-     * @api public
-     * @readonly
-     * @static
-     */
-    WhiteSpaceNode.prototype.type = 5;
-
-    /**
-     * Inherit from `Text.prototype`.
-     */
-    Text.isImplementedBy(WhiteSpaceNode);
-
-    /**
      * Expose PunctuationNode.
      */
     function PunctuationNode() {
@@ -936,6 +915,28 @@ function TextOMConstructor() {
      * Inherit from `Text.prototype`.
      */
     Text.isImplementedBy(PunctuationNode);
+
+    /**
+     * Expose WhiteSpaceNode.
+     */
+    function WhiteSpaceNode() {
+        PunctuationNode.apply(this, arguments);
+    }
+
+    /**
+     * The type of an instance of WhiteSpaceNode.
+     *
+     * @api public
+     * @readonly
+     * @static
+     */
+    WhiteSpaceNode.prototype.type = 5;
+    WhiteSpaceNode.prototype.hierarchy = -1;
+
+    /**
+     * Inherit from `Text.prototype`.
+     */
+    PunctuationNode.isImplementedBy(WhiteSpaceNode);
 
     /**
      * Expose SourceNode.
