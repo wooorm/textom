@@ -1,5 +1,5 @@
 
-n.n.n / 2014-07-04
+0.1.0-rc.2 / 2014-07-04
 ==================
 
  * Updated dependency versions of istanbul and jscs to 0.2.16 and 1.5.7 resp.
