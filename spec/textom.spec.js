@@ -26,7 +26,8 @@ var TextOM = textom(),
     WordNode = TextOM.WordNode,
     PunctuationNode = TextOM.PunctuationNode,
     WhiteSpaceNode = TextOM.WhiteSpaceNode,
-    SourceNode = TextOM.SourceNode;
+    SourceNode = TextOM.SourceNode,
+    TextNode = TextOM.TextNode;
 
 describe('textom', function () {
     it('should be of type `function`', function () {
@@ -91,6 +92,12 @@ describe('TextOM', function () {
     it('should have a `SOURCE_NODE` property, equal to the `type` property ' +
         'on an instance of `SourceNode`', function () {
             assert(TextOM.SOURCE_NODE === (new SourceNode()).type);
+        }
+    );
+
+    it('should have a `TEXT_NODE` property, equal to the `type` property ' +
+        'on an instance of `TextNode`', function () {
+            assert(TextOM.TEXT_NODE === (new TextNode()).type);
         }
     );
 });
@@ -291,6 +298,14 @@ describe('TextOM.Node#SOURCE_NODE', function () {
     it('should be equal to the `type` property on an instance of ' +
         '`SourceNode`', function () {
             assert(nodePrototype.SOURCE_NODE === (new SourceNode()).type);
+        }
+    );
+});
+
+describe('TextOM.Node#TEXT_NODE', function () {
+    it('should be equal to the `type` property on an instance of ' +
+        '`TextNode`', function () {
+            assert(nodePrototype.TEXT_NODE === (new TextNode()).type);
         }
     );
 });
@@ -2159,8 +2174,8 @@ describe('TextOM.WordNode()', function () {
         assert(typeof WordNode === 'function');
     });
 
-    it('should inherit from `Text`', function () {
-        assert((new WordNode()) instanceof Text);
+    it('should inherit from `Element`', function () {
+        assert((new WordNode()) instanceof Element);
     });
 });
 
@@ -2169,8 +2184,8 @@ describe('TextOM.PunctuationNode()', function () {
         assert(typeof PunctuationNode === 'function');
     });
 
-    it('should inherit from `Text`', function () {
-        assert((new PunctuationNode()) instanceof Text);
+    it('should inherit from `Element`', function () {
+        assert((new PunctuationNode()) instanceof Element);
     });
 });
 
@@ -2179,8 +2194,8 @@ describe('TextOM.WhiteSpaceNode()', function () {
         assert(typeof WhiteSpaceNode === 'function');
     });
 
-    it('should inherit from `Text`', function () {
-        assert((new WhiteSpaceNode()) instanceof Text);
+    it('should inherit from `Element`', function () {
+        assert((new WhiteSpaceNode()) instanceof Element);
     });
 
     it('should inherit from `PunctuationNode`', function () {
@@ -2195,6 +2210,16 @@ describe('TextOM.SourceNode()', function () {
 
     it('should inherit from `Text`', function () {
         assert((new SourceNode()) instanceof Text);
+    });
+});
+
+describe('TextOM.TextNode()', function () {
+    it('should be of type `function`', function () {
+        assert(typeof TextNode === 'function');
+    });
+
+    it('should inherit from `Text`', function () {
+        assert((new TextNode()) instanceof Text);
     });
 });
 
@@ -2251,6 +2276,14 @@ describe('HierarchyError', function () {
         function () {
             assert.doesNotThrow(function () {
                 (new RootNode()).append(new SourceNode());
+            }, 'HierarchyError');
+        }
+    );
+
+    it('should throw when appending a `TextNode` to a `RootNode`',
+        function () {
+            assert.throws(function () {
+                (new RootNode()).append(new TextNode());
             }, 'HierarchyError');
         }
     );
@@ -2321,6 +2354,14 @@ describe('HierarchyError', function () {
         }
     );
 
+    it('should throw when appending a `TextNode` to a `ParagraphNode`',
+        function () {
+            assert.throws(function () {
+                (new ParagraphNode()).append(new TextNode());
+            }, 'HierarchyError');
+        }
+    );
+
     it('should throw when appending a `RootNode` to a `SentenceNode`',
         function () {
             assert.throws(function () {
@@ -2381,6 +2422,38 @@ describe('HierarchyError', function () {
                 (new SentenceNode()).append(
                     new SourceNode()
                 );
+            }, 'HierarchyError');
+        }
+    );
+
+    it('should throw when appending a `TextNode` to a `SentenceNode`',
+        function () {
+            assert.throws(function () {
+                (new SentenceNode()).append(new TextNode());
+            }, 'HierarchyError');
+        }
+    );
+
+    it('should NOT throw when appending a `TextNode` to a `WordNode`',
+        function () {
+            assert.doesNotThrow(function () {
+                (new WordNode()).append(new TextNode());
+            }, 'HierarchyError');
+        }
+    );
+
+    it('should NOT throw when appending a `TextNode` to a `WhiteSpaceNode`',
+        function () {
+            assert.doesNotThrow(function () {
+                (new WhiteSpaceNode()).append(new TextNode());
+            }, 'HierarchyError');
+        }
+    );
+
+    it('should NOT throw when appending a `TextNode` to a `PunctuationNode`',
+        function () {
+            assert.doesNotThrow(function () {
+                (new PunctuationNode()).append(new TextNode());
             }, 'HierarchyError');
         }
     );
@@ -2603,18 +2676,12 @@ describe('Events on TextOM.Parent', function () {
             'the context, and the changed child and the previous value as ' +
             'arguments, when a Text is changed', function () {
                 var rootNode = new RootNode(),
-                    paragraphNode = rootNode.append(
-                        new ParagraphNode()
-                    ),
-                    sentenceNode = paragraphNode.append(
-                        new SentenceNode()
-                    ),
-                    wordNode = sentenceNode.append(
-                        new WordNode('alfred')
-                    ),
-                    whiteSpaceNode = rootNode.append(
-                        new WhiteSpaceNode('\n\n')
-                    ),
+                    paragraphNode = rootNode.append(new ParagraphNode()),
+                    sentenceNode = paragraphNode.append(new SentenceNode()),
+                    wordNode = sentenceNode.append(new WordNode()),
+                    textNode0 = wordNode.append(new TextNode('alfred')),
+                    whiteSpaceNode = rootNode.append(new WhiteSpaceNode()),
+                    textNode1 = whiteSpaceNode.append(new TextNode('\n\n')),
                     iterator = 0,
                     shouldBePreviousValue = null,
                     shouldBeChild = null;
@@ -2638,15 +2705,18 @@ describe('Events on TextOM.Parent', function () {
                 sentenceNode.on('changetextinside',
                     onchangetextinsideFactory(sentenceNode)
                 );
-                shouldBeChild = wordNode;
-                shouldBePreviousValue = wordNode.toString();
+                wordNode.on('changetextinside',
+                    onchangetextinsideFactory(wordNode)
+                );
+                shouldBeChild = textNode0;
+                shouldBePreviousValue = textNode0.toString();
 
                 shouldBeChild.fromString('bertrand');
-                assert(iterator === 3);
+                assert(iterator === 4);
 
                 iterator = 0;
-                shouldBeChild = whiteSpaceNode;
-                shouldBePreviousValue = whiteSpaceNode.toString();
+                shouldBeChild = textNode1;
+                shouldBePreviousValue = textNode1.toString();
 
                 shouldBeChild.fromString('\n');
                 assert(iterator === 1);
@@ -2657,18 +2727,12 @@ describe('Events on TextOM.Parent', function () {
             'the context, and the changed child and the previous value as ' +
             'arguments, when a Text is changed', function () {
                 var rootNode = new RootNode(),
-                    paragraphNode = rootNode.append(
-                        new ParagraphNode()
-                    ),
-                    sentenceNode = paragraphNode.append(
-                        new SentenceNode()
-                    ),
-                    wordNode = sentenceNode.append(
-                        new WordNode('alfred')
-                    ),
-                    whiteSpaceNode = rootNode.append(
-                        new WhiteSpaceNode('\n\n')
-                    ),
+                    paragraphNode = rootNode.append(new ParagraphNode()),
+                    sentenceNode = paragraphNode.append(new SentenceNode()),
+                    wordNode = sentenceNode.append(new WordNode()),
+                    textNode0 = wordNode.append(new TextNode('alfred')),
+                    whiteSpaceNode = rootNode.append(new WhiteSpaceNode()),
+                    textNode1 = whiteSpaceNode.append(new TextNode('\n\n')),
                     iterator = 0,
                     shouldBeChild = null,
                     shouldBePreviousValue = null;
@@ -2692,22 +2756,26 @@ describe('Events on TextOM.Parent', function () {
                 SentenceNode.on('changetextinside',
                     onchangetextinsideFactory(sentenceNode)
                 );
-                shouldBeChild = wordNode;
-                shouldBePreviousValue = wordNode.toString();
+                WordNode.on('changetextinside',
+                    onchangetextinsideFactory(wordNode)
+                );
+                shouldBeChild = textNode0;
+                shouldBePreviousValue = textNode0.toString();
 
-                wordNode.fromString('bertrand');
-                assert(iterator === 3);
+                textNode0.fromString('bertrand');
+                assert(iterator === 4);
 
                 iterator = 0;
-                shouldBeChild = whiteSpaceNode;
-                shouldBePreviousValue = whiteSpaceNode.toString();
+                shouldBeChild = textNode1;
+                shouldBePreviousValue = textNode1.toString();
 
-                whiteSpaceNode.fromString('\n');
+                textNode1.fromString('\n');
                 assert(iterator === 1);
 
                 RootNode.off('changetextinside');
                 ParagraphNode.off('changetextinside');
                 SentenceNode.off('changetextinside');
+                WordNode.off('changetextinside');
             }
         );
     });
@@ -2855,30 +2923,31 @@ describe('Events on TextOM.Text', function () {
             'context, and the current and previous values as arguments, ' +
             'when a `text` is changed', function () {
                 var sentenceNode = new SentenceNode(),
-                    wordNode = sentenceNode.append(
-                        new WordNode('alfred')
-                    ),
+                    wordNode = sentenceNode.append(new WordNode()),
+                    textNode = wordNode.append(new TextNode('alfred')),
                     iterator = 0,
                     shouldBeValue = 'bertrand',
-                    shouldBePreviousValue = wordNode.toString();
+                    shouldBePreviousValue = textNode.toString();
 
                 function onchangetext(value, previousValue) {
                     iterator++;
-                    assert(this === wordNode);
+                    assert(this === textNode);
                     assert(value === shouldBeValue);
                     assert(previousValue === shouldBePreviousValue);
                 }
 
-                wordNode.on('changetext', onchangetext);
-                WordNode.on('changetext', onchangetext);
+                textNode.on('changetext', onchangetext);
+                TextNode.on('changetext', onchangetext);
+                Text.on('changetext', onchangetext);
                 Child.on('changetext', onchangetext);
                 Node.on('changetext', onchangetext);
 
-                wordNode.fromString(shouldBeValue);
-                assert(iterator === 4);
+                textNode.fromString(shouldBeValue);
+                assert(iterator === 5);
 
-                wordNode.off('changetext');
-                WordNode.off('changetext');
+                textNode.off('changetext');
+                TextNode.off('changetext');
+                Text.off('changetext');
                 Child.off('changetext');
                 Node.off('changetext');
             });
