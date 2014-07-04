@@ -2489,6 +2489,14 @@ describe('HierarchyError', function () {
             }, 'HierarchyError');
         }
     );
+
+    it('should NOT throw when appending a `PunctuationNode` to a `WordNode`',
+        function () {
+            assert.doesNotThrow(function () {
+                (new WordNode()).append(new PunctuationNode());
+            }, 'HierarchyError');
+        }
+    );
 });
 
 describe('Events on TextOM.Parent', function () {

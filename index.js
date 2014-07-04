@@ -15,6 +15,15 @@ if (!arrayIndexOf) {
     throw new Error('Missing Array#indexOf() method for TextOM');
 }
 
+var ROOT_NODE = 1,
+    PARAGRAPH_NODE = 2,
+    SENTENCE_NODE = 3,
+    WORD_NODE = 4,
+    PUNCTUATION_NODE = 5,
+    WHITE_SPACE_NODE = 6,
+    SOURCE_NODE = 7,
+    TEXT_NODE = 8;
+
 function fire(context, callbacks, args) {
     var iterator = -1;
 
@@ -76,6 +85,16 @@ function emit(name) {
     }
 }
 
+function canInsertIntoParent(parent, child) {
+    var allowed = parent.allowedChildTypes;
+
+    if (!allowed || !allowed.length || !child.type) {
+        return true;
+    }
+
+    return allowed.indexOf(child.type) > -1;
+}
+
 /**
  * Inserts the given `child` after (when given), the `item`, and otherwise as
  * the first item of the given parents.
@@ -102,11 +121,9 @@ function insert(parent, item, child) {
         throw new Error('HierarchyError: Cannot insert a node into itself');
     }
 
-    if (child.hierarchy > -1 && parent.hierarchy > -1) {
-        if (parent.hierarchy + 1 !== child.hierarchy) {
-            throw new Error('HierarchyError: The operation would ' +
-                'yield an incorrect node tree');
-        }
+    if (!canInsertIntoParent(parent, child)) {
+        throw new Error('HierarchyError: The operation would ' +
+            'yield an incorrect node tree');
     }
 
     if (typeof child.remove !== 'function') {
@@ -822,8 +839,13 @@ function TextOMConstructor() {
      * @readonly
      * @static
      */
-    RootNode.prototype.type = 1;
-    RootNode.prototype.hierarchy = 1;
+    RootNode.prototype.type = ROOT_NODE;
+
+    RootNode.prototype.allowedChildTypes = [
+        PARAGRAPH_NODE,
+        WHITE_SPACE_NODE,
+        SOURCE_NODE
+    ];
 
     /**
      * Inherit from `Parent.prototype`.
@@ -848,8 +870,13 @@ function TextOMConstructor() {
      * @readonly
      * @static
      */
-    ParagraphNode.prototype.type = 2;
-    ParagraphNode.prototype.hierarchy = 2;
+    ParagraphNode.prototype.type = PARAGRAPH_NODE;
+
+    ParagraphNode.prototype.allowedChildTypes = [
+        SENTENCE_NODE,
+        WHITE_SPACE_NODE,
+        SOURCE_NODE
+    ];
 
     /**
      * Inherit from `Parent.prototype` and `Child.prototype`.
@@ -874,8 +901,11 @@ function TextOMConstructor() {
      * @readonly
      * @static
      */
-    SentenceNode.prototype.type = 3;
-    SentenceNode.prototype.hierarchy = 3;
+    SentenceNode.prototype.type = SENTENCE_NODE;
+
+    SentenceNode.prototype.allowedChildTypes = [
+        WORD_NODE, PUNCTUATION_NODE, WHITE_SPACE_NODE, SOURCE_NODE
+    ];
 
     /**
      * Inherit from `Parent.prototype` and `Child.prototype`.
@@ -896,8 +926,9 @@ function TextOMConstructor() {
      * @readonly
      * @static
      */
-    WordNode.prototype.type = 4;
-    WordNode.prototype.hierarchy = 4;
+    WordNode.prototype.type = WORD_NODE;
+
+    WordNode.prototype.allowedChildTypes = [TEXT_NODE, PUNCTUATION_NODE];
 
     /**
      * Inherit from `Text.prototype`.
@@ -918,8 +949,9 @@ function TextOMConstructor() {
      * @readonly
      * @static
      */
-    PunctuationNode.prototype.type = 6;
-    PunctuationNode.prototype.hierarchy = 4;
+    PunctuationNode.prototype.type = PUNCTUATION_NODE;
+
+    PunctuationNode.prototype.allowedChildTypes = [TEXT_NODE];
 
     /**
      * Inherit from `Text.prototype`.
@@ -940,8 +972,9 @@ function TextOMConstructor() {
      * @readonly
      * @static
      */
-    WhiteSpaceNode.prototype.type = 5;
-    WhiteSpaceNode.prototype.hierarchy = -1;
+    WhiteSpaceNode.prototype.type = WHITE_SPACE_NODE;
+
+    WhiteSpaceNode.prototype.allowedChildTypes = [TEXT_NODE];
 
     /**
      * Inherit from `Text.prototype`.
@@ -962,7 +995,7 @@ function TextOMConstructor() {
      * @readonly
      * @static
      */
-    SourceNode.prototype.type = 7;
+    SourceNode.prototype.type = SOURCE_NODE;
 
     /**
      * Inherit from `Text.prototype`.
@@ -983,8 +1016,7 @@ function TextOMConstructor() {
      * @readonly
      * @static
      */
-    TextNode.prototype.type = 7;
-    TextNode.prototype.hierarchy = 5;
+    TextNode.prototype.type = TEXT_NODE;
 
     /**
      * Inherit from `Text.prototype`.
@@ -1005,21 +1037,16 @@ function TextOMConstructor() {
     /**
      * Export all node types to `TextOM` and `Node#`.
      */
-    TextOM.ROOT_NODE = nodePrototype.ROOT_NODE =
-        RootNode.prototype.type;
-    TextOM.PARAGRAPH_NODE = nodePrototype.PARAGRAPH_NODE =
-        ParagraphNode.prototype.type;
-    TextOM.SENTENCE_NODE = nodePrototype.SENTENCE_NODE =
-        SentenceNode.prototype.type;
-    TextOM.WORD_NODE = nodePrototype.WORD_NODE = WordNode.prototype.type;
+    TextOM.ROOT_NODE = nodePrototype.ROOT_NODE = ROOT_NODE;
+    TextOM.PARAGRAPH_NODE = nodePrototype.PARAGRAPH_NODE = PARAGRAPH_NODE;
+    TextOM.SENTENCE_NODE = nodePrototype.SENTENCE_NODE = SENTENCE_NODE;
+    TextOM.WORD_NODE = nodePrototype.WORD_NODE = WORD_NODE;
     TextOM.PUNCTUATION_NODE = nodePrototype.PUNCTUATION_NODE =
-        PunctuationNode.prototype.type;
+        PUNCTUATION_NODE;
     TextOM.WHITE_SPACE_NODE = nodePrototype.WHITE_SPACE_NODE =
-        WhiteSpaceNode.prototype.type;
-    TextOM.SOURCE_NODE = nodePrototype.SOURCE_NODE =
-        SourceNode.prototype.type;
-    TextOM.TEXT_NODE = nodePrototype.TEXT_NODE =
-        TextNode.prototype.type;
+        WHITE_SPACE_NODE;
+    TextOM.SOURCE_NODE = nodePrototype.SOURCE_NODE = SOURCE_NODE;
+    TextOM.TEXT_NODE = nodePrototype.TEXT_NODE = TEXT_NODE;
 
     /**
      * Export all `Node`s to `TextOM`.
