@@ -1,4 +1,12 @@
 
+n.n.n / 2014-07-04
+==================
+
+ * Updated dependency versions of istanbul and jscs to 0.2.16 and 1.5.7 resp.
+ * Added a better internal hierarchy mechanism
+ * Appending or prepending a node into itself now throws (rather than looping till infinity)
+ * WordNode, WhiteSpaceNode, and PunctuationNode now accept children (fixes #6)
+
 0.1.0-rc.1 / 2014-07-03
 ==================
 
