@@ -594,6 +594,14 @@ describe('TextOM.Parent#prepend(childNode)', function () {
         }
     );
 
+    it('should throw when prepending a node into itself', function () {
+        var element = new Element();
+
+        assert.throws(function () {
+            element.prepend(element);
+        }, 'HierarchyError');
+    });
+
     it('should call the `remove` method on the prependee', function () {
         var parent = new Parent(),
             node = new Child(),
@@ -775,6 +783,14 @@ describe('TextOM.Parent#append(childNode)', function () {
             }, 'remove');
         }
     );
+
+    it('should throw when appending a node into itself', function () {
+        var element = new Element();
+
+        assert.throws(function () {
+            element.append(element);
+        }, 'HierarchyError');
+    });
 
     it('should call the `remove` method on the appendee', function () {
         var parent = new Parent(),
@@ -1258,6 +1274,14 @@ describe('TextOM.Child#before(childNode)', function () {
         }, 'remove');
     });
 
+    it('should NOT throw when inserting a node before itself', function () {
+        var child = (new Parent()).append(new Child());
+
+        assert.doesNotThrow(function () {
+            child.before(child);
+        });
+    });
+
     it('should call the `remove` method on the prependee', function () {
         var child = (new Parent()).append(new Child()),
             child1 = new Child(),
@@ -1429,6 +1453,14 @@ describe('TextOM.Child#after(childNode)', function () {
         assert.throws(function () {
             child.after({});
         }, 'remove');
+    });
+
+    it('should NOT throw when inserting a node after itself', function () {
+        var child = (new Parent()).append(new Child());
+
+        assert.doesNotThrow(function () {
+            child.after(child);
+        });
     });
 
     it('should call the `remove` method on the appendee', function () {

@@ -98,6 +98,10 @@ function insert(parent, item, child) {
             ' is not a valid argument for \'insert\'');
     }
 
+    if (parent === child || parent === item) {
+        throw new Error('HierarchyError: Cannot insert a node into itself');
+    }
+
     if (child.hierarchy > -1 && parent.hierarchy > -1) {
         if (parent.hierarchy + 1 !== child.hierarchy) {
             throw new Error('HierarchyError: The operation would ' +
