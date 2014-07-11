@@ -1,4 +1,13 @@
 
+n.n.n / 2014-07-11
+==================
+
+ * Both rewrote and refactored documentation
+ * Updated IDL to match latest API changes
+ * Added parse-latin to Related
+ * Node types are now strings (fixes #8)
+ * Updated versions of eslint, istanbul
+
 0.1.0-rc.2 / 2014-07-04
 ==================
 
