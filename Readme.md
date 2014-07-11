@@ -53,20 +53,24 @@ root.append(paragraph);
 var sentence = new TextOM.SentenceNode();
 paragraph.append(sentence);
 
-// Add some actual contents.
-var dogs = new TextOM.WordNode('Dogs')
-var space0 = new TextOM.WhiteSpaceNode(' ')
-var ampersand = new TextOM.PunctuationNode('&')
-var space1 = new TextOM.WhiteSpaceNode(' ')
-var cats = new TextOM.WordNode('cats')
-var fullStop = new TextOM.PunctuationNode('.')
+// Add some words, punctuation, and white space.
+var dogs = sentence.append(new TextOM.WordNode()),
+    space0 = sentence.append(new TextOM.WhiteSpaceNode()),
+    ampersand = sentence.append(new TextOM.PunctuationNode()),
+    space1 = sentence.append(new TextOM.WhiteSpaceNode()),
+    cats = sentence.append(new TextOM.WordNode()),
+    fullStop = sentence.append(new TextOM.PunctuationNode());
 
-sentence.append(dogs);
-sentence.append(space0);
-sentence.append(ampersand);
-sentence.append(space1);
-sentence.append(cats);
-sentence.append(fullStop);
+// Add some actual contents.
+var dogsText = dogs.append(new TextOM.TextNode('Dogs')),
+    space0Text = space0.append(new TextOM.TextNode(' ')),
+    ampersandText = ampersand.append(new TextOM.TextNode('&')),
+    space1Text = space1.append(new TextOM.TextNode(' ')),
+    catsText = cats.append(new TextOM.TextNode('cats')),
+    fullStopText = fullStop.append(new TextOM.TextNode('.'));
+
+// Check what the current textual value is:
+root.toString(); // 'Dogs & cats.'
 ```
 
 ### TextOM
@@ -76,18 +80,14 @@ Constructor.
 
 ##### TextOM\.Node.on(name, listener)
 ```js
-TextOM.WordNode.on('changetext', function (value, previousValue) {
-  this; // the node which text changed
-  value; // the current value
-  previousValue; // the previous value
-});
+TextOM.RootNode.on('someeventname', function () {});
 ```
 
 Registers the specified listener on any instance of constructor, to events of the given name. Returns self.
 
 ##### TextOM\.Node.off(name?, listener?)
 ```js
-TextOM.WordNode.off('changetext');
+TextOM.WordNode.off('someeventname');
 ```
 
 Removes the specified listener on all instances of constructor, to events of the given name.
@@ -97,16 +97,14 @@ Returns self.
 
 ##### TextOM\.Node#on(name, listener)
 ```js
-root.on('insertinside', function (node) {
-  node; // the inserted node
-});
+root.on('someeventname', function () {});
 ```
 
 Registers the specified listener on the node it's called on, to events of the given name. Returns self.
 
 ##### TextOM\.Node#off(name?, listener?)
 ```js
-root.off('insertinside');
+root.off('someeventname');
 ```
 
 Removes the specified listener on the node it's called on, to events of the given name.
@@ -332,30 +330,31 @@ Constructor. Inherits from [Child](#textomchild). Has a value.
 
 ##### TextOM\.Text#toString()
 ```js
-dogs.toString(); // "Dogs"
-space1.toString(); // " "
-fullStop.toString(); // "."
+dogsText.toString(); // "Dogs"
+space1Text.toString(); // " "
+fullStopText.toString(); // "."
 ```
 
 Returns the internal value of the context object.
 
 ##### TextOM\.Text#fromString(value?)
 ```js
-'' + root; // "Dogs & cats."
-cats.fromString();
-'' + root; // "Dogs & ."
-cats.fromString("Cats");
-'' + root; // "Dogs & Cats."
+root.toString(); // "Dogs & cats."
+catsText.fromString();
+root.toString(); // "Dogs & ."
+catsText.fromString("Lions");
+root.toString(); // "Dogs & Lions."
 ```
 
 (Re)sets and returns the internal value of the context object with the stringified version of the given value.
 
 ##### TextOM\.Text#split(position)
 ```js
-cats.prev; // space1
-cats.split(2);
-'' + cats; // "ts"
-'' + cats.prev; // "ca"
+catsText.prev; // null
+catsText.toString(); // "cats"
+catsText.split(2);
+catsText.toString(); // "ts"
+catsText.prev.toString(); // "ca"
 ```
 
 Split the context object into two nodes: prepends a new node (an instance of the context object's constructor), moving the internal value from 0–position to the prepended node, and removing the internal value from 0–position of the context object.
@@ -510,10 +509,10 @@ Normal events fire on instances of [Child](#textomchild) (and thus also on [Elem
 Lets say, for example, we have the example in [API](#api), and add the following code to it:
 
 ```js
-dogs.fromString('Poodles');
+dogsText.fromString('Poodles');
 ```
 
-A `"changetext"` event will fire on dogs, and because dogs is an instance of [WordNode](#textomwordnode), the event will also fire on [WordNode](#textomwordnode). Because a [WordNode](#textomwordnode) also inherits from [Text](#textomtext), the event will also fire on [Text](#textomtext), continuing with [Child](#textomchild), and finally on [Node](#textomnode).
+A `"changetext"` event will fire on dogsText, and because dogs is an instance of [TextNode](#textomtextnode), the event will also fire on TextNode. Because a TextNode also inherits from [Text](#textomtext), the event will also fire on [Text](#textomtext), continuing with [Child](#textomchild), and finally on [Node](#textomnode).
 
 ### Bubbling events
 Bubbling events start at a [parent](#textomparent), and continue up through its ancestors, until no higher ancestor exists. These events also fire on the (single) parents constructor.
@@ -521,17 +520,17 @@ Bubbling events start at a [parent](#textomparent), and continue up through its 
 Lets say, for example, we have the example in [API](#api), and add the following code to it:
 
 ```js
-dogs.fromString('Poodles');
+dogsText.fromString('Wolves');
 ```
 
-A `"changetextinside"` event will fire on the [parent](#textomparent) of dogs (sentence), and because sentence is an instance of [SentenceNode](#textomsentencenode), this event will also fire on [SentenceNode](#textomsentencenode). The same would happen through sentences ancestors: paragraph and [ParagraphNode](#textomparagraphnode), root and [RootNode](#textomrootnode).
+A `"changetextinside"` event will fire on the [parent](#textomparent) of dogsText (dogs), and because dogs is an instance of [WordNode](#textomwordnode), this event will also fire on WordNode. The same would happen through dogs ancestors: sentence and [SentenceNode](#textomsentencenode), paragraph and [ParagraphNode](#textomparagraphnode), and root and [RootNode](#textomrootnode).
 
 ### List of events
 #### remove
 ```js
-dogs.on('remove', function (parent) {
+dogs.on('remove', function (previousParent) {
   this === dogs; // true
-  parent === sentence; // true
+  previousParent === sentence; // true
 })
 dogs.remove();
 ```
@@ -540,7 +539,7 @@ Fired when a child is removed from its parent.
 
 - this: the removed [child](#textomchild);
 - arguments:
-  - parent: the previous [parent](#textomparent).
+  - previousParent: the previous [parent](#textomparent).
 
 #### insert
 ```js
@@ -556,15 +555,15 @@ Fired when a child is inserted into a parent.
 
 #### changetext
 ```js
-dogs.on('changetext', function (value, previousValue) {
-  this === dogs; // true
+dogsText.on('changetext', function (value, previousValue) {
+  this === dogsText; // true
   value === 'Poodles'; // true
   previousValue === 'Dogs'; // true
 })
-dogs.fromString('Poodles');
+dogsText.fromString('Poodles');
 ```
 
-Fired when the internal value of an instance of [Text](#textomtext) (i.e., WhiteSpaceNode, PunctuationNode, WordNode, or SourceNode) changes.
+Fired when the internal value of an instance of [Text](#textomtext) (i.e., TextNode, SourceNode) changes.
 
 - this: the [text](#textomtext) which value changed;
 - arguments:
@@ -610,11 +609,11 @@ Fired when the `next` attribute on a [child](#textomchild) is changed (i.e., by 
 ```js
 root.on('changetextinside', function (node, value, previousValue) {
   this === root; // true
-  node === cats; // true
+  node === catsText; // true
   value === 'lions'; // true
   previousValue === 'cats'; // true
 })
-cats.fromString('lions');
+catsText.fromString('lions');
 ```
 
 Fired when a [child](#textomchild)’s internal value changes inside an ancestor.
