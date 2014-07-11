@@ -15,14 +15,14 @@ if (!arrayIndexOf) {
     throw new Error('Missing Array#indexOf() method for TextOM');
 }
 
-var ROOT_NODE = 1,
-    PARAGRAPH_NODE = 2,
-    SENTENCE_NODE = 3,
-    WORD_NODE = 4,
-    PUNCTUATION_NODE = 5,
-    WHITE_SPACE_NODE = 6,
-    SOURCE_NODE = 7,
-    TEXT_NODE = 8;
+var ROOT_NODE = 'RootNode',
+    PARAGRAPH_NODE = 'ParagraphNode',
+    SENTENCE_NODE = 'SentenceNode',
+    WORD_NODE = 'WordNode',
+    PUNCTUATION_NODE = 'PunctuationNode',
+    WHITE_SPACE_NODE = 'WhiteSpaceNode',
+    SOURCE_NODE = 'SourceNode',
+    TEXT_NODE = 'TextNode';
 
 function fire(context, callbacks, args) {
     var iterator = -1;
