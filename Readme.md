@@ -365,12 +365,14 @@ module textom
 {
   [Constructor]
   interface Node {
-    const unsigned long ROOT_NODE = 1
-    const unsigned long PARAGRAPH_NODE = 2
-    const unsigned long SENTENCE_NODE = 3
-    const unsigned long WORD_NODE = 4
-    const unsigned long PUNCTUATION_NODE = 5
-    const unsigned long WHITE_SPACE_NODE = 6
+    const string ROOT_NODE = "RootNode"
+    const string PARAGRAPH_NODE = "ParagraphNode"
+    const string SENTENCE_NODE = "SentenceNode"
+    const string WORD_NODE = "WordNode"
+    const string PUNCTUATION_NODE = "PunctuationNode"
+    const string WHITE_SPACE_NODE = "WhiteSpaceNode"
+    const string SOURCE_NODE = "SourceNode"
+    const string TEXT_NODE = "TextNode"
 
     void on(String type, Function callback);
     void off(optional String type = null, optional Function callback = null);
@@ -423,48 +425,48 @@ module textom
 
   [Constructor]
   interface RootNode {
-    readonly attribute unsigned long type = 1;
-    readonly attribute unsigned long hierarchy = 1;
+    readonly attribute string type = "RootNode";
   };
   RootNode implements Parent;
 
   [Constructor]
   interface ParagraphNode {
-    readonly attribute unsigned long type = 2;
-    readonly attribute unsigned long hierarchy = 2;
+    readonly attribute string type = "ParagraphNode";
   };
   ParagraphNode implements Element;
 
   [Constructor]
   interface SentenceNode {
-    readonly attribute unsigned long type = 3;
-    readonly attribute unsigned long hierarchy = 3;
+    readonly attribute string type = "SentenceNode";
   };
   SentenceNode implements Element;
 
-  [Constructor(optional String value = "")]
+  [Constructor]
   interface WordNode {
-    readonly attribute unsigned long type = 4;
-    readonly attribute unsigned long hierarchy = 4;
+    readonly attribute string type = "WordNode";
   };
-  WordNode implements Text;
+  WordNode implements Parent;
 
-  [Constructor(optional String value = "")]
-  interface WhiteSpaceNode {
-    readonly attribute unsigned long type = 5;
-  };
-  WhiteSpaceNode implements Text;
-
-  [Constructor(optional String value = "")]
+  [Constructor]
   interface PunctuationNode {
-    readonly attribute unsigned long type = 6;
-    readonly attribute unsigned long hierarchy = 4;
+    readonly attribute string type = "PunctuationNode";
   };
-  PunctuationNode implements Text;
+  PunctuationNode implements Parent;
+
+  [Constructor]
+  interface WhiteSpaceNode {
+    readonly attribute string type = "WhiteSpaceNode";
+  };
+  WhiteSpaceNode implements PunctuationNode;
+
+  [Constructor(optional String value = "")]
+  interface TextNode {
+    readonly attribute string type = "TextNode";
+  };
 
   [Constructor(optional String value = "")]
   interface SourceNode {
-    readonly attribute unsigned long type = 7;
+    readonly attribute string type = "SourceNode";
   };
   SourceNode implements Text;
 }
