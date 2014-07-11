@@ -1,5 +1,5 @@
 
-n.n.n / 2014-07-11
+0.1.0-rc.3 / 2014-07-11
 ==================
 
  * Both rewrote and refactored documentation
