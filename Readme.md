@@ -633,6 +633,7 @@ Pretty much every browser (available through browserstack) runs all TextOM unit 
 
 ## Related
 
+  * [parse-latin](https://github.com/wooorm/parse-latin "Parse Latin")
   * [parse-english](https://github.com/wooorm/parse-english "Parse English")
   * [retext](https://github.com/wooorm/retext "Retext")
 
