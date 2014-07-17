@@ -1,5 +1,5 @@
 
-n.n.n / 2014-07-17
+0.1.0-rc.4 / 2014-07-17
 ==================
 
  * Refactored insert validation to its own function
