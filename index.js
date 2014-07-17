@@ -428,6 +428,8 @@ function TextOMConstructor() {
         newPrototype = new AltConstructor();
 
         for (key in constructorPrototype) {
+            /* Note: Code climate, and probably other linters, will fail
+             * here. Thats okay, their wrong. */
             newPrototype[key] = constructorPrototype[key];
         }
 
