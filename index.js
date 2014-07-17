@@ -383,6 +383,26 @@ function ignore(name, callback) {
     return self;
 }
 
+function validateSplitPosition(position, length) {
+    if (
+        position === null ||
+        position === undefined ||
+        position !== position ||
+        position === -Infinity
+    ) {
+            position = 0;
+    } else if (position === Infinity) {
+        position = length;
+    } else if (typeof position !== 'number') {
+        throw new TypeError('\'' + position + ' is not a valid ' +
+            'argument for \'#split\'');
+    } else if (position < 0) {
+        position = Math.abs((length + position) % length);
+    }
+
+    return position;
+}
+
 function TextOMConstructor() {
     /**
      * Expose `Node`. Initialises a new `Node` object.
@@ -543,17 +563,7 @@ function TextOMConstructor() {
         var self = this,
             clone, cloneNode, iterator;
 
-        if (position === null || position === undefined ||
-            position !== position || position === -Infinity) {
-                position = 0;
-        } else if (position === Infinity) {
-            position = self.length;
-        } else if (typeof position !== 'number') {
-            throw new TypeError('\'' + position + ' is not a valid ' +
-                'argument for \'Parent.prototype.split\'');
-        } else if (position < 0) {
-            position = Math.abs((self.length + position) % self.length);
-        }
+        position = validateSplitPosition(position, self.length);
 
         /* This throws if we're not attached, thus preventing appending. */
         /*eslint-disable new-cap */
@@ -794,19 +804,7 @@ function TextOMConstructor() {
             value = self.internalValue,
             cloneNode;
 
-        if (position === null ||
-            position === undefined ||
-            position !== position ||
-            position === -Infinity) {
-                position = 0;
-        } else if (position === Infinity) {
-            position = value.length;
-        } else if (typeof position !== 'number') {
-            throw new TypeError('\'' + position + ' is not a valid ' +
-                'argument for \'Text.prototype.split\'');
-        } else if (position < 0) {
-            position = Math.abs((value.length + position) % value.length);
-        }
+        position = validateSplitPosition(position, value.length);
 
         /* This throws if we're not attached, thus preventing substringing. */
         /*eslint-disable new-cap */
