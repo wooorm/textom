@@ -1,4 +1,15 @@
 
+n.n.n / 2014-07-17
+==================
+
+ * Refactored insert validation to its own function
+ * Refactored listen, ignore, trigger, and emit to be constructed on each instantiation
+ * Fixed duplicate code in Parent#split and Text#split
+ * Removed two unused variables
+ * Added comment about why codecoverage fails
+ * Replaced unicode with ascii (en-dash to hyphen-minus)
+ * Updated examples to match latest API changes
+
 0.1.0-rc.3 / 2014-07-11
 ==================
 
