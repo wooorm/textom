@@ -50,18 +50,7 @@ function canInsertIntoParent(parent, child) {
     return allowed.indexOf(child.type) > -1;
 }
 
-/**
- * Inserts the given `child` after (when given), the `item`, and otherwise as
- * the first item of the given parents.
- *
- * @param {Object} parent
- * @param {Object} item
- * @param {Object} child
- * @api private
- */
-function insert(parent, item, child) {
-    var next;
-
+function validateInsert(parent, item, child) {
     if (!parent) {
         throw new TypeError('Illegal invocation: \'' + parent +
             ' is not a valid argument for \'insert\'');
@@ -101,6 +90,21 @@ function insert(parent, item, child) {
                 'indice corresponding to the item');
         }
     }
+}
+
+/**
+ * Inserts the given `child` after (when given), the `item`, and otherwise as
+ * the first item of the given parents.
+ *
+ * @param {Object} parent
+ * @param {Object} item
+ * @param {Object} child
+ * @api private
+ */
+function insert(parent, item, child) {
+    var next;
+
+    validateInsert(parent, item, child);
 
     /* Detach the child. */
     child.remove();
