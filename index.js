@@ -40,51 +40,6 @@ function fire(context, callbacks, args) {
     return;
 }
 
-function trigger(name) {
-    var self = this,
-        args = arraySlice.call(arguments, 1),
-        callbacks;
-
-    while (self) {
-        callbacks = self.callbacks;
-        if (callbacks) {
-            fire(self, callbacks[name], args);
-        }
-
-        callbacks = self.constructor.callbacks;
-        if (callbacks) {
-            fire(self, callbacks[name], args);
-        }
-
-        self = self.parent;
-    }
-}
-
-function emit(name) {
-    var self = this,
-        args = arraySlice.call(arguments, 1),
-        constructors = self.constructor.constructors,
-        iterator = -1,
-        callbacks = self.callbacks;
-
-    if (callbacks) {
-        fire(self, callbacks[name], args);
-    }
-
-    /* istanbul ignore if: Wrong-usage */
-    if (!constructors) {
-        return;
-    }
-
-    while (constructors[++iterator]) {
-        callbacks = constructors[iterator].callbacks;
-
-        if (callbacks) {
-            fire(self, callbacks[name], args);
-        }
-    }
-}
-
 function canInsertIntoParent(parent, child) {
     var allowed = parent.allowedChildTypes;
 
@@ -310,79 +265,6 @@ function remove(node) {
     return node;
 }
 
-function listen(name, callback) {
-    var self = this,
-        callbacks;
-
-    if (typeof name !== 'string') {
-        if (name === null || name === undefined) {
-            return self;
-        }
-
-        throw new TypeError('Illegal invocation: \'' + name +
-            ' is not a valid argument for \'listen\'');
-    }
-
-    if (typeof callback !== 'function') {
-        if (callback === null || callback === undefined) {
-            return self;
-        }
-
-        throw new TypeError('Illegal invocation: \'' + callback +
-            ' is not a valid argument for \'listen\'');
-    }
-
-    callbacks = self.callbacks || (self.callbacks = {});
-    callbacks = callbacks[name] || (callbacks[name] = []);
-    callbacks.unshift(callback);
-
-    return self;
-}
-
-function ignore(name, callback) {
-    var self = this,
-        callbacks, indice;
-
-    if ((name === null || name === undefined) &&
-        (callback === null || callback === undefined)) {
-        self.callbacks = {};
-        return self;
-    }
-
-    if (typeof name !== 'string') {
-        if (name === null || name === undefined) {
-            return self;
-        }
-
-        throw new TypeError('Illegal invocation: \'' + name +
-            ' is not a valid argument for \'listen\'');
-    }
-
-    if (!(callbacks = self.callbacks)) {
-        return self;
-    }
-
-    if (!(callbacks = callbacks[name])) {
-        return self;
-    }
-
-    if (typeof callback !== 'function') {
-        if (callback === null || callback === undefined) {
-            callbacks.length = 0;
-            return self;
-        }
-
-        throw new TypeError('Illegal invocation: \'' + callback +
-            ' is not a valid argument for \'listen\'');
-    }
-
-    if ((indice = callbacks.indexOf(callback)) !== -1) {
-        callbacks.splice(indice, 1);
-    }
-
-    return self;
-}
-
 function validateSplitPosition(position, length) {
     if (
         position === null ||
@@ -419,13 +301,123 @@ function TextOMConstructor() {
 
     var prototype = Node.prototype;
 
-    prototype.on = Node.on = listen;
+    prototype.on = Node.on = function (name, callback) {
+        var self = this,
+            callbacks;
 
-    prototype.off = Node.off = ignore;
+        if (typeof name !== 'string') {
+            if (name === null || name === undefined) {
+                return self;
+            }
 
-    prototype.emit = emit;
+            throw new TypeError('Illegal invocation: \'' + name +
+                ' is not a valid argument for \'listen\'');
+        }
 
-    prototype.trigger = trigger;
+        if (typeof callback !== 'function') {
+            if (callback === null || callback === undefined) {
+                return self;
+            }
+
+            throw new TypeError('Illegal invocation: \'' + callback +
+                ' is not a valid argument for \'listen\'');
+        }
+
+        callbacks = self.callbacks || (self.callbacks = {});
+        callbacks = callbacks[name] || (callbacks[name] = []);
+        callbacks.unshift(callback);
+
+        return self;
+    };
+
+    prototype.off = Node.off = function (name, callback) {
+        var self = this,
+            callbacks, indice;
+
+        if ((name === null || name === undefined) &&
+            (callback === null || callback === undefined)) {
+            self.callbacks = {};
+            return self;
+        }
+
+        if (typeof name !== 'string') {
+            if (name === null || name === undefined) {
+                return self;
+            }
+
+            throw new TypeError('Illegal invocation: \'' + name +
+                ' is not a valid argument for \'listen\'');
+        }
+
+        if (!(callbacks = self.callbacks)) {
+            return self;
+        }
+
+        if (!(callbacks = callbacks[name])) {
+            return self;
+        }
+
+        if (typeof callback !== 'function') {
+            if (callback === null || callback === undefined) {
+                callbacks.length = 0;
+                return self;
+            }
+
+            throw new TypeError('Illegal invocation: \'' + callback +
+                ' is not a valid argument for \'listen\'');
+        }
+
+        if ((indice = callbacks.indexOf(callback)) !== -1) {
+            callbacks.splice(indice, 1);
+        }
+
+        return self;
+    };
+
+    prototype.emit = function (name) {
+        var self = this,
+            args = arraySlice.call(arguments, 1),
+            constructors = self.constructor.constructors,
+            iterator = -1,
+            callbacks = self.callbacks;
+
+        if (callbacks) {
+            fire(self, callbacks[name], args);
+        }
+
+        /* istanbul ignore if: Wrong-usage */
+        if (!constructors) {
+            return;
+        }
+
+        while (constructors[++iterator]) {
+            callbacks = constructors[iterator].callbacks;
+
+            if (callbacks) {
+                fire(self, callbacks[name], args);
+            }
+        }
+    };
+
+    prototype.trigger = function (name) {
+        var self = this,
+            args = arraySlice.call(arguments, 1),
+            callbacks;
+
+        while (self) {
+            callbacks = self.callbacks;
+            if (callbacks) {
+                fire(self, callbacks[name], args);
+            }
+
+            callbacks = self.constructor.callbacks;
+            if (callbacks) {
+                fire(self, callbacks[name], args);
+            }
+
+            self = self.parent;
+        }
+    };
 
     /**
      * Inherit the contexts' (Super) prototype into a given Constructor. E.g.,
