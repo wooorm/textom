@@ -529,8 +529,8 @@ function TextOMConstructor() {
     };
 
     /**
-     * Split the Parent into two, dividing the children from 0–position (NOT
-     * including the character at `position`), and position–length (including
+     * Split the Parent into two, dividing the children from 0-position (NOT
+     * including the character at `position`), and position-length (including
      * the character at `position`).
      *
      * @param {?number} [position=0] - the position to split at.
@@ -779,8 +779,8 @@ function TextOMConstructor() {
     };
 
     /**
-     * Split the Text into two, dividing the internal value from 0–position
-     * (NOT including the character at `position`), and position–length
+     * Split the Text into two, dividing the internal value from 0-position
+     * (NOT including the character at `position`), and position-length
      * (including the character at `position`).
      *
      * @param {?number} [position=0] - the position to split at.
