@@ -1,8 +1,16 @@
-language: "node_js"
+language: node_js
 before_install:
-  - "npm update -g npm"
-script: "npm run-script test-travis"
+- npm update -g npm
+script: npm run-script test-travis
 node_js:
-  - "0.10"
-  - "0.11"
-after_script: "npm install coveralls@2.10.0 && cat ./coverage/lcov.info | coveralls"
+- '0.10'
+- '0.11'
+after_script: npm install coveralls@2.10.0 && cat ./coverage/lcov.info | coveralls
+deploy:
+  provider: npm
+  email: tituswormer@gmail.com
+  api_key:
+    secure: Ja4JbGXidX1M69sNw2rMunx8ydxnlEsIY75O9TbzUVpHB0tpVa3JEFNTZc+OSH7W65N4Kp0OQYJ8HWnXqPmbmlgtACGYPLoY4thlg9mqiE6VRK68CdpkWAvRzYiapRg9AMCTrG5r8TJB6iu9+DRDO7En/f+MeTxR4cAAcrwys2Q=
+  on:
+    tags: true
+    repo: wooorm/textom
