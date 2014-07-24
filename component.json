@@ -2,7 +2,7 @@
   "name": "textom",
   "repository": "wooorm/textom",
   "description": "Object model for natural languages",
-  "version": "0.1.0-rc.4",
+  "version": "0.1.0",
   "keywords": [
     "natural",
     "language",
