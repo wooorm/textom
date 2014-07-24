@@ -1,4 +1,13 @@
 
+n.n.n / 2014-07-24
+==================
+
+ * Update travis to auto-deploy to NPM
+ * Add parse-dutch to list of related projects
+ * Update assertion and unit test count
+ * Add notes about the semantics of different nodes
+ * Update mocha
+
 0.1.0-rc.4 / 2014-07-17
 ==================
 
