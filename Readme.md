@@ -362,29 +362,45 @@ Split the context object into two nodes: prepends a new node (an instance of the
 #### TextOM.RootNode()
 Constructor. Inherits from [Parent](#textomparent).
 
+Semantics: Root (Parent) represents the root of a TextOM document. Any subsequent nodes are the children of this root element.
+
 #### TextOM.ParagraphNode()
 Constructor. Inherits from [Element](#textomelement).
+
+Semantics: Paragraph (Element) represents a self-contained unit of a discourse in writing dealing with a particular point or idea.
 
 #### TextOM.SentenceNode()
 Constructor. Inherits from [Element](#textomelement).
 
+Semantics: Sentence (Element) represents a grouping of grammatically linked words, that in principle tells a complete thought (although it may make little sense taken in isolation out of context).
+
 #### TextOM.WordNode()
 Constructor. Inherits from [Element](#textomelement).
+
+Semantics: Word (Element) represents the smallest element that may be uttered in isolation with semantic or pragmatic content.
 
 #### TextOM.PunctuationNode()
 Constructor. Inherits from [Element](#textomelement).
 
+Semantics: Punctuation (Element) represents typographical devices which aid the understanding and correct reading of other grammatical units.
+
 #### TextOM.WhiteSpaceNode()
-Constructor. Inherits from [Element](#textomelement).
+Constructor. Inherits from [PunctuationNode](#textompunctuationnode).
+
+Semantics: White Space (Punctuation) represents typographical devices devoid of content, separating other grammatical units.
 
 #### TextOM.SourceNode()
 Constructor. Inherits from [Text](#textomtext).
 
+Semantics: Source (Text) represents an external (non-grammatical) value embedded into a grammatical unit, for example a hyperlink or an emoticon.
+
 #### TextOM.TextNode()
 Constructor. Inherits from [Text](#textomtext).
 
+Semantics: Text (Text) represents actual content in a TextOM document: One or more characters.
+
 ### IDL
-The following IDL document gives a short view of the defined interfaces by TextOM. Note: It not might be that valid in the eyes of W3C standardistas, buts its pretty readable for us simple developers :).
+The following IDL document gives a short view of the defined interfaces by TextOM. Note: It might not be that valid in the eyes of W3C standardistas, but it gives a nice overview nonetheless.
 
 ```idl
 module textom
