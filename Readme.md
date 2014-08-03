@@ -8,10 +8,10 @@ See [Browser Support](#browser-support) for more information (a.k.a. don’t wor
 
 **TextOM** provides an object model for natural language in JavaScript. No dependencies. NodeJS, and the browser. Lots of tests (230+), including 350+ assertions. 100% coverage.
 
-Note: This project is **not** a parser for natural language, or an extensible system for analysing and manipulating natural language, its rather the core that lies underneath such systems. Its like a simplified and modified version of the DOM, without any parsing capabilities, for natural language. If you need the aforementioned functionalities, use the following project—both build on top of this module.
+Note: This project is **not** a parser for natural language, or an extensible system for analysing and manipulating natural language, its rather the core that lies underneath such systems. Its like a simplified and modified version of the DOM, without any parsing capabilities, for natural language. If you need the aforementioned functionalities, use the following projects—both build on top of this module.
 
 * For parsing capabilities, see [parse-latin](https://github.com/wooorm/parse-latin "Parse Latin");
-* For a pluggable system for analysing and manipulating, see [retext](https://github.com/wooorm/retext "Retext").
+* For a pluggable system for analysing and manipulating natural language, see [retext](https://github.com/wooorm/retext "Retext").
 
 ## Installation
 
