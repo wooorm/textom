@@ -1,9 +1,8 @@
 {
   "name": "textom",
+  "main": "index.js",
   "description": "Object model for natural languages",
-  "authors": [
-    "Titus Wormer <tituswormer@gmail.com>"
-  ],
+  "license": "MIT",
   "keywords": [
     "natural",
     "language",
@@ -14,9 +13,9 @@
     "type": "git",
     "url": "https://github.com/wooorm/textom.git"
   },
-  "license": "MIT",
-  "dependencies": {},
-  "main": "index.js",
+  "authors": [
+    "Titus Wormer <tituswormer@gmail.com>"
+  ],
   "ignore": [
     ".*",
     "*.log",

@@ -2,24 +2,23 @@
   "name": "textom",
   "version": "0.1.1",
   "description": "Object model for natural languages",
+  "license": "MIT",
   "keywords": [
     "natural",
     "language",
     "object",
     "model"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wooorm/textom.git"
+  },
   "author": "Titus Wormer <tituswormer@gmail.com>",
-  "license": "MIT",
-  "dependencies": {},
   "devDependencies": {
     "eslint": "^0.8.0",
     "istanbul": "^0.3.0",
     "jscs": "^1.6.0",
     "mocha": "^1.21.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/wooorm/textom.git"
   },
   "scripts": {
     "test": "node_modules/.bin/_mocha --reporter spec --check-leaks -u exports spec/textom.spec.js",
