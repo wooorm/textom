@@ -1,5 +1,5 @@
 
-n.n.n / 2014-09-29
+0.2.0-rc.1 / 2014-09-29
 ==================
 
  * Merge branch 'feature/add-node-names'
