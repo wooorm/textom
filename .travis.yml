@@ -10,5 +10,4 @@ deploy:
   api_key:
     secure: Ja4JbGXidX1M69sNw2rMunx8ydxnlEsIY75O9TbzUVpHB0tpVa3JEFNTZc+OSH7W65N4Kp0OQYJ8HWnXqPmbmlgtACGYPLoY4thlg9mqiE6VRK68CdpkWAvRzYiapRg9AMCTrG5r8TJB6iu9+DRDO7En/f+MeTxR4cAAcrwys2Q=
   on:
-    tags: true
     repo: wooorm/textom
