@@ -53,6 +53,22 @@ SOURCE_NODE = 'SourceNode';
 TEXT_NODE = 'TextNode';
 
 /**
+ * Static node names.
+ */
+
+var NODE,
+    PARENT,
+    CHILD,
+    ELEMENT,
+    TEXT;
+
+NODE = 'Node';
+PARENT = 'Parent';
+CHILD = 'Child';
+ELEMENT = 'Element';
+TEXT = 'Text';
+
+/**
  * Invoke every callback in `callbacks` with `parameters`
  * and `context` as its context object.
  *
@@ -459,6 +475,15 @@ function TextOMConstructor() {
     nodePrototype = Node.prototype;
 
     /**
+     * Expose the node name of `Node`.
+     *
+     * @readonly
+     * @static
+     */
+
+    nodePrototype.nodeName = NODE;
+
+    /**
      * Listen to an event.
      *
      * @param {string} name
@@ -763,6 +788,15 @@ function TextOMConstructor() {
     parentPrototype = Parent.prototype;
 
     /**
+     * Expose the node name of `Parent`.
+     *
+     * @readonly
+     * @static
+     */
+
+    parentPrototype.nodeName = PARENT;
+
+    /**
      * First child of a `parent`, null otherwise.
      *
      * @type {Child?}
@@ -915,6 +949,15 @@ function TextOMConstructor() {
     childPrototype = Child.prototype;
 
     /**
+     * Expose the node name of `Child`.
+     *
+     * @readonly
+     * @static
+     */
+
+    childPrototype.nodeName = CHILD;
+
+    /**
      * Parent or `null`.
      *
      * @type {Parent?}
@@ -1028,6 +1071,15 @@ function TextOMConstructor() {
     Element.constructors.splice(2, 0, Parent);
 
     /**
+     * Expose the node name of `Element`.
+     *
+     * @readonly
+     * @static
+     */
+
+    Element.prototype.nodeName = ELEMENT;
+
+    /**
      * Define `Text`.
      *
      * @constructor
@@ -1040,6 +1092,15 @@ function TextOMConstructor() {
     }
 
     textPrototype = Text.prototype;
+
+    /**
+     * Expose the node name of `Text`.
+     *
+     * @readonly
+     * @static
+     */
+
+    textPrototype.nodeName = TEXT;
 
     /**
      * Default value.
@@ -1404,6 +1465,26 @@ function TextOMConstructor() {
      */
 
     nodePrototype.TextOM = TextOM;
+
+    /**
+     * Expose all node names on `TextOM`.
+     */
+
+    TextOM.NODE = NODE;
+    TextOM.PARENT = PARENT;
+    TextOM.CHILD = CHILD;
+    TextOM.ELEMENT = ELEMENT;
+    TextOM.TEXT = TEXT;
+
+    /**
+     * Expose all node names on every `Node`.
+     */
+
+    nodePrototype.NODE = NODE;
+    nodePrototype.PARENT = PARENT;
+    nodePrototype.CHILD = CHILD;
+    nodePrototype.ELEMENT = ELEMENT;
+    nodePrototype.TEXT = TEXT;
 
     /**
      * Expose all node types on `TextOM`.

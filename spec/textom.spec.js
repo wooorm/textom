@@ -143,6 +143,41 @@ describe('TextOM', function () {
             assert(TextOM.TEXT_NODE === new TextNode().type);
         }
     );
+
+    it('should have a `NODE` property equal to the `nodeName` property ' +
+        'on an instance of `Node`',
+        function () {
+            assert(TextOM.NODE === new Node().nodeName);
+        }
+    );
+
+    it('should have a `PARENT` property equal to the `nodeName` property ' +
+        'on an instance of `Parent`',
+        function () {
+            assert(TextOM.PARENT === new Parent().nodeName);
+        }
+    );
+
+    it('should have a `CHILD` property equal to the `nodeName` property ' +
+        'on an instance of `Child`',
+        function () {
+            assert(TextOM.CHILD === new Child().nodeName);
+        }
+    );
+
+    it('should have a `ELEMENT` property equal to the `nodeName` property ' +
+        'on an instance of `Element`',
+        function () {
+            assert(TextOM.ELEMENT === new Element().nodeName);
+        }
+    );
+
+    it('should have a `TEXT` property equal to the `nodeName` property ' +
+        'on an instance of `Text`',
+        function () {
+            assert(TextOM.TEXT === new Text().nodeName);
+        }
+    );
 });
 
 describe('TextOM.Node', function () {
@@ -281,6 +316,51 @@ describe('TextOM.Node.off', function () {
     it('should be a `function`', function () {
         assert(typeof Node.off === 'function');
     });
+});
+
+describe('TextOM.Node#NODE', function () {
+    it('should have a `NODE` property equal to the `nodeName` property ' +
+        'on an instance of `Node`',
+        function () {
+            assert(nodePrototype.NODE === new Node().nodeName);
+        }
+    );
+});
+
+describe('TextOM.Node#PARENT', function () {
+    it('should have a `PARENT` property equal to the `nodeName` property ' +
+        'on an instance of `Parent`',
+        function () {
+            assert(nodePrototype.PARENT === new Parent().nodeName);
+        }
+    );
+});
+
+describe('TextOM.Node#CHILD', function () {
+    it('should have a `CHILD` property equal to the `nodeName` property ' +
+        'on an instance of `Child`',
+        function () {
+            assert(nodePrototype.CHILD === new Child().nodeName);
+        }
+    );
+});
+
+describe('TextOM.Node#ELEMENT', function () {
+    it('should have a `ELEMENT` property equal to the `nodeName` property ' +
+        'on an instance of `Element`',
+        function () {
+            assert(nodePrototype.ELEMENT === new Element().nodeName);
+        }
+    );
+});
+
+describe('TextOM.Node#TEXT', function () {
+    it('should have a `TEXT` property equal to the `nodeName` property ' +
+        'on an instance of `Text`',
+        function () {
+            assert(nodePrototype.TEXT === new Text().nodeName);
+        }
+    );
 });
 
 describe('TextOM.Node#ROOT_NODE', function () {
@@ -2682,7 +2762,7 @@ describe('TextOM.Element()', function () {
             if (has.call(childPrototype, key)) {
                 if (typeof childPrototype[key] === 'function') {
                     assert(key in element);
-                } else {
+                } else if (!has.call(Element.prototype, key)) {
                     assert(element[key] === childPrototype[key]);
                 }
             }
@@ -2700,7 +2780,7 @@ describe('TextOM.Element()', function () {
                 /* istanbul ignore else: maybe in the future? */
                 if (typeof parentPrototype[key] === 'function') {
                     assert(key in element);
-                } else {
+                } else if (!has.call(Element.prototype, key)) {
                     assert(element[key] === parentPrototype[key]);
                 }
             }
@@ -2942,6 +3022,12 @@ describe('TextOM.RootNode()', function () {
     it('should inherit from `Parent`', function () {
         assert(new RootNode() instanceof Parent);
     });
+
+    it('TextOM.RootNode#nodeName should be equal to Node#PARENT',
+        function () {
+            assert(new RootNode().nodeName === nodePrototype.PARENT);
+        }
+    );
 });
 
 describe('TextOM.ParagraphNode()', function () {
@@ -2952,6 +3038,12 @@ describe('TextOM.ParagraphNode()', function () {
     it('should inherit from `Element`', function () {
         assert(new ParagraphNode() instanceof Element);
     });
+
+    it('TextOM.ParagraphNode#nodeName should be equal to Node#ELEMENT',
+        function () {
+            assert(new ParagraphNode().nodeName === nodePrototype.ELEMENT);
+        }
+    );
 });
 
 describe('TextOM.SentenceNode()', function () {
@@ -2962,6 +3054,12 @@ describe('TextOM.SentenceNode()', function () {
     it('should inherit from `Element`', function () {
         assert(new SentenceNode() instanceof Element);
     });
+
+    it('TextOM.SentenceNode#nodeName should be equal to Node#ELEMENT',
+        function () {
+            assert(new SentenceNode().nodeName === nodePrototype.ELEMENT);
+        }
+    );
 });
 
 describe('TextOM.WordNode()', function () {
@@ -2972,6 +3070,12 @@ describe('TextOM.WordNode()', function () {
     it('should inherit from `Element`', function () {
         assert(new WordNode() instanceof Element);
     });
+
+    it('TextOM.WordNode#nodeName should be equal to Node#ELEMENT',
+        function () {
+            assert(new WordNode().nodeName === nodePrototype.ELEMENT);
+        }
+    );
 });
 
 describe('TextOM.PunctuationNode()', function () {
@@ -2982,6 +3086,12 @@ describe('TextOM.PunctuationNode()', function () {
     it('should inherit from `Element`', function () {
         assert(new PunctuationNode() instanceof Element);
     });
+
+    it('TextOM.PunctuationNode#nodeName should be equal to Node#ELEMENT',
+        function () {
+            assert(new PunctuationNode().nodeName === nodePrototype.ELEMENT);
+        }
+    );
 });
 
 describe('TextOM.WhiteSpaceNode()', function () {
@@ -2996,6 +3106,12 @@ describe('TextOM.WhiteSpaceNode()', function () {
     it('should inherit from `PunctuationNode`', function () {
         assert(new WhiteSpaceNode() instanceof PunctuationNode);
     });
+
+    it('TextOM.WhiteSpaceNode#nodeName should be equal to Node#ELEMENT',
+        function () {
+            assert(new WhiteSpaceNode().nodeName === nodePrototype.ELEMENT);
+        }
+    );
 });
 
 describe('TextOM.SourceNode()', function () {
@@ -3006,6 +3122,12 @@ describe('TextOM.SourceNode()', function () {
     it('should inherit from `Text`', function () {
         assert(new SourceNode() instanceof Text);
     });
+
+    it('TextOM.SourceNode#nodeName should be equal to Node#TEXT',
+        function () {
+            assert(new SourceNode().nodeName === nodePrototype.TEXT);
+        }
+    );
 });
 
 describe('TextOM.TextNode()', function () {
@@ -3016,6 +3138,12 @@ describe('TextOM.TextNode()', function () {
     it('should inherit from `Text`', function () {
         assert(new TextNode() instanceof Text);
     });
+
+    it('TextOM.TextNode#nodeName should be equal to Node#TEXT',
+        function () {
+            assert(new TextNode().nodeName === nodePrototype.TEXT);
+        }
+    );
 });
 
 describe('HierarchyError', function () {
