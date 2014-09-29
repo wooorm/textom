@@ -1,47 +1,95 @@
 'use strict';
 
 /**
- * Utilities.
+ * Cached methods.
  */
-var arrayPrototype = Array.prototype,
-    arrayUnshift = arrayPrototype.unshift,
-    arrayPush = arrayPrototype.push,
-    arraySlice = arrayPrototype.slice,
-    arrayIndexOf = arrayPrototype.indexOf,
-    arraySplice = arrayPrototype.splice;
 
-/* istanbul ignore if: User forgot a polyfill much? */
+var arrayPrototype,
+    arrayUnshift,
+    arrayPush,
+    arraySlice,
+    arrayIndexOf,
+    arraySplice;
+
+arrayPrototype = Array.prototype;
+
+arrayUnshift = arrayPrototype.unshift;
+arrayPush = arrayPrototype.push;
+arraySlice = arrayPrototype.slice;
+arrayIndexOf = arrayPrototype.indexOf;
+arraySplice = arrayPrototype.splice;
+
+/**
+ * Warning message when `indexOf` is not available.
+ */
+
+/* istanbul ignore if */
 if (!arrayIndexOf) {
-    throw new Error('Missing Array#indexOf() method for TextOM');
+    throw new Error(
+        'Missing `Array#indexOf()` method for TextOM'
+    );
 }
 
-var ROOT_NODE = 'RootNode',
-    PARAGRAPH_NODE = 'ParagraphNode',
-    SENTENCE_NODE = 'SentenceNode',
-    WORD_NODE = 'WordNode',
-    PUNCTUATION_NODE = 'PunctuationNode',
-    WHITE_SPACE_NODE = 'WhiteSpaceNode',
-    SOURCE_NODE = 'SourceNode',
-    TEXT_NODE = 'TextNode';
+/**
+ * Static node types.
+ */
 
-function fire(context, callbacks, args) {
-    var iterator = -1;
+var ROOT_NODE,
+    PARAGRAPH_NODE,
+    SENTENCE_NODE,
+    WORD_NODE,
+    PUNCTUATION_NODE,
+    WHITE_SPACE_NODE,
+    SOURCE_NODE,
+    TEXT_NODE;
+
+ROOT_NODE = 'RootNode';
+PARAGRAPH_NODE = 'ParagraphNode';
+SENTENCE_NODE = 'SentenceNode';
+WORD_NODE = 'WordNode';
+PUNCTUATION_NODE = 'PunctuationNode';
+WHITE_SPACE_NODE = 'WhiteSpaceNode';
+SOURCE_NODE = 'SourceNode';
+TEXT_NODE = 'TextNode';
+
+/**
+ * Invoke every callback in `callbacks` with `parameters`
+ * and `context` as its context object.
+ *
+ * @param {Array.<Function>} callbacks
+ * @param {Array.<*>} parameters
+ * @param {Node} context
+ */
+
+function invokeAll(callbacks, parameters, context) {
+    var index;
 
     if (!callbacks || !callbacks.length) {
         return;
     }
 
+    index = callbacks.length;
+
     callbacks = callbacks.concat();
 
-    while (callbacks[++iterator]) {
-        callbacks[iterator].apply(context, args);
+    while (index--) {
+        callbacks[index].apply(context, parameters);
     }
-
-    return;
 }
 
+/**
+ * Return whether or not `child` can be inserted
+ * into `parent`.
+ *
+ * @param {Parent} parent
+ * @param {Child} child
+ * @return {boolean}
+ */
+
 function canInsertIntoParent(parent, child) {
-    var allowed = parent.allowedChildTypes;
+    var allowed;
+
+    allowed = parent.allowedChildTypes;
 
     if (!allowed || !allowed.length || !child.type) {
         return true;
@@ -50,124 +98,184 @@ function canInsertIntoParent(parent, child) {
     return allowed.indexOf(child.type) > -1;
 }
 
+/**
+ * Throw an error if an insertion is invalid.
+ *
+ * @param {Parent} parent
+ * @param {Child} item
+ * @param {Child} child
+ */
+
 function validateInsert(parent, item, child) {
     if (!parent) {
-        throw new TypeError('Illegal invocation: \'' + parent +
-            ' is not a valid argument for \'insert\'');
+        throw new Error(
+            'TypeError: `' + parent + '` is not a ' +
+            'valid `parent` for `insert`'
+        );
     }
 
     if (!child) {
-        throw new TypeError('\'' + child +
-            ' is not a valid argument for \'insert\'');
+        throw new Error(
+            'TypeError: `' + child + '` is not a ' +
+            'valid `child` for `insert`'
+        );
     }
 
     if (parent === child || parent === item) {
-        throw new Error('HierarchyError: Cannot insert a node into itself');
+        throw new Error(
+            'HierarchyError: Cannot insert `node` into ' +
+            '`node`'
+        );
     }
 
     if (!canInsertIntoParent(parent, child)) {
-        throw new Error('HierarchyError: The operation would ' +
-            'yield an incorrect node tree');
+        throw new Error(
+            'HierarchyError: The operation would yield ' +
+            'an incorrect node tree'
+        );
     }
 
     if (typeof child.remove !== 'function') {
-        throw new Error('The operated on node did not have a ' +
-            '`remove` method');
+        throw new Error(
+            'TypeError: The operated on node does not ' +
+            'have a `remove` method'
+        );
     }
 
-    /* Insert after... */
+    /**
+     * Insert after...
+     */
+
     if (item) {
         /* istanbul ignore if: Wrong-usage */
         if (item.parent !== parent) {
-            throw new Error('The operated on node (the "pointer") ' +
-                'was detached from the parent');
+            throw new Error(
+                'HierarchyError: The operated on node ' +
+                'is detached from `parent`'
+            );
         }
 
         /* istanbul ignore if: Wrong-usage */
         if (arrayIndexOf.call(parent, item) === -1) {
-            throw new Error('The operated on node (the "pointer") ' +
-                'was attached to its parent, but the parent has no ' +
-                'indice corresponding to the item');
+            throw new Error(
+                'HierarchyError: The operated on node ' +
+                'is attached to `parent`, but `parent` ' +
+                'has no indice corresponding to the node'
+            );
         }
     }
 }
 
 /**
- * Inserts the given `child` after (when given), the `item`, and otherwise as
- * the first item of the given parents.
+ * Insert `child` after `item` in `parent`, or at
+ * `parent`s head when `item` is not given.
  *
- * @param {Object} parent
- * @param {Object} item
- * @param {Object} child
- * @api private
+ * @param {Parent} parent
+ * @param {Child} item
+ * @param {Child} child
+ * @return {Child} - `child`.
  */
+
 function insert(parent, item, child) {
     var next;
 
     validateInsert(parent, item, child);
 
-    /* Detach the child. */
+    /**
+     * Detach `child`.
+     */
+
     child.remove();
 
-    /* Set the child's parent to items parent. */
+    /**
+     * Set `child`s parent to parent.
+     */
+
     child.parent = parent;
 
     if (item) {
         next = item.next;
 
-        /* If item has a next node... */
-        if (next) {
-            /* ...link the child's next node, to items next node. */
-            child.next = next;
+        /**
+         * If `item` has a next node, link `child`s next
+         * node, to `item`s next node, and link the next
+         * nodes previous node to `child`.
+         */
 
-            /* ...link the next nodes previous node, to the child. */
+        if (next) {
+            child.next = next;
             next.prev = child;
         }
 
-        /* Set the child's previous node to item. */
-        child.prev = item;
+        /**
+         * Set `child`s previous node to `item`, and set
+         * the next node of `item` to `child`.
+         */
 
-        /* Set the next node of item to the child. */
+        child.prev = item;
         item.next = child;
 
-        /* If the parent has no last node or if item is the parent last node,
-         * link the parents last node to the child. */
+        /**
+         * If the parent has no last node or if `item` is
+         * `parent`s last node, link `parent`s last node
+         * to `child`.
+         *
+         * Otherwise, insert `child` into `parent` after
+         * `item`s.
+         */
+
         if (item === parent.tail || !parent.tail) {
             parent.tail = child;
             arrayPush.call(parent, child);
-        /* Else, insert the child into the parent after the items index. */
         } else {
             arraySplice.call(
                 parent, arrayIndexOf.call(parent, item) + 1, 0, child
             );
         }
-    /* If parent has a first node... */
     } else if (parent.head) {
         next = parent.head;
 
-        /* Set the child's next node to head. */
-        child.next = next;
+        /**
+         * Set `child`s next node to head and set the
+         * previous node of head to `child`.
+         */
 
-        /* Set the previous node of head to the child. */
+        child.next = next;
         next.prev = child;
 
-        /* Set the parents heads to the child. */
+        /**
+         * Set the `parent`s head to `child`.
+         */
+
         parent.head = child;
 
-        /* If the the parent has no last node, link the parents last node to
-         * head. */
+        /**
+         * If the the parent has no last node, link the
+         * parents last node to what used to be it's
+         * head.
+         */
+
         if (!parent.tail) {
             parent.tail = next;
         }
 
         arrayUnshift.call(parent, child);
-    /* Prepend. There is no `head` (or `tail`) node yet. */
     } else {
-        /* Set parent's first node to the prependee and return the child. */
+        /**
+         * Prepend the node: There is no `head`, nor
+         * `tail` node yet.
+         *
+         * Set `parent`s head to `child`.
+         */
+
         parent.head = child;
         parent[0] = child;
         parent.length = 1;
     }
+
+    /**
+     * Emit events.
+     */
 
     next = child.next;
 
@@ -189,67 +297,98 @@ function insert(parent, item, child) {
 }
 
 /**
- * Detach a node from its (when applicable) parent, links its (when
- * existing) previous and next items to each other.
+ * Remove `node` from its parent.
  *
- * @param {Object} node
- * @api private
+ * @param {Child} node
+ * @return {Child} - `node`.
  */
+
 function remove(node) {
+    var parent,
+        prev,
+        next,
+        indice;
+
     /* istanbul ignore if: Wrong-usage */
     if (!node) {
         return false;
     }
 
-    /* Cache self, the parent list, and the previous and next items. */
-    var parent = node.parent,
-        prev = node.prev,
-        next = node.next,
-        indice;
+    /**
+     * Exit early when the node is already detached.
+     */
 
-    /* If the item is already detached, return node. */
+    parent = node.parent;
+
     if (!parent) {
         return node;
     }
 
-    /* If node is the last item in the parent, link the parents last
-     * item to the previous item. */
+    prev = node.prev;
+    next = node.next;
+
+    /**
+     * If `node` is its parent's tail, link the
+     * tail to `node`s previous item.
+     */
+
     if (parent.tail === node) {
         parent.tail = prev;
     }
 
-    /* If node is the first item in the parent, link the parents first
-     * item to the next item. */
+    /**
+     * If `node` is its parent's head, link the
+     * head to `node`s next item.
+     */
+
     if (parent.head === node) {
         parent.head = next;
     }
 
-    /* If both the last and first items in the parent are the same,
-     * remove the link to the last item. */
+    /**
+     * If node was its parent's only child,
+     * remove the `tail` we just added.
+     */
+
     if (parent.tail === parent.head) {
         parent.tail = null;
     }
 
-    /* If a previous item exists, link its next item to nodes next
-     * item. */
+    /**
+     * If a previous item exists, link its next item to
+     * `node`s next item.
+     */
+
     if (prev) {
         prev.next = next;
     }
 
-    /* If a next item exists, link its previous item to nodes previous
-     * item. */
+    /**
+     * If a next item exists, link its previous item to
+     * `node`s previous item.
+     */
+
     if (next) {
         next.prev = prev;
     }
 
+    indice = arrayIndexOf.call(parent, node);
+
     /* istanbul ignore else: Wrong-usage */
-    if ((indice = arrayIndexOf.call(parent, node)) !== -1) {
+    if (indice !== -1) {
         arraySplice.call(parent, indice, 1);
     }
 
-    /* Remove links from node to both the next and previous items,
-     * and to the parent. */
+    /**
+     * Remove links from `node` to both its next and
+     * previous items, and its parent.
+     */
+
     node.prev = node.next = node.parent = null;
+
+    /**
+     * Emit events.
+     */
 
     node.emit('remove', parent);
 
@@ -265,9 +404,16 @@ function remove(node) {
 
     parent.trigger('removeinside', node, parent);
 
-    /* Return node. */
     return node;
 }
+
+/**
+ * Throw an error if a split would be invalid.
+ *
+ * @param {number} position
+ * @param {number} length
+ * @param {number} position - Normalized position.
+ */
 
 function validateSplitPosition(position, length) {
     if (
@@ -276,12 +422,14 @@ function validateSplitPosition(position, length) {
         position !== position ||
         position === -Infinity
     ) {
-            position = 0;
+        position = 0;
     } else if (position === Infinity) {
         position = length;
     } else if (typeof position !== 'number') {
-        throw new TypeError('\'' + position + ' is not a valid ' +
-            'argument for \'#split\'');
+        throw new TypeError(
+            'TypeError: `' + position + '` is not a ' +
+            'valid `position` for `#split()`'
+        );
     } else if (position < 0) {
         position = Math.abs((length + position) % length);
     }
@@ -290,168 +438,290 @@ function validateSplitPosition(position, length) {
 }
 
 function TextOMConstructor() {
+    var nodePrototype,
+        parentPrototype,
+        childPrototype,
+        textPrototype,
+        TextOM;
+
     /**
-     * Expose `Node`. Initialises a new `Node` object.
+     * Define `Node`.
      *
-     * @api public
      * @constructor
      */
+
     function Node() {
         if (!this.data) {
-            /** @member {Object} */
             this.data = {};
         }
     }
 
-    var prototype = Node.prototype;
+    nodePrototype = Node.prototype;
 
-    prototype.on = Node.on = function (name, callback) {
-        var self = this,
-            callbacks;
+    /**
+     * Listen to an event.
+     *
+     * @param {string} name
+     * @param {function(...[*])} handler
+     * @this {Node|Function}
+     * @return self
+     */
 
-        if (typeof name !== 'string') {
-            if (name === null || name === undefined) {
-                return self;
-            }
+    nodePrototype.on = Node.on = function (name, handler) {
+        var self,
+            handlers;
 
-            throw new TypeError('Illegal invocation: \'' + name +
-                ' is not a valid argument for \'listen\'');
-        }
-
-        if (typeof callback !== 'function') {
-            if (callback === null || callback === undefined) {
-                return self;
-            }
-
-            throw new TypeError('Illegal invocation: \'' + callback +
-                ' is not a valid argument for \'listen\'');
-        }
-
-        callbacks = self.callbacks || (self.callbacks = {});
-        callbacks = callbacks[name] || (callbacks[name] = []);
-        callbacks.unshift(callback);
-
-        return self;
-    };
-
-    prototype.off = Node.off = function (name, callback) {
-        var self = this,
-            callbacks, indice;
-
-        if ((name === null || name === undefined) &&
-            (callback === null || callback === undefined)) {
-            self.callbacks = {};
-            return self;
-        }
+        self = this;
 
         if (typeof name !== 'string') {
             if (name === null || name === undefined) {
                 return self;
             }
 
-            throw new TypeError('Illegal invocation: \'' + name +
-                ' is not a valid argument for \'listen\'');
+            throw new Error(
+                'Illegal invocation: `' + name + '` ' +
+                'is not a valid `name` for ' +
+                '`on(name, handler)`'
+            );
         }
 
-        if (!(callbacks = self.callbacks)) {
-            return self;
-        }
-
-        if (!(callbacks = callbacks[name])) {
-            return self;
-        }
-
-        if (typeof callback !== 'function') {
-            if (callback === null || callback === undefined) {
-                callbacks.length = 0;
+        if (typeof handler !== 'function') {
+            if (handler === null || handler === undefined) {
                 return self;
             }
 
-            throw new TypeError('Illegal invocation: \'' + callback +
-                ' is not a valid argument for \'listen\'');
+            throw new TypeError(
+                'Illegal invocation: `' + handler + '` ' +
+                'is not a valid `handler` for ' +
+                '`on(name, handler)`'
+            );
         }
 
-        if ((indice = callbacks.indexOf(callback)) !== -1) {
-            callbacks.splice(indice, 1);
-        }
+        handlers = self.callbacks || (self.callbacks = {});
+        handlers = handlers[name] || (handlers[name] = []);
+        handlers.unshift(handler);
 
         return self;
-    };
-
-    prototype.emit = function (name) {
-        var self = this,
-            args = arraySlice.call(arguments, 1),
-            constructors = self.constructor.constructors,
-            iterator = -1,
-            callbacks = self.callbacks;
-
-        if (callbacks) {
-            fire(self, callbacks[name], args);
-        }
-
-        /* istanbul ignore if: Wrong-usage */
-        if (!constructors) {
-            return;
-        }
-
-        while (constructors[++iterator]) {
-            callbacks = constructors[iterator].callbacks;
-
-            if (callbacks) {
-                fire(self, callbacks[name], args);
-            }
-        }
-    };
-
-    prototype.trigger = function (name) {
-        var self = this,
-            args = arraySlice.call(arguments, 1),
-            callbacks;
-
-        while (self) {
-            callbacks = self.callbacks;
-            if (callbacks) {
-                fire(self, callbacks[name], args);
-            }
-
-            callbacks = self.constructor.callbacks;
-            if (callbacks) {
-                fire(self, callbacks[name], args);
-            }
-
-            self = self.parent;
-        }
     };
 
     /**
-     * Inherit the contexts' (Super) prototype into a given Constructor. E.g.,
-     * Node is implemented by Parent, Parent is implemented by RootNode, &c.
+     * Stop listening to an event.
      *
-     * @param {function} Constructor
-     * @api public
+     * - When no arguments are given, stops listening;
+     * - When `name` is given, stops listening to events
+     *   of name `name`;
+     * - When `name` and `handler` are given, stops
+     *   invoking `handler` when events of name `name`
+     *   are emitted.
+     *
+     * @param {string?} name
+     * @param {function(...[*])?} handler
+     * @this {Node|Function}
+     * @return self
      */
-    Node.isImplementedBy = function (Constructor) {
-        var self = this,
-            constructors = self.constructors || [self],
-            constructorPrototype, key, newPrototype;
 
-        constructors = [Constructor].concat(constructors);
+    nodePrototype.off = Node.off = function (name, handler) {
+        var self,
+            handlers,
+            indice;
+
+        self = this;
+
+        if (
+            (name === null || name === undefined) &&
+            (handler === null || handler === undefined)
+        ) {
+            self.callbacks = {};
+
+            return self;
+        }
+
+        if (typeof name !== 'string') {
+            if (name === null || name === undefined) {
+                return self;
+            }
+
+            throw new Error(
+                'Illegal invocation: `' + name + '` ' +
+                'is not a valid `name` for ' +
+                '`off(name, handler)`'
+            );
+        }
+
+        handlers = self.callbacks;
+
+        if (!handlers) {
+            return self;
+        }
+
+        handlers = handlers[name];
+
+        if (!handlers) {
+            return self;
+        }
+
+        if (typeof handler !== 'function') {
+            if (handler === null || handler === undefined) {
+                handlers.length = 0;
+
+                return self;
+            }
+
+            throw new Error(
+                'Illegal invocation: `' + handler + '` ' +
+                'is not a valid `handler` for ' +
+                '`off(name, handler)`'
+            );
+        }
+
+        indice = handlers.indexOf(handler);
+
+        if (indice !== -1) {
+            handlers.splice(indice, 1);
+        }
+
+        return self;
+    };
+
+    /**
+     * Emit an event.
+     *
+     * @param {string} name
+     * @param {...*} parameters
+     * @this {Node}
+     * @return self
+     */
+
+    nodePrototype.emit = function (name) {
+        var self,
+            parameters,
+            constructors,
+            index,
+            handlers;
+
+        self = this;
+        handlers = self.callbacks;
+
+        parameters = arraySlice.call(arguments, 1);
+
+        if (handlers) {
+            invokeAll(handlers[name], parameters, self);
+        }
+
+        constructors = self.constructor.constructors;
+
+        /* istanbul ignore if: Wrong-usage */
+        if (!constructors) {
+            return self;
+        }
+
+        index = constructors.length;
+
+        while (index--) {
+            handlers = constructors[index].callbacks;
+
+            if (handlers) {
+                invokeAll(handlers[name], parameters, self);
+            }
+        }
+
+        return self;
+    };
+
+    /**
+     * Trigger a bubbling event.
+     *
+     * @param {string} name
+     * @param {...*} parameters
+     * @this {Node}
+     * @return self
+     */
+
+    nodePrototype.trigger = function (name) {
+        var self,
+            node,
+            parameters,
+            handlers;
+
+        self = this;
+
+        node = self;
+
+        parameters = arraySlice.call(arguments, 1);
+
+        while (node) {
+            handlers = node.callbacks;
+
+            if (handlers) {
+                invokeAll(handlers[name], parameters, node);
+            }
+
+            handlers = node.constructor.callbacks;
+
+            if (handlers) {
+                invokeAll(handlers[name], parameters, node);
+            }
+
+            node = node.parent;
+        }
+
+        return self;
+    };
+
+    /**
+     * Inherit Super's prototype into a `Constructor`.
+     *
+     * Such as `Node` is implemented by `Parent`, `Parent`
+     * is implemented by `RootNode`, etc.
+     *
+     * @param {Function} Constructor
+     * @this {Function} - Super.
+     */
+
+    Node.isImplementedBy = function (Constructor) {
+        var self,
+            constructors,
+            constructorPrototype,
+            key,
+            newPrototype;
+
+        self = this;
+
+        constructors = [Constructor].concat(self.constructors || [self]);
 
         constructorPrototype = Constructor.prototype;
 
         function AltConstructor () {}
+
         AltConstructor.prototype = self.prototype;
+
         newPrototype = new AltConstructor();
 
         for (key in constructorPrototype) {
-            /* Note: Code climate, and probably other linters, will fail
-             * here. Thats okay, their wrong. */
+            /**
+             * Note: Code climate, and probably other
+             * linters, will fail here. Thats okay,
+             * they're wrong.
+             */
+
             newPrototype[key] = constructorPrototype[key];
         }
+
+        /**
+         * Some browser do not enumerate custom
+         * `toString` methods, `Node.isImplementedBy`
+         * does cater for `toString`, but not others
+         * (`valueOf` and such).
+         */
 
         if (constructorPrototype.toString !== {}.toString) {
             newPrototype.toString = constructorPrototype.toString;
         }
+
+        /**
+         * Copy properties and methods on the Super (not
+         * its prototype) over to the given `Constructor`.
+         */
 
         for (key in self) {
             /* istanbul ignore else */
@@ -460,117 +730,143 @@ function TextOMConstructor() {
             }
         }
 
+        /**
+         * Enable nicely displayed `> Node` instead of
+         * `> Object` in some browser consoles.
+         */
+
         newPrototype.constructor = Constructor;
+
+        /**
+         * Store all constructor function.
+         */
+
         Constructor.constructors = constructors;
+
+        /**
+         * Set the new prototype.
+         */
+
         Constructor.prototype = newPrototype;
     };
 
     /**
-     * Expose Parent. Constructs a new Parent node;
+     * Define `Parent`.
      *
-     * @api public
      * @constructor
      */
+
     function Parent() {
         Node.apply(this, arguments);
     }
 
-    prototype = Parent.prototype;
+    parentPrototype = Parent.prototype;
 
     /**
-     * The first child of a parent, null otherwise.
+     * First child of a `parent`, null otherwise.
      *
-     * @api public
-     * @type {?Child}
+     * @type {Child?}
      * @readonly
      */
-    prototype.head = null;
+
+    parentPrototype.head = null;
 
     /**
-     * The last child of a parent (unless the last child is also the first
-     * child), null otherwise.
+     * Last child of a `parent` (unless the last child
+     * is also the first child), `null` otherwise.
      *
-     * @api public
-     * @type {?Child}
+     * @type {Child?}
      * @readonly
      */
-    prototype.tail = null;
+
+    parentPrototype.tail = null;
 
     /**
-     * The number of children in a parent.
+     * Number of children in `parent`.
      *
-     * @api public
      * @type {number}
      * @readonly
      */
-    prototype.length = 0;
+
+    parentPrototype.length = 0;
 
     /**
-     * Insert a child at the beginning of the list (like Array#unshift).
+     * Insert a child at the beginning of the parent.
      *
-     * @param {Child} child - the child to insert as the (new) FIRST child
-     * @return {Child} - the given child.
-     * @api public
+     * @param {Child} child - Child to insert as the new
+     *   head.
+     * @return {self}
      */
-    prototype.prepend = function (child) {
+
+    parentPrototype.prepend = function (child) {
         return insert(this, null, child);
     };
 
     /**
      * Insert a child at the end of the list (like Array#push).
      *
-     * @param {Child} child - the child to insert as the (new) LAST child
-     * @return {Child} - the given child.
-     * @api public
+     * @param {Child} child - Child to insert as the new
+     *   tail.
+     * @return {self}
      */
-    prototype.append = function (child) {
+
+    parentPrototype.append = function (child) {
         return insert(this, this.tail || this.head, child);
     };
 
     /**
-     * Return a child at given position in parent, and null otherwise. (like
-     * NodeList#item).
+     * Get child at `position` in `parent`.
      *
-     * @param {?number} [index=0] - the position to find a child at.
-     * @return {Child?} - the found child, or null.
-     * @api public
+     * @param {number?} [index=0] - Position of `child`;
+     * @return {Child?}
      */
-    prototype.item = function (index) {
+
+    parentPrototype.item = function (index) {
         if (index === null || index === undefined) {
             index = 0;
         } else if (typeof index !== 'number' || index !== index) {
-            throw new TypeError('\'' + index + ' is not a valid argument ' +
-                'for \'Parent.prototype.item\'');
+            throw new Error(
+                'TypeError: `' + index + '` ' +
+                'is not a valid `index` for ' +
+                '`item(index)`'
+            );
         }
 
         return this[index] || null;
     };
 
     /**
-     * Split the Parent into two, dividing the children from 0-position (NOT
-     * including the character at `position`), and position-length (including
-     * the character at `position`).
+     * Split the context in two, dividing the children
+     * from 0-position (NOT INCLUDING the character at
+     * `position`), and position-length (INCLUDING the
+     * character at `position`).
      *
-     * @param {?number} [position=0] - the position to split at.
-     * @return {Parent} - the prepended parent.
-     * @api public
+     * @param {number?} [position=0] - Position to split
+     *   at.
+     * @this {Parent}
+     * @return {self}
      */
-    prototype.split = function (position) {
-        var self = this,
-            clone, cloneNode, iterator;
+
+    parentPrototype.split = function (position) {
+        var self,
+            clone,
+            cloneNode,
+            index;
+
+        self = this;
 
         position = validateSplitPosition(position, self.length);
 
-        /* This throws if we're not attached, thus preventing appending. */
         /*eslint-disable new-cap */
         cloneNode = insert(self.parent, self.prev, new self.constructor());
         /*eslint-enable new-cap */
 
         clone = arraySlice.call(self);
-        iterator = -1;
 
-        while (++iterator < position && clone[iterator]) {
-            cloneNode.append(clone[iterator]);
+        index = -1;
+
+        while (++index < position && clone[index]) {
+            cloneNode.append(clone[index]);
         }
 
         return cloneNode;
@@ -579,106 +875,110 @@ function TextOMConstructor() {
     /**
      * Return the result of calling `toString` on each of `Parent`s children.
      *
-     * NOTE The `toString` method is intentionally generic; It can be
-     * transferred to other kinds of (linked-list-like) objects for use as a
-     * method.
-     *
-     * @return {String}
-     * @api public
+     * @this {Parent}
+     * @return {string}
      */
-    prototype.toString = function () {
-        var value, node;
 
-        value = '';
+    parentPrototype.toString = function () {
+        var values,
+            node;
+
+        values = [];
+
         node = this.head;
 
         while (node) {
-            value += node;
+            values.push(node);
+
             node = node.next;
         }
 
-        return value;
+        return values.join('');
     };
 
     /**
      * Inherit from `Node.prototype`.
      */
+
     Node.isImplementedBy(Parent);
 
     /**
-     * Expose Child. Constructs a new Child node;
+     * Define `Child`.
      *
-     * @api public
      * @constructor
      */
+
     function Child() {
         Node.apply(this, arguments);
     }
 
-    prototype = Child.prototype;
+    childPrototype = Child.prototype;
 
     /**
-     * The parent node, null otherwise (when the child is detached).
+     * Parent or `null`.
      *
-     * @api public
-     * @type {?Parent}
+     * @type {Parent?}
      * @readonly
      */
-    prototype.parent = null;
+
+    childPrototype.parent = null;
 
     /**
-     * The next node, null otherwise (when `child` is the parents last child
-     * or detached).
+     * The next node, `null` otherwise (when `child` is
+     * its parent's tail or detached).
      *
-     * @api public
-     * @type {?Child}
+     * @type {Child?}
      * @readonly
      */
-    prototype.next = null;
+
+    childPrototype.next = null;
 
     /**
-     * The previous node, null otherwise (when `child` is the parents first
-     * child or detached).
+     * The previous node, `null` otherwise (when `child` is
+     * its parent's head or detached).
      *
-     * @api public
-     * @type {?Child}
+     * @type {Child?}
      * @readonly
      */
-    prototype.prev = null;
+
+    childPrototype.prev = null;
 
     /**
-     * Insert a given child before the operated on child in the parent.
+     * Insert `child` before the context in its parent.
      *
-     * @param {Child} child - the child to insert before the operated on
-     *                        child.
-     * @return {Child} - the given child.
-     * @api public
+     * @param {Child} child - Child to insert.
+     * @this {Child}
+     * @return {self}
      */
-    prototype.before = function (child) {
+
+    childPrototype.before = function (child) {
         return insert(this.parent, this.prev, child);
     };
 
     /**
-     * Insert a given child after the operated on child in the parent.
+     * Insert `child` after the context in its parent.
      *
-     * @param {Child} child - the child to insert after the operated on child.
-     * @return {Child} - the given child.
-     * @api public
+     * @param {Child} child - Child to insert.
+     * @this {Child}
+     * @return {self}
      */
-    prototype.after = function (child) {
+
+    childPrototype.after = function (child) {
         return insert(this.parent, this, child);
     };
 
     /**
-     * Remove the operated on child, and insert a given child at its previous
-     * position in the parent.
+     * Replace the context object with `child`.
      *
-     * @param {Child} child - the child to replace the operated on child with.
-     * @return {Child} - the given child.
-     * @api public
+     * @param {Child} child - Child to insert.
+     * @this {Child}
+     * @return {self}
      */
-    prototype.replace = function (child) {
-        var result = insert(this.parent, this, child);
+
+    childPrototype.replace = function (child) {
+        var result;
+
+        result = insert(this.parent, this, child);
 
         remove(this);
 
@@ -686,100 +986,111 @@ function TextOMConstructor() {
     };
 
     /**
-     * Remove the operated on child.
+     * Remove the context object.
      *
-     * @return {Child} - the operated on child.
-     * @api public
+     * @this {Child}
+     * @return {self}
      */
-    prototype.remove = function () {
+
+    childPrototype.remove = function () {
         return remove(this);
     };
 
     /**
      * Inherit from `Node.prototype`.
      */
+
     Node.isImplementedBy(Child);
 
     /**
-     * Expose Element. Constructs a new Element node;
+     * Define `Element`.
      *
-     * @api public
      * @constructor
      */
+
     function Element() {
         Parent.apply(this, arguments);
         Child.apply(this, arguments);
     }
 
     /**
-     * Inherit from `Parent.prototype` and `Child.prototype`.
+     * Inherit from `Parent.prototype` and
+     * `Child.prototype`.
      */
+
     Parent.isImplementedBy(Element);
     Child.isImplementedBy(Element);
 
-    /* Add Parent as a constructor (which it is) */
+    /**
+     * Add Parent as a constructor (which it is)
+     */
+
     Element.constructors.splice(2, 0, Parent);
 
     /**
-     * Expose Text. Constructs a new Text node;
+     * Define `Text`.
      *
-     * @api public
      * @constructor
      */
+
     function Text(value) {
         Child.apply(this, arguments);
 
         this.fromString(value);
     }
 
-    prototype = Text.prototype;
+    textPrototype = Text.prototype;
 
     /**
-     * The internal value.
-     *
-     * @api private
+     * Default value.
      */
-    prototype.internalValue = '';
+
+    textPrototype.internalValue = '';
 
     /**
-     * Return the internal value of a Text;
+     * Get the internal value of a Text;
      *
-     * @return {String}
-     * @api public
+     * @this {Text}
+     * @return {string}
      */
-    prototype.toString = function () {
+
+    textPrototype.toString = function () {
         return this.internalValue;
     };
 
     /**
-     * (Re)sets and returns the internal value of a Text with the stringified
-     * version of the given value.
+     * Sets the internal value of the context with the
+     * stringified `value`.
      *
-     * @param {?String} [value=''] - the value to set
-     * @return {String}
-     * @api public
+     * @param {string?} [value='']
+     * @this {Text}
+     * @return {string}
      */
-    prototype.fromString = function (value) {
-        var self = this,
-            previousValue = self.toString(),
+
+    textPrototype.fromString = function (value) {
+        var self,
+            current,
             parent;
+
+        self = this;
 
         if (value === null || value === undefined) {
             value = '';
         } else {
-            value = value.toString();
+            value = String(value);
         }
 
-        if (value !== previousValue) {
+        current = self.toString();
+
+        if (value !== current) {
             self.internalValue = value;
 
-            self.emit('changetext', value, previousValue);
+            self.emit('changetext', value, current);
 
             parent = self.parent;
+
             if (parent) {
-                parent.trigger(
-                    'changetextinside', self, value, previousValue
-                );
+                parent.trigger('changetextinside', self, value, current);
             }
         }
 
@@ -787,22 +1098,27 @@ function TextOMConstructor() {
     };
 
     /**
-     * Split the Text into two, dividing the internal value from 0-position
-     * (NOT including the character at `position`), and position-length
-     * (including the character at `position`).
+     * Split the context in two, dividing the children
+     * from 0-position (NOT INCLUDING the character at
+     * `position`), and position-length (INCLUDING the
+     * character at `position`).
      *
-     * @param {?number} [position=0] - the position to split at.
-     * @return {Child} - the prepended child.
-     * @api public
+     * @param {number?} [position=0] - Position to split
+     *   at.
+     * @this {Text}
+     * @return {self}
      */
-    prototype.split = function (position) {
-        var self = this,
-            value = self.internalValue,
+
+    textPrototype.split = function (position) {
+        var self,
+            value,
             cloneNode;
+
+        self = this;
+        value = self.internalValue;
 
         position = validateSplitPosition(position, value.length);
 
-        /* This throws if we're not attached, thus preventing substringing. */
         /*eslint-disable new-cap */
         cloneNode = insert(self.parent, self.prev, new self.constructor());
         /*eslint-enable new-cap */
@@ -816,14 +1132,15 @@ function TextOMConstructor() {
     /**
      * Inherit from `Child.prototype`.
      */
+
     Child.isImplementedBy(Text);
 
     /**
-     * Expose RootNode. Constructs a new RootNode (inheriting from Parent);
+     * Define `RootNode`.
      *
-     * @api public
      * @constructor
      */
+
     function RootNode() {
         Parent.apply(this, arguments);
     }
@@ -831,11 +1148,17 @@ function TextOMConstructor() {
     /**
      * The type of an instance of RootNode.
      *
-     * @api public
      * @readonly
      * @static
      */
+
     RootNode.prototype.type = ROOT_NODE;
+
+    /**
+     * Define allowed children.
+     *
+     * @readonly
+     */
 
     RootNode.prototype.allowedChildTypes = [
         PARAGRAPH_NODE,
@@ -846,15 +1169,15 @@ function TextOMConstructor() {
     /**
      * Inherit from `Parent.prototype`.
      */
+
     Parent.isImplementedBy(RootNode);
 
     /**
-     * Expose ParagraphNode. Constructs a new ParagraphNode (inheriting from
-     * both Parent and Child);
+     * Define `ParagraphNode`.
      *
-     * @api public
      * @constructor
      */
+
     function ParagraphNode() {
         Element.apply(this, arguments);
     }
@@ -862,11 +1185,17 @@ function TextOMConstructor() {
     /**
      * The type of an instance of ParagraphNode.
      *
-     * @api public
      * @readonly
      * @static
      */
+
     ParagraphNode.prototype.type = PARAGRAPH_NODE;
+
+    /**
+     * Define allowed children.
+     *
+     * @readonly
+     */
 
     ParagraphNode.prototype.allowedChildTypes = [
         SENTENCE_NODE,
@@ -877,15 +1206,15 @@ function TextOMConstructor() {
     /**
      * Inherit from `Parent.prototype` and `Child.prototype`.
      */
+
     Element.isImplementedBy(ParagraphNode);
 
     /**
-     * Expose SentenceNode. Constructs a new SentenceNode (inheriting from
-     * both Parent and Child);
+     * Define `SentenceNode`.
      *
-     * @api public
      * @constructor
      */
+
     function SentenceNode() {
         Element.apply(this, arguments);
     }
@@ -893,24 +1222,35 @@ function TextOMConstructor() {
     /**
      * The type of an instance of SentenceNode.
      *
-     * @api public
      * @readonly
      * @static
      */
+
     SentenceNode.prototype.type = SENTENCE_NODE;
 
+    /**
+     * Define allowed children.
+     *
+     * @readonly
+     */
+
     SentenceNode.prototype.allowedChildTypes = [
-        WORD_NODE, PUNCTUATION_NODE, WHITE_SPACE_NODE, SOURCE_NODE
+        WORD_NODE,
+        PUNCTUATION_NODE,
+        WHITE_SPACE_NODE,
+        SOURCE_NODE
     ];
 
     /**
      * Inherit from `Parent.prototype` and `Child.prototype`.
      */
+
     Element.isImplementedBy(SentenceNode);
 
     /**
-     * Expose WordNode.
+     * Define `WordNode`.
      */
+
     function WordNode() {
         Element.apply(this, arguments);
     }
@@ -918,22 +1258,33 @@ function TextOMConstructor() {
     /**
      * The type of an instance of WordNode.
      *
-     * @api public
      * @readonly
      * @static
      */
+
     WordNode.prototype.type = WORD_NODE;
 
-    WordNode.prototype.allowedChildTypes = [TEXT_NODE, PUNCTUATION_NODE];
+    /**
+     * Define allowed children.
+     *
+     * @readonly
+     */
+
+    WordNode.prototype.allowedChildTypes = [
+        TEXT_NODE,
+        PUNCTUATION_NODE
+    ];
 
     /**
      * Inherit from `Text.prototype`.
      */
+
     Element.isImplementedBy(WordNode);
 
     /**
-     * Expose PunctuationNode.
+     * Define `PunctuationNode`.
      */
+
     function PunctuationNode() {
         Element.apply(this, arguments);
     }
@@ -941,22 +1292,32 @@ function TextOMConstructor() {
     /**
      * The type of an instance of PunctuationNode.
      *
-     * @api public
      * @readonly
      * @static
      */
+
     PunctuationNode.prototype.type = PUNCTUATION_NODE;
 
-    PunctuationNode.prototype.allowedChildTypes = [TEXT_NODE];
+    /**
+     * Define allowed children.
+     *
+     * @readonly
+     */
+
+    PunctuationNode.prototype.allowedChildTypes = [
+        TEXT_NODE
+    ];
 
     /**
      * Inherit from `Text.prototype`.
      */
+
     Element.isImplementedBy(PunctuationNode);
 
     /**
-     * Expose WhiteSpaceNode.
+     * Expose `WhiteSpaceNode`.
      */
+
     function WhiteSpaceNode() {
         PunctuationNode.apply(this, arguments);
     }
@@ -964,22 +1325,32 @@ function TextOMConstructor() {
     /**
      * The type of an instance of WhiteSpaceNode.
      *
-     * @api public
      * @readonly
      * @static
      */
+
     WhiteSpaceNode.prototype.type = WHITE_SPACE_NODE;
 
-    WhiteSpaceNode.prototype.allowedChildTypes = [TEXT_NODE];
+    /**
+     * Define allowed children.
+     *
+     * @readonly
+     */
+
+    WhiteSpaceNode.prototype.allowedChildTypes = [
+        TEXT_NODE
+    ];
 
     /**
      * Inherit from `Text.prototype`.
      */
+
     PunctuationNode.isImplementedBy(WhiteSpaceNode);
 
     /**
-     * Expose SourceNode.
+     * Expose `SourceNode`.
      */
+
     function SourceNode() {
         Text.apply(this, arguments);
     }
@@ -987,20 +1358,22 @@ function TextOMConstructor() {
     /**
      * The type of an instance of SourceNode.
      *
-     * @api public
      * @readonly
      * @static
      */
+
     SourceNode.prototype.type = SOURCE_NODE;
 
     /**
      * Inherit from `Text.prototype`.
      */
+
     Text.isImplementedBy(SourceNode);
 
     /**
-     * Expose TextNode.
+     * Expose `TextNode`.
      */
+
     function TextNode() {
         Text.apply(this, arguments);
     }
@@ -1008,45 +1381,60 @@ function TextOMConstructor() {
     /**
      * The type of an instance of TextNode.
      *
-     * @api public
      * @readonly
      * @static
      */
+
     TextNode.prototype.type = TEXT_NODE;
 
     /**
      * Inherit from `Text.prototype`.
      */
-    Text.isImplementedBy(TextNode);
 
-    var nodePrototype = Node.prototype,
-        TextOM;
+    Text.isImplementedBy(TextNode);
 
     /**
      * Define the `TextOM` object.
-     * Expose `TextOM` on every instance of Node.
-     *
-     * @api public
      */
-    nodePrototype.TextOM = TextOM = {};
+
+    TextOM = {};
 
     /**
-     * Export all node types to `TextOM` and `Node#`.
+     * Expose `TextOM` on every `Node`.
      */
-    TextOM.ROOT_NODE = nodePrototype.ROOT_NODE = ROOT_NODE;
-    TextOM.PARAGRAPH_NODE = nodePrototype.PARAGRAPH_NODE = PARAGRAPH_NODE;
-    TextOM.SENTENCE_NODE = nodePrototype.SENTENCE_NODE = SENTENCE_NODE;
-    TextOM.WORD_NODE = nodePrototype.WORD_NODE = WORD_NODE;
-    TextOM.PUNCTUATION_NODE = nodePrototype.PUNCTUATION_NODE =
-        PUNCTUATION_NODE;
-    TextOM.WHITE_SPACE_NODE = nodePrototype.WHITE_SPACE_NODE =
-        WHITE_SPACE_NODE;
-    TextOM.SOURCE_NODE = nodePrototype.SOURCE_NODE = SOURCE_NODE;
-    TextOM.TEXT_NODE = nodePrototype.TEXT_NODE = TEXT_NODE;
+
+    nodePrototype.TextOM = TextOM;
 
     /**
-     * Export all `Node`s to `TextOM`.
+     * Expose all node types on `TextOM`.
      */
+
+    TextOM.ROOT_NODE = ROOT_NODE;
+    TextOM.PARAGRAPH_NODE = PARAGRAPH_NODE;
+    TextOM.SENTENCE_NODE = SENTENCE_NODE;
+    TextOM.WORD_NODE = WORD_NODE;
+    TextOM.PUNCTUATION_NODE = PUNCTUATION_NODE;
+    TextOM.WHITE_SPACE_NODE = WHITE_SPACE_NODE;
+    TextOM.SOURCE_NODE = SOURCE_NODE;
+    TextOM.TEXT_NODE = TEXT_NODE;
+
+    /**
+     * Expose all node types on every `Node`.
+     */
+
+    nodePrototype.ROOT_NODE = ROOT_NODE;
+    nodePrototype.PARAGRAPH_NODE = PARAGRAPH_NODE;
+    nodePrototype.SENTENCE_NODE = SENTENCE_NODE;
+    nodePrototype.WORD_NODE = WORD_NODE;
+    nodePrototype.PUNCTUATION_NODE = PUNCTUATION_NODE;
+    nodePrototype.WHITE_SPACE_NODE = WHITE_SPACE_NODE;
+    nodePrototype.SOURCE_NODE = SOURCE_NODE;
+    nodePrototype.TEXT_NODE = TEXT_NODE;
+
+    /**
+     * Expose all different `Node`s on `TextOM`.
+     */
+
     TextOM.Node = Node;
     TextOM.Parent = Parent;
     TextOM.Child = Child;
@@ -1062,9 +1450,14 @@ function TextOMConstructor() {
     TextOM.TextNode = TextNode;
 
     /**
-     * Expose `TextOM`. Used to instantiate a new `RootNode`.
+     * Expose `TextOM`.
      */
+
     return TextOM;
 }
+
+/**
+ * Expose `TextOMConstructor`.
+ */
 
 module.exports = TextOMConstructor;
