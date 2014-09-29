@@ -9,14 +9,19 @@ Note: This project is **not** a parser for natural language, or an extensible sy
 
 ## Installation
 
-NPM:
+npm:
 ```sh
 $ npm install textom
 ```
 
-Component.js:
+Component:
 ```sh
 $ component install wooorm/textom
+```
+
+Bower:
+```sh
+$ bower install textom
 ```
 
 ## Usage
