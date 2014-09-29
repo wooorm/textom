@@ -1,4 +1,27 @@
 
+n.n.n / 2014-09-29
+==================
+
+ * Merge branch 'feature/add-node-names'
+ * Add `nodeName` properties to nodes
+ * Add spec for `nodeName` properties
+ * Update API
+ * Refactor spec
+ * Fix indent in .jscs.json
+ * Remove tags-only npm deployment from travis
+ * Remove `npm update npm` from travis
+ * Update .gitignore, .npmignore
+ * Update Installation in docs
+ * Reorder properties in package.json, component.json, bower.json
+ * Update copyright in Readme.md
+ * Remove browser test
+ * Remove testling
+ * Add broader jscs version range
+ * Update eslint to 0.8.0
+ * Fix two ungrammatical sentences
+ * Fix link, now pointing to parse-latin instead of -english
+ * Add a fancy word
+
 0.1.1 / 2014-07-25
 ==================
 
