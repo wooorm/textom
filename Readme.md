@@ -675,4 +675,4 @@ Fired when a [child](#textomchild) is removed from an ancestor.
 
 ## License
 
-  MIT
+MIT © Titus Wormer
