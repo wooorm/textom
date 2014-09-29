@@ -27,8 +27,6 @@
     "lint": "npm run-script lint-api && npm run-script lint-test",
     "lint-api": "node_modules/.bin/eslint index.js --env node --env browser --rule 'quotes: [2, single]'",
     "lint-test": "node_modules/.bin/eslint spec/textom.spec.js --env node --env mocha --rule 'quotes: [2, single]' && node_modules/.bin/jscs index.js spec/textom.spec.js",
-    "install-browser-test": "npm install browserify",
-    "build-browser-test": "node_modules/.bin/browserify spec/textom.spec.js -o spec/browser.spec.js",
     "coverage": "node_modules/.bin/istanbul cover node_modules/.bin/_mocha -- -- spec/textom.spec.js",
     "make": "npm run-script lint && npm run-script coverage"
   }
