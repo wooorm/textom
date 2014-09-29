@@ -14,7 +14,7 @@
   "devDependencies": {
     "eslint": "^0.8.0",
     "istanbul": "^0.3.0",
-    "jscs": "^1.5.7",
+    "jscs": "^1.6.0",
     "mocha": "^1.21.0"
   },
   "repository": {
