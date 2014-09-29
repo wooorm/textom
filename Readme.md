@@ -1,11 +1,5 @@
 # TextOM [![Build Status](https://travis-ci.org/wooorm/textom.svg?branch=master)](https://travis-ci.org/wooorm/textom) [![Coverage Status](https://img.shields.io/coveralls/wooorm/textom.svg)](https://coveralls.io/r/wooorm/textom?branch=master)
 
-[![browser support](https://ci.testling.com/wooorm/textom.png) ](https://ci.testling.com/wooorm/textom)
-
-See [Browser Support](#browser-support) for more information (a.k.a. don’t worry about those grey icons above).
-
----
-
 **TextOM** provides an object model for natural language in JavaScript. No dependencies. NodeJS, and the browser. Lots of tests (230+), including 350+ assertions. 100% coverage.
 
 Note: This project is **not** a parser for natural language, or an extensible system for analysing and manipulating natural language, its rather the core that lies underneath such systems. Its like a simplified and modified version of the DOM, without any parsing capabilities, for natural language. If you need the aforementioned functionalities, use the following projects—both build on top of this module.
@@ -671,9 +665,6 @@ Fired when a [child](#textomchild) is removed from an ancestor.
 - arguments:
   - node: the removed [child](#textomchild);
   - parent: the previous [parent](#textomparent).
-
-## Browser Support
-Pretty much every browser (available through browserstack) runs all TextOM unit tests; just make sure `Array#indexOf()` is [polyfill](mzl.la/19ZfdDP)’d in browser that need it.
 
 ## Related
 
