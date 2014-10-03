@@ -1,4 +1,11 @@
 
+n.n.n / 2014-10-03
+==================
+
+ * Merge branch 'feature/add-value-of-support'
+ * Add `Parent#valueOf()`, `Text#valueOf()`
+ * Add spec for `valueOf()`
+
 0.2.0-rc.1 / 2014-09-29
 ==================
 
