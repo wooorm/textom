@@ -1,5 +1,5 @@
 
-n.n.n / 2014-10-03
+0.2.0-rc.2 / 2014-10-03
 ==================
 
  * Merge branch 'feature/add-value-of-support'
