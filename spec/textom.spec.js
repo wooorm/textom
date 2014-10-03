@@ -58,9 +58,11 @@ function noop() {}
 /* istanbul ignore next: noop */
 function altNoop() {}
 
-var has;
+var has,
+    objectToString;
 
 has = Object.prototype.hasOwnProperty;
+objectToString = Object.prototype.toString;
 
 /**
  * Tests.
@@ -194,10 +196,7 @@ describe('TextOM.Node', function () {
 
             assert(has.call(node, 'data'));
 
-            assert(
-                Object.prototype.toString.call(node.data) ===
-                '[object Object]'
-            );
+            assert(objectToString.call(node.data) === '[object Object]');
         }
     );
 });
@@ -1541,7 +1540,7 @@ describe('TextOM.Parent#split(position)', function () {
     );
 });
 
-describe('TextOM.Parent#toString', function () {
+describe('TextOM.Parent#toString()', function () {
     it('should be a method', function () {
         assert(typeof parentPrototype.toString === 'function');
     });
@@ -1578,6 +1577,57 @@ describe('TextOM.Parent#toString', function () {
             assert(node.toString() === 'a value');
         }
     );
+});
+
+describe('TextOM.Parent#valueOf()', function () {
+    it('should be a method', function () {
+        assert(typeof parentPrototype.valueOf === 'function');
+    });
+
+    it('should return an object', function () {
+        assert(typeof new Parent().valueOf() === 'object');
+    });
+
+    it('should return an object with a string `type` property', function () {
+        assert(typeof new Parent().valueOf().type === 'string');
+    });
+
+    it('should return an object with a `children` array', function () {
+        assert(
+            objectToString.call(new Parent().valueOf().children) ===
+            '[object Array]'
+        );
+    });
+
+    it('should return an empty `children` array when without children',
+        function () {
+            assert(new Parent().valueOf().children.length === 0);
+        }
+    );
+
+    it('should return an `children` array with objects', function () {
+        var parent,
+            text1,
+            text2,
+            result;
+
+        parent = new Parent();
+        text1 = new Text('Alfred');
+        text2 = new Text('Bertrand');
+
+        parent.append(text1);
+        parent.append(text2);
+
+        result = parent.valueOf();
+
+        assert(result.children.length === 2);
+
+        assert(typeof result.children[0] === 'object');
+        assert(typeof result.children[0].type === 'string');
+
+        assert(typeof result.children[1] === 'object');
+        assert(typeof result.children[1].type === 'string');
+    });
 });
 
 describe('TextOM.Child', function () {
@@ -2808,6 +2858,30 @@ describe('TextOM.Text#toString()', function () {
     });
 });
 
+describe('TextOM.Text#valueOf()', function () {
+    it('should be a method', function () {
+        assert(typeof Text.prototype.valueOf === 'function');
+    });
+
+    it('should return an object', function () {
+        assert(typeof new Text().valueOf() === 'object');
+    });
+
+    it('should return an object with a string `type` property', function () {
+        assert(typeof new Text().valueOf().type === 'string');
+    });
+
+    it('should return an object with a string `value` property', function () {
+        assert(new Text('Alfred').valueOf().value === 'Alfred');
+    });
+
+    it('should return an empty string when without `value`',
+        function () {
+            assert(new Text().valueOf().value === '');
+        }
+    );
+});
+
 describe('TextOM.Text#fromString(value?)', function () {
     it('should (re)set an empty string (`""`) when a nully value is given',
         function () {
@@ -3144,6 +3218,156 @@ describe('TextOM.TextNode()', function () {
             assert(new TextNode().nodeName === nodePrototype.TEXT);
         }
     );
+});
+
+describe('TextOM.RootNode().valueOf().type', function () {
+    it('should be equal to TextOM.Node#ROOT_NODE', function () {
+        assert(new RootNode().valueOf().type === nodePrototype.ROOT_NODE);
+    });
+});
+
+describe('TextOM.RootNode().valueOf().children', function () {
+    it('should be an array', function () {
+        assert(
+            objectToString.call(new RootNode().valueOf().children) ===
+            '[object Array]'
+        );
+    });
+
+    it('should be empty', function () {
+        assert(new RootNode().valueOf().children.length === 0);
+    });
+});
+
+describe('TextOM.ParagraphNode().valueOf().type', function () {
+    it('should be equal to TextOM.Node#PARAGRAPH_NODE', function () {
+        assert(
+            new ParagraphNode().valueOf().type ===
+            nodePrototype.PARAGRAPH_NODE
+        );
+    });
+});
+
+describe('TextOM.ParagraphNode().valueOf().children', function () {
+    it('should be an array', function () {
+        assert(
+            objectToString.call(new ParagraphNode().valueOf().children) ===
+            '[object Array]'
+        );
+    });
+
+    it('should be empty', function () {
+        assert(new ParagraphNode().valueOf().children.length === 0);
+    });
+});
+
+describe('TextOM.SentenceNode().valueOf().type', function () {
+    it('should be equal to TextOM.Node#SENTENCE_NODE', function () {
+        assert(
+            new SentenceNode().valueOf().type ===
+            nodePrototype.SENTENCE_NODE
+        );
+    });
+});
+
+describe('TextOM.SentenceNode().valueOf().children', function () {
+    it('should be an array', function () {
+        assert(
+            objectToString.call(new SentenceNode().valueOf().children) ===
+            '[object Array]'
+        );
+    });
+
+    it('should be empty', function () {
+        assert(new SentenceNode().valueOf().children.length === 0);
+    });
+});
+
+describe('TextOM.WordNode().valueOf().type', function () {
+    it('should be equal to TextOM.Node#WORD_NODE', function () {
+        assert(new WordNode().valueOf().type === nodePrototype.WORD_NODE);
+    });
+});
+
+describe('TextOM.WordNode().valueOf().children', function () {
+    it('should be an array', function () {
+        assert(
+            objectToString.call(new WordNode().valueOf().children) ===
+            '[object Array]'
+        );
+    });
+
+    it('should be empty', function () {
+        assert(new WordNode().valueOf().children.length === 0);
+    });
+});
+
+describe('TextOM.PunctuationNode().valueOf().type', function () {
+    it('should be equal to TextOM.Node#PUNCTUATION_NODE', function () {
+        assert(
+            new PunctuationNode().valueOf().type ===
+            nodePrototype.PUNCTUATION_NODE
+        );
+    });
+});
+
+describe('TextOM.PunctuationNode().valueOf().children', function () {
+    it('should be an array', function () {
+        assert(
+            objectToString.call(new PunctuationNode().valueOf().children) ===
+            '[object Array]'
+        );
+    });
+
+    it('should be empty', function () {
+        assert(new PunctuationNode().valueOf().children.length === 0);
+    });
+});
+
+describe('TextOM.WhiteSpaceNode().valueOf().type', function () {
+    it('should be equal to TextOM.Node#WHITE_SPACE_NODE', function () {
+        assert(
+            new WhiteSpaceNode().valueOf().type ===
+            nodePrototype.WHITE_SPACE_NODE
+        );
+    });
+});
+
+describe('TextOM.WhiteSpaceNode().valueOf().children', function () {
+    it('should be an array', function () {
+        assert(
+            objectToString.call(new WhiteSpaceNode().valueOf().children) ===
+            '[object Array]'
+        );
+    });
+
+    it('should be empty', function () {
+        assert(new WhiteSpaceNode().valueOf().children.length === 0);
+    });
+});
+
+describe('TextOM.SourceNode().valueOf().type', function () {
+    it('should be equal to TextOM.Node#SOURCE_NODE', function () {
+        assert(new SourceNode().valueOf().type === nodePrototype.SOURCE_NODE);
+    });
+});
+
+describe('TextOM.SourceNode().valueOf().value', function () {
+    it('should be equal the value of `text`', function () {
+        assert(new SourceNode('Alfred').valueOf().value === 'Alfred');
+    });
+});
+
+describe('TextOM.TextNode().valueOf().type', function () {
+    it('should be equal to TextOM.Node#TEXT_NODE', function () {
+        assert(new TextNode().valueOf().type === nodePrototype.TEXT_NODE);
+    });
+});
+
+describe('TextOM.TextNode().valueOf().value', function () {
+    it('should be equal the value of `text`', function () {
+        assert(new TextNode('Alfred').valueOf().value === 'Alfred');
+    });
 });
 
 describe('HierarchyError', function () {

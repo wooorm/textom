@@ -743,6 +743,10 @@ function TextOMConstructor() {
             newPrototype.toString = constructorPrototype.toString;
         }
 
+        if (constructorPrototype.valueOf !== {}.valueOf) {
+            newPrototype.valueOf = constructorPrototype.valueOf;
+        }
+
         /**
          * Copy properties and methods on the Super (not
          * its prototype) over to the given `Constructor`.
@@ -928,6 +932,36 @@ function TextOMConstructor() {
         }
 
         return values.join('');
+    };
+
+    /**
+     * Return an NLCST node representing the context.
+     *
+     * @this {Parent}
+     * @return {NLCSTNode}
+     */
+
+    parentPrototype.valueOf = function () {
+        var children,
+            nlcst,
+            node;
+
+        children = [];
+
+        nlcst = {
+            'type' : this.type || '',
+            'children' : children
+        };
+
+        node = this.head;
+
+        while (node) {
+            children.push(node.valueOf());
+
+            node = node.next;
+        }
+
+        return nlcst;
     };
 
     /**
@@ -1117,6 +1151,20 @@ function TextOMConstructor() {
 
     textPrototype.toString = function () {
         return this.internalValue;
+    };
+
+    /**
+     * Return an NLCST node representing the text.
+     *
+     * @this {Text}
+     * @return {NLCSTNode}
+     */
+
+    textPrototype.valueOf = function () {
+        return {
+            'type' : this.type || '',
+            'value' : this.internalValue
+        };
     };
 
     /**
