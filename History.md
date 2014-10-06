@@ -1,5 +1,5 @@
 
-n.n.n / 2014-10-06
+0.2.0-rc.4 / 2014-10-06
 ==================
 
  * Merge branch 'feature/event-cancelation'
