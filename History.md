@@ -1,4 +1,10 @@
 
+n.n.n / 2014-10-06
+==================
+
+ * Add `valueOf` to IDL definition in Readme.md
+ * Fix split prototype: Parent#split > Element#split
+
 0.2.0-rc.2 / 2014-10-03
 ==================
 
