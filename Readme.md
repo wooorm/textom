@@ -406,6 +406,14 @@ module textom
 {
   [Constructor]
   interface Node {
+    const string nodeName = "Node"
+
+    const string NODE = "Node"
+    const string PARENT = "Parent"
+    const string ELEMENT = "Element"
+    const string CHILD = "Child"
+    const string TEXT = "Text"
+
     const string ROOT_NODE = "RootNode"
     const string PARAGRAPH_NODE = "ParagraphNode"
     const string SENTENCE_NODE = "SentenceNode"
@@ -422,6 +430,8 @@ module textom
   [Constructor,
    ArrayClass]
   interface Parent {
+    const string nodeName = "Parent"
+
     getter Child? item(unsigned long index);
     readonly attribute unsigned long length;
 
@@ -439,6 +449,8 @@ module textom
 
   [Constructor]
   interface Child {
+    const string nodeName = "Child"
+
     readonly attribute Parent? parent;
     readonly attribute Child? prev;
     readonly attribute Child? next;
@@ -452,6 +464,8 @@ module textom
 
   [Constructor]
   interface Element {
+    const string nodeName = "Element"
+
     [NewObject] Element split(unsigned long position);
   };
   Element implements Child;
@@ -459,6 +473,8 @@ module textom
 
   [Constructor(optional String value = "")]
   interface Text {
+    const string nodeName = "Text"
+
     [NewObject] valueOf();
 
     string toString();
