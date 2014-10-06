@@ -5,12 +5,10 @@
  */
 
 var TextOMConstructor,
-    assert,
-    inspect;
+    assert;
 
 TextOMConstructor = require('..');
 assert = require('assert');
-inspect = require('retext-inspect');
 
 /**
  * Constants.
@@ -40,10 +38,6 @@ Parent = TextOM.Parent;
 Child = TextOM.Child;
 Element = TextOM.Element;
 Text = TextOM.Text;
-
-inspect.attach({
-    'TextOM' : TextOM
-});
 
 RootNode = TextOM.RootNode;
 ParagraphNode = TextOM.ParagraphNode;
