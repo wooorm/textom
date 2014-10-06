@@ -1330,216 +1330,6 @@ describe('TextOM.Parent#item(index?)', function () {
     );
 });
 
-describe('TextOM.Parent#split(position)', function () {
-    it('should throw when the operated on item is not attached',
-        function () {
-            var parent;
-
-            parent = new Parent();
-
-            assert.throws(function () {
-                parent.split();
-            }, /undefined/);
-        }
-    );
-
-    it('should throw when a position was given, not a number',
-        function () {
-            var parent,
-                element;
-
-            parent = new Parent();
-
-            element = parent.append(new Element());
-
-            assert.throws(function () {
-                element.split('failure');
-            }, /failure/);
-        }
-    );
-
-    it('should return a new instance() of the operated on item',
-        function () {
-            var parent,
-                element;
-
-            parent = new Parent();
-
-            element = parent.append(new Element());
-
-            assert(element.split() instanceof element.constructor);
-        }
-    );
-
-    it('should treat a given negative position, as an position from the ' +
-        'end (e.g., when the internal value of element is `alfred`, treat ' +
-        '`-1` as `5`)',
-        function () {
-            var parent,
-                element;
-
-            parent = new Parent();
-
-            element = parent.append(new Element());
-
-            element.append(new Text('alfred'));
-            element.append(new Text('bertrand'));
-
-            element.split(-1);
-
-            assert(element.toString() === 'bertrand');
-            assert(element.prev.toString() === 'alfred');
-        }
-    );
-
-    it('should NOT throw when NaN, or -Infinity are given (but treat it ' +
-        'as `0`)',
-        function () {
-            var parent,
-                element;
-
-            parent = new Parent();
-
-            element = parent.append(new Element());
-
-            element.append(new Text('alfred'));
-            element.append(new Text('bertrand'));
-
-            element.split(NaN);
-
-            assert(element.toString() === 'alfredbertrand');
-            assert(element.prev.toString() === '');
-
-            element.split(-Infinity);
-
-            assert(element.toString() === 'alfredbertrand');
-            assert(element.prev.toString() === '');
-        }
-    );
-
-    it('should NOT throw when Infinity is given (but treat it as ' +
-        '`this.length`)',
-        function () {
-            var parent,
-                element;
-
-            parent = new Parent();
-
-            element = parent.append(new Element());
-
-            element.append(new Text('alfred'));
-            element.append(new Text('bertrand'));
-
-            element.split(Infinity);
-
-            assert(element.toString() === '');
-            assert(element.prev.toString() === 'alfredbertrand');
-        }
-    );
-
-    it('should NOT throw when a position greater than the length of the ' +
-        'element is given (but treat it as `this.length`)',
-        function () {
-            var parent,
-                element;
-
-            parent = new Parent();
-            element = parent.append(new Element());
-
-            element.append(new Text('alfred'));
-            element.append(new Text('bertrand'));
-
-            element.split(3);
-
-            assert(element.toString() === '');
-            assert(element.prev.toString() === 'alfredbertrand');
-        }
-    );
-
-    it('should NOT throw when a nully position is given, but treat it as ' +
-        '`0`',
-        function () {
-            var parent,
-                element;
-
-            parent = new Parent();
-
-            element = parent.append(new Element());
-
-            element.append(new Text('alfred'));
-            element.append(new Text('bertrand'));
-
-            element.split();
-
-            assert(element.toString() === 'alfredbertrand');
-            assert(element.prev.toString() === '');
-
-            element.split(null);
-
-            assert(element.toString() === 'alfredbertrand');
-            assert(element.prev.toString() === '');
-
-            element.split(undefined);
-
-            assert(element.toString() === 'alfredbertrand');
-            assert(element.prev.toString() === '');
-        }
-    );
-
-    it('should remove the children of the current items value, from `0` to ' +
-        'the given position',
-        function () {
-            var parent,
-                element;
-
-            parent = new Parent();
-
-            element = parent.append(new Element());
-
-            element.append(new Text('alfred'));
-            element.append(new Text('bertrand'));
-
-            element.split(1);
-
-            assert(element.toString() === 'bertrand');
-        }
-    );
-
-    it('should prepend a new instance() of the operated on item',
-        function () {
-            var parent,
-                element;
-
-            parent = new Parent();
-
-            element = parent.append(new Element());
-
-            element.split();
-
-            assert(element.prev instanceof element.constructor);
-        }
-    );
-
-    it('should move the part of the current items value, from `0` to the ' +
-        'given position, to prepended item',
-        function () {
-            var parent,
-                element;
-
-            parent = new Parent();
-
-            element = parent.append(new Element());
-
-            element.append(new Text('alfred'));
-            element.append(new Text('bertrand'));
-
-            element.split(1);
-
-            assert(element.prev.toString() === 'alfred');
-        }
-    );
-});
-
 describe('TextOM.Parent#toString()', function () {
     it('should be a method', function () {
         assert(typeof parentPrototype.toString === 'function');
@@ -2836,6 +2626,210 @@ describe('TextOM.Element()', function () {
             }
         }
     });
+});
+
+describe('TextOM.Element#split(position)', function () {
+    it('should throw when the operated on item is not attached', function () {
+        var element;
+
+        element = new Element();
+
+        assert.throws(function () {
+            element.split();
+        }, /parent/);
+    });
+
+    it('should throw when a non-number position was given', function () {
+        var parent,
+            element;
+
+        parent = new Parent();
+
+        element = parent.append(new Element());
+
+        assert.throws(function () {
+            element.split('failure');
+        }, /failure/);
+    });
+
+    it('should return a new instance of the operated on item', function () {
+        var parent,
+            element;
+
+        parent = new Parent();
+
+        element = parent.append(new Element());
+
+        assert(element.split() instanceof element.constructor);
+    });
+
+    it('should treat a given negative position, as an position from the ' +
+        'end (e.g., when the internal value of element is `alfred`, treat ' +
+        '`-1` as `5`)',
+        function () {
+            var parent,
+                element;
+
+            parent = new Parent();
+
+            element = parent.append(new Element());
+
+            element.append(new Text('alfred'));
+            element.append(new Text('bertrand'));
+
+            element.split(-1);
+
+            assert(element.toString() === 'bertrand');
+            assert(element.prev.toString() === 'alfred');
+        }
+    );
+
+    it('should NOT throw when NaN, or -Infinity are given (but treat it ' +
+        'as `0`)',
+        function () {
+            var parent,
+                element;
+
+            parent = new Parent();
+
+            element = parent.append(new Element());
+
+            element.append(new Text('alfred'));
+            element.append(new Text('bertrand'));
+
+            element.split(NaN);
+
+            assert(element.toString() === 'alfredbertrand');
+            assert(element.prev.toString() === '');
+
+            element.split(-Infinity);
+
+            assert(element.toString() === 'alfredbertrand');
+            assert(element.prev.toString() === '');
+        }
+    );
+
+    it('should NOT throw when Infinity is given (but treat it as ' +
+        '`this.length`)',
+        function () {
+            var parent,
+                element;
+
+            parent = new Parent();
+
+            element = parent.append(new Element());
+
+            element.append(new Text('alfred'));
+            element.append(new Text('bertrand'));
+
+            element.split(Infinity);
+
+            assert(element.toString() === '');
+            assert(element.prev.toString() === 'alfredbertrand');
+        }
+    );
+
+    it('should NOT throw when a position greater than the length of the ' +
+        'element is given (but treat it as `this.length`)',
+        function () {
+            var parent,
+                element;
+
+            parent = new Parent();
+            element = parent.append(new Element());
+
+            element.append(new Text('alfred'));
+            element.append(new Text('bertrand'));
+
+            element.split(3);
+
+            assert(element.toString() === '');
+            assert(element.prev.toString() === 'alfredbertrand');
+        }
+    );
+
+    it('should NOT throw when a nully position is given, but treat it as ' +
+        '`0`',
+        function () {
+            var parent,
+                element;
+
+            parent = new Parent();
+
+            element = parent.append(new Element());
+
+            element.append(new Text('alfred'));
+            element.append(new Text('bertrand'));
+
+            element.split();
+
+            assert(element.toString() === 'alfredbertrand');
+            assert(element.prev.toString() === '');
+
+            element.split(null);
+
+            assert(element.toString() === 'alfredbertrand');
+            assert(element.prev.toString() === '');
+
+            element.split(undefined);
+
+            assert(element.toString() === 'alfredbertrand');
+            assert(element.prev.toString() === '');
+        }
+    );
+
+    it('should remove the children of the current items value, from `0` to ' +
+        'the given position',
+        function () {
+            var parent,
+                element;
+
+            parent = new Parent();
+
+            element = parent.append(new Element());
+
+            element.append(new Text('alfred'));
+            element.append(new Text('bertrand'));
+
+            element.split(1);
+
+            assert(element.toString() === 'bertrand');
+        }
+    );
+
+    it('should prepend a new instance() of the operated on item',
+        function () {
+            var parent,
+                element;
+
+            parent = new Parent();
+
+            element = parent.append(new Element());
+
+            element.split();
+
+            assert(element.prev instanceof element.constructor);
+        }
+    );
+
+    it('should move the part of the current items value, from `0` to the ' +
+        'given position, to prepended item',
+        function () {
+            var parent,
+                element;
+
+            parent = new Parent();
+
+            element = parent.append(new Element());
+
+            element.append(new Text('alfred'));
+            element.append(new Text('bertrand'));
+
+            element.split(1);
+
+            assert(element.prev.toString() === 'alfred');
+        }
+    );
 });
 
 describe('TextOM.Text(value?)', function () {

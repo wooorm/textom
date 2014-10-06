@@ -430,8 +430,6 @@ module textom
 
     Child prepend(Child child);
     Child append(Child child);
-
-    [NewObject] Parent split(unsigned long position);
     
     string toString();
   };
@@ -452,6 +450,7 @@ module textom
 
   [Constructor]
   interface Element {
+    [NewObject] Element split(unsigned long position);
   };
   Element implements Child;
   Element implements Parent;

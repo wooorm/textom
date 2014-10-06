@@ -874,43 +874,6 @@ function TextOMConstructor() {
     };
 
     /**
-     * Split the context in two, dividing the children
-     * from 0-position (NOT INCLUDING the character at
-     * `position`), and position-length (INCLUDING the
-     * character at `position`).
-     *
-     * @param {number?} [position=0] - Position to split
-     *   at.
-     * @this {Parent}
-     * @return {self}
-     */
-
-    parentPrototype.split = function (position) {
-        var self,
-            clone,
-            cloneNode,
-            index;
-
-        self = this;
-
-        position = validateSplitPosition(position, self.length);
-
-        /*eslint-disable new-cap */
-        cloneNode = insert(self.parent, self.prev, new self.constructor());
-        /*eslint-enable new-cap */
-
-        clone = arraySlice.call(self);
-
-        index = -1;
-
-        while (++index < position && clone[index]) {
-            cloneNode.append(clone[index]);
-        }
-
-        return cloneNode;
-    };
-
-    /**
      * Return the result of calling `toString` on each of `Parent`s children.
      *
      * @this {Parent}
@@ -1097,6 +1060,43 @@ function TextOMConstructor() {
 
     Parent.isImplementedBy(Element);
     Child.isImplementedBy(Element);
+
+    /**
+     * Split the context in two, dividing the children
+     * from 0-position (NOT INCLUDING the character at
+     * `position`), and position-length (INCLUDING the
+     * character at `position`).
+     *
+     * @param {number?} [position=0] - Position to split
+     *   at.
+     * @this {Parent}
+     * @return {self}
+     */
+
+    Element.prototype.split = function (position) {
+        var self,
+            clone,
+            cloneNode,
+            index;
+
+        self = this;
+
+        position = validateSplitPosition(position, self.length);
+
+        /*eslint-disable new-cap */
+        cloneNode = insert(self.parent, self.prev, new self.constructor());
+        /*eslint-enable new-cap */
+
+        clone = arraySlice.call(self);
+
+        index = -1;
+
+        while (++index < position && clone[index]) {
+            cloneNode.append(clone[index]);
+        }
+
+        return cloneNode;
+    };
 
     /**
      * Add Parent as a constructor (which it is)
