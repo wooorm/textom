@@ -1,4 +1,11 @@
 
+n.n.n / 2014-10-06
+==================
+
+ * Merge branch 'feature/event-cancelation'
+ * Add new event mechanism
+ * Add `nodeName` to IDL definition in Readme.md
+
 0.2.0-rc.3 / 2014-10-06
 ==================
 
