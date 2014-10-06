@@ -1,5 +1,5 @@
 
-n.n.n / 2014-10-06
+0.2.0-rc.3 / 2014-10-06
 ==================
 
  * Add `valueOf` to IDL definition in Readme.md
