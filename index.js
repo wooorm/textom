@@ -69,29 +69,135 @@ ELEMENT = 'Element';
 TEXT = 'Text';
 
 /**
- * Invoke every callback in `callbacks` with `parameters`
- * and `context` as its context object.
+ * Invoke listeners while a condition returns true
  *
- * @param {Array.<Function>} callbacks
- * @param {Array.<*>} parameters
- * @param {Node} context
+ * @param {function(this:Node, parameters...): function(): boolean} condition
  */
 
-function invokeAll(callbacks, parameters, context) {
-    var index;
+function invokeEvent(condition) {
+    /**
+     * Invoke every callback in `callbacks` with `parameters`
+     * and `context` as its context object, while the condition
+     * returns truthy.
+     *
+     * @param {Array.<Function>} callbacks
+     * @param {Array.<*>} parameters
+     * @param {Node} context
+     */
 
-    if (!callbacks || !callbacks.length) {
-        return;
-    }
+    return function (handlers, name, parameters, context) {
+        var index,
+            length,
+            test;
 
-    index = callbacks.length;
+        if (!handlers) {
+            return true;
+        }
 
-    callbacks = callbacks.concat();
+        handlers = handlers[name];
 
-    while (index--) {
-        callbacks[index].apply(context, parameters);
-    }
+        if (!handlers || !handlers.length) {
+            return true;
+        }
+
+        test = condition.apply(context, parameters);
+
+        index = -1;
+        length = handlers.length;
+
+        handlers = handlers.concat();
+
+        while (++index < length) {
+            if (!test()) {
+                return false;
+            }
+
+            handlers[index].apply(context, parameters);
+        }
+
+        return test();
+    };
 }
+
+/**
+ * `remove` event condition.
+ */
+
+invokeEvent.remove = invokeEvent(function (previousParent) {
+    var self;
+
+    self = this;
+
+    /**
+     * Return true if the current parent is not
+     * the removed-from parent.
+     *
+     * @return {boolean}
+     */
+
+    return function () {
+        return previousParent !== self.parent;
+    };
+});
+
+/**
+ * `insert` event condition.
+ */
+
+invokeEvent.insert = invokeEvent(function () {
+    var self,
+        parent;
+
+    self = this;
+    parent = self.parent;
+
+    /**
+     * Return true if the current parent is
+     * the inserted-into parent.
+     *
+     * @return {boolean}
+     */
+
+    return function () {
+        return parent === self.parent;
+    };
+});
+
+/**
+ * `insertinside` event condition.
+ */
+
+invokeEvent.insertinside = invokeEvent(function (node) {
+    var parent;
+
+    parent = node.parent;
+
+    return function () {
+        return node.parent === parent;
+    };
+});
+
+/**
+ * `removeinside` event condition.
+ */
+
+invokeEvent.removeinside = invokeEvent(function (node, previousParent) {
+    return function () {
+        return node.parent !== previousParent;
+    };
+});
+
+/**
+ * Default conditional (always returns `true`).
+ */
+
+var invokeAll;
+
+invokeAll = invokeEvent(function () {
+    return function () {
+        return true;
+    };
+});
 
 /**
  * Return whether or not `child` can be inserted
@@ -295,7 +401,9 @@ function insert(parent, item, child) {
 
     next = child.next;
 
-    child.emit('insert');
+    if (child.emit('insert')) {
+        parent.trigger('insertinside', child);
+    }
 
     if (item) {
         item.emit('changenext', child, next);
@@ -306,8 +414,6 @@ function insert(parent, item, child) {
         next.emit('changeprev', child, item);
         child.emit('changenext', next, null);
     }
-
-    parent.trigger('insertinside', child);
 
     return child;
 }
@@ -406,7 +512,9 @@ function remove(node) {
      * Emit events.
      */
 
-    node.emit('remove', parent);
+    if (node.emit('remove', parent)) {
+        parent.trigger('removeinside', node, parent);
+    }
 
     if (next) {
         next.emit('changeprev', prev || null, node);
@@ -417,8 +525,6 @@ function remove(node) {
         node.emit('changeprev', null, prev);
         prev.emit('changenext', next || null, node);
     }
-
-    parent.trigger('removeinside', node, parent);
 
     return node;
 }
@@ -621,36 +727,42 @@ function TextOMConstructor() {
         var self,
             parameters,
             constructors,
+            constructor,
             index,
+            length,
+            invoke,
             handlers;
 
         self = this;
         handlers = self.callbacks;
 
+        invoke = invokeEvent[name] || invokeAll;
+
         parameters = arraySlice.call(arguments, 1);
 
-        if (handlers) {
-            invokeAll(handlers[name], parameters, self);
+        if (!invoke(handlers, name, parameters, self)) {
+            return false;
         }
 
         constructors = self.constructor.constructors;
 
         /* istanbul ignore if: Wrong-usage */
         if (!constructors) {
-            return self;
+            return true;
         }
 
-        index = constructors.length;
+        length = constructors.length;
+        index = -1;
 
-        while (index--) {
-            handlers = constructors[index].callbacks;
+        while (++index < length) {
+            constructor = constructors[index];
 
-            if (handlers) {
-                invokeAll(handlers[name], parameters, self);
+            if (!invoke(constructor.callbacks, name, parameters, self)) {
+                return false;
             }
         }
 
-        return self;
+        return true;
     };
 
     /**
@@ -666,31 +778,29 @@ function TextOMConstructor() {
         var self,
             node,
             parameters,
-            handlers;
+            invoke;
 
         self = this;
 
-        node = self;
+        invoke = invokeEvent[name] || invokeAll;
 
         parameters = arraySlice.call(arguments, 1);
 
-        while (node) {
-            handlers = node.callbacks;
+        node = self;
 
-            if (handlers) {
-                invokeAll(handlers[name], parameters, node);
+        while (node) {
+            if (!invoke(node.callbacks, name, parameters, node)) {
+                return false;
             }
 
-            handlers = node.constructor.callbacks;
-
-            if (handlers) {
-                invokeAll(handlers[name], parameters, node);
+            if (!invoke(node.constructor.callbacks, name, parameters, node)) {
+                return false;
             }
 
             node = node.parent;
         }
 
-        return self;
+        return true;
     };
 
     /**
@@ -1193,12 +1303,9 @@ function TextOMConstructor() {
 
         if (value !== current) {
             self.internalValue = value;
-
-            self.emit('changetext', value, current);
-
             parent = self.parent;
 
-            if (parent) {
+            if (self.emit('changetext', value, current) && parent) {
                 parent.trigger('changetextinside', self, value, current);
             }
         }

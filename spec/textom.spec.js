@@ -5,10 +5,12 @@
  */
 
 var TextOMConstructor,
-    assert;
+    assert,
+    inspect;
 
 TextOMConstructor = require('..');
 assert = require('assert');
+inspect = require('retext-inspect');
 
 /**
  * Constants.
@@ -39,6 +41,10 @@ Child = TextOM.Child;
 Element = TextOM.Element;
 Text = TextOM.Text;
 
+inspect.attach({
+    'TextOM' : TextOM
+});
+
 RootNode = TextOM.RootNode;
 ParagraphNode = TextOM.ParagraphNode;
 SentenceNode = TextOM.SentenceNode;
@@ -58,11 +64,37 @@ function noop() {}
 /* istanbul ignore next: noop */
 function altNoop() {}
 
+/* istanbul ignore next: should never be called */
+function doNotCall() {
+    throw new Error('doNotCall was called, but shouldn\'t be');
+}
+
 var has,
     objectToString;
 
 has = Object.prototype.hasOwnProperty;
 objectToString = Object.prototype.toString;
+
+/**
+ * Remove all constructor events.
+ */
+
+afterEach(function () {
+    Node.off();
+    Parent.off();
+    Child.off();
+    Element.off();
+    Text.off();
+
+    RootNode.off();
+    ParagraphNode.off();
+    SentenceNode.off();
+    WordNode.off();
+    PunctuationNode.off();
+    WhiteSpaceNode.off();
+    SourceNode.off();
+    TextNode.off();
+});
 
 /**
  * Tests.
@@ -3654,12 +3686,15 @@ describe('Events on TextOM.Parent', function () {
                 rootNode.on('insertinside',
                     oninsertinsideFactory(rootNode)
                 );
+
                 paragraphNode.on('insertinside',
                     oninsertinsideFactory(paragraphNode)
                 );
+
                 sentenceNode.on('insertinside',
                     oninsertinsideFactory(sentenceNode)
                 );
+
                 shouldBeChild = wordNode;
 
                 sentenceNode.append(wordNode);
@@ -3672,6 +3707,38 @@ describe('Events on TextOM.Parent', function () {
                 rootNode.append(whiteSpaceNode);
 
                 assert(index === 1);
+            }
+        );
+
+        it('stops emitting when `child` is no longer attached to its parent',
+            function () {
+                var paragraphNode,
+                    sentenceNode,
+                    wordNode;
+
+                paragraphNode = new ParagraphNode();
+                sentenceNode = new SentenceNode();
+                wordNode = new WordNode();
+
+                function remove() {
+                    wordNode.remove();
+                }
+
+                ParagraphNode.on('insertinside', doNotCall);
+                paragraphNode.on('insertinside', doNotCall);
+                SentenceNode.on('insertinside', doNotCall);
+                sentenceNode.on('insertinside', doNotCall);
+
+                sentenceNode.on('insertinside', remove);
+
+                sentenceNode.append(wordNode);
+
+                sentenceNode.off();
+                SentenceNode.off();
+
+                SentenceNode.on('insertinside', remove);
+
+                sentenceNode.append(wordNode);
             }
         );
 
@@ -3733,14 +3800,6 @@ describe('Events on TextOM.Parent', function () {
                 rootNode.append(whiteSpaceNode);
 
                 assert(index === 1);
-
-                /**
-                 * Clean.
-                 */
-
-                RootNode.off('insertinside');
-                ParagraphNode.off('insertinside');
-                SentenceNode.off('insertinside');
             }
         );
     });
@@ -3814,6 +3873,45 @@ describe('Events on TextOM.Parent', function () {
             }
         );
 
+        it('stops emitting when `child` is re-attached to its ex-parent',
+            function () {
+                var paragraphNode,
+                    sentenceNode,
+                    wordNode;
+
+                paragraphNode = new ParagraphNode();
+                sentenceNode = new SentenceNode();
+                wordNode = new WordNode();
+
+                function insert() {
+                    /**
+                     * Re-insert the node.
+                     */
+
+                    sentenceNode.append(wordNode);
+                }
+
+                paragraphNode.append(sentenceNode);
+                sentenceNode.append(wordNode);
+
+                ParagraphNode.on('removeinside', doNotCall);
+                paragraphNode.on('removeinside', doNotCall);
+                SentenceNode.on('removeinside', doNotCall);
+                sentenceNode.on('removeinside', doNotCall);
+
+                sentenceNode.on('removeinside', insert);
+
+                wordNode.remove();
+
+                sentenceNode.off();
+                SentenceNode.off();
+
+                SentenceNode.on('removeinside', insert);
+
+                wordNode.remove();
+            }
+        );
+
         it('emits on all `Child`s ancestors constructors, with the ' +
             'current ancestor as the context, and the removed child ' +
             'and the previous parent as an arguments, when a Child is ' +
@@ -3881,14 +3979,6 @@ describe('Events on TextOM.Parent', function () {
                 whiteSpaceNode.remove();
 
                 assert(index === 1);
-
-                /**
-                 * Clean.
-                 */
-
-                RootNode.off('removeinside');
-                ParagraphNode.off('removeinside');
-                SentenceNode.off('removeinside');
             }
         );
     });
@@ -4049,11 +4139,6 @@ describe('Events on TextOM.Parent', function () {
                 textNode1.fromString('\n');
 
                 assert(index === 1);
-
-                RootNode.off('changetextinside');
-                ParagraphNode.off('changetextinside');
-                SentenceNode.off('changetextinside');
-                WordNode.off('changetextinside');
             }
         );
     });
@@ -4090,12 +4175,41 @@ describe('Events on TextOM.Child', function () {
                 paragraphNode.append(sentenceNode);
 
                 assert(index === 6);
+            }
+        );
 
-                SentenceNode.off('insert');
-                Element.off('insert');
-                Child.off('insert');
-                Parent.off('insert');
-                Node.off('insert');
+        it('stops emitting when `child` is no longer attached to its parent',
+            function () {
+                var sentenceNode,
+                    wordNode;
+
+                sentenceNode = new SentenceNode();
+                wordNode = new WordNode();
+
+                function remove() {
+                    /**
+                     * Re-remove the node.
+                     */
+
+                    wordNode.remove();
+                }
+
+                WordNode.on('insert', doNotCall);
+                Element.on('insert', doNotCall);
+                Child.on('insert', doNotCall);
+                Parent.on('insert', doNotCall);
+                Node.on('insert', doNotCall);
+
+                wordNode.on('insert', remove);
+
+                sentenceNode.append(wordNode);
+
+                wordNode.off();
+                WordNode.off();
+
+                WordNode.on('insert', remove);
+
+                sentenceNode.append(wordNode);
             }
         );
     });
@@ -4135,9 +4249,6 @@ describe('Events on TextOM.Child', function () {
                 wordNode.after(punctuationNode);
 
                 assert(index === 2);
-
-                wordNode.off('changenext');
-                WordNode.off('changenext');
             }
         );
     });
@@ -4177,9 +4288,6 @@ describe('Events on TextOM.Child', function () {
                 whiteSpaceNode.before(punctuationNode);
 
                 assert(index === 2);
-
-                whiteSpaceNode.off('changeprev');
-                WhiteSpaceNode.off('changeprev');
             }
         );
     });
@@ -4217,12 +4325,43 @@ describe('Events on TextOM.Child', function () {
                 sentenceNode.remove();
 
                 assert(index === 6);
+            }
+        );
 
-                SentenceNode.off('remove');
-                Element.off('remove');
-                Child.off('remove');
-                Parent.off('remove');
-                Node.off('remove');
+        it('stops emitting when `child` is re-attached to its ex-parent',
+            function () {
+                var sentenceNode,
+                    wordNode;
+
+                sentenceNode = new SentenceNode();
+                wordNode = new WordNode();
+
+                function insert() {
+                    /**
+                     * Re-insert the node.
+                     */
+
+                    sentenceNode.append(wordNode);
+                }
+
+                sentenceNode.append(wordNode);
+
+                WordNode.on('remove', doNotCall);
+                Element.on('remove', doNotCall);
+                Child.on('remove', doNotCall);
+                Parent.on('remove', doNotCall);
+                Node.on('remove', doNotCall);
+
+                wordNode.on('remove', insert);
+
+                wordNode.remove();
+
+                wordNode.off();
+                WordNode.off();
+
+                WordNode.on('remove', insert);
+
+                wordNode.remove();
             }
         );
     });
@@ -4271,12 +4410,6 @@ describe('Events on TextOM.Text', function () {
                 textNode.fromString(shouldBeValue);
 
                 assert(index === 5);
-
-                textNode.off('changetext');
-                TextNode.off('changetext');
-                Text.off('changetext');
-                Child.off('changetext');
-                Node.off('changetext');
             }
         );
     });
