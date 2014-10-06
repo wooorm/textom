@@ -1,4 +1,9 @@
 
+n.n.n / 2014-10-06
+==================
+
+ * Remove not dependended on dependency from spec
+
 0.2.0-rc.4 / 2014-10-06
 ==================
 
