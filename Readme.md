@@ -430,7 +430,9 @@ module textom
 
     Child prepend(Child child);
     Child append(Child child);
-    
+
+    [NewObject] valueOf();
+
     string toString();
   };
   Parent implements Node;
@@ -457,7 +459,10 @@ module textom
 
   [Constructor(optional String value = "")]
   interface Text {
+    [NewObject] valueOf();
+
     string toString();
+
     string fromString(String value);
     [NewObject] Text split(unsigned long position);
   };
