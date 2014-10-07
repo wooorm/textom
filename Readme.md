@@ -216,11 +216,11 @@ Identifier for [Node](#textomnode-nlcstnode)s.
 
 ##### TextOM\.Node#PARENT
 
-Identifier for [Parent](#textomparentnlcstparent)s.
+Identifier for [Parent](#textomparent-nlcstparent)s.
 
 ##### TextOM\.Node#ELEMENT
 
-Identifier for [element](#textomelement)s.
+Identifier for [Element](#textomelement)s.
 
 ##### TextOM\.Node#CHILD
 
@@ -236,7 +236,7 @@ Constructor ([Node](#textomnode-nlcstnode)).
 
 ##### TextOM\.Parent#nodeName
 
-Identifier for [Parent](#textomparentnlcstparent)s.
+Identifier for [Parent](#textomparent-nlcstparent)s.
 
 ##### TextOM\.Parent#head
 
@@ -245,7 +245,7 @@ paragraph.head; // sentence
 sentence.head; // dogs
 ```
 
-First [child](#textomchild) of `parent` or `null`.
+First [`Child`](#textomchild) of `parent` or `null`.
 
 ##### TextOM\.Parent#tail
 
@@ -254,7 +254,7 @@ paragraph.tail; // null (see description below);
 sentence.tail; // fullStop
 ```
 
-Last [child](#textomchild) of `parent` (if more than one child exists) or `null`.
+Last [`Child`](#textomchild) of `parent` (if more than one child exists) or `null`.
      
 ##### TextOM\.Parent#length
 
@@ -341,7 +341,7 @@ sentence.parent; // paragraph
 paragraph.parent; // root
 ```
 
-`child`s [parent](#textomparentnlcstparent) or `null`.
+`child`s [`Parent`](#textomparent-nlcstparent) or `null`.
 
 ##### TextOM\.child#prev
 
@@ -350,7 +350,7 @@ dogs.prev; // null
 space1.prev; // dogs
 ```
 
-`child`s preceding sibling ([child](#textomchild)) or `null`.
+`child`s preceding sibling ([`Child`](#textomchild)) or `null`.
      
 ##### TextOM\.child#next
 
@@ -359,7 +359,7 @@ cats.next; // fullStop
 fullStop.next; // null
 ```
 
-`child`s following sibling ([child](#textomchild)) or `null`.
+`child`s following sibling ([`Child`](#textomchild)) or `null`.
 
 ##### TextOM\.Child#before(sibling)
 
@@ -369,7 +369,7 @@ dogs.before(cats);
 dogs.prev; // cats
 ```
 
-Insert `sibling` ([child](#textomchild)) as `child`s preceding sibling in `parent`.
+Insert `sibling` ([`Child`](#textomchild)) as `child`s preceding sibling in `parent`.
 
 ##### TextOM\.Child#after(child)
 
@@ -379,7 +379,7 @@ cats.before(dogs);
 cats.next; // dogs
 ```
 
-Insert `sibling` ([child](#textomchild)) as `child`s following sibling in `parent`.
+Insert `sibling` ([`Child`](#textomchild)) as `child`s following sibling in `parent`.
 
 ##### TextOM\.Child#remove()
 
@@ -399,12 +399,11 @@ cats.replace(dogs);
 root.toString(); // " & Dogs"
 ```
 
-
-Replace `child` with `sibling` ([child](#textomchild)) in `parent`.
+Replace `child` with `sibling` ([`Child`](#textomchild)) in `parent`.
 
 #### TextOM.Element()
 
-Constructor ([Parent](#textomparentnlcstparent) and [Child](#textomchild)).
+Constructor ([Parent](#textomparent-nlcstparent) and [`Child`](#textomchild)).
 
 ##### TextOM\.Element#nodeName
 
@@ -487,7 +486,7 @@ Split `text` in two.
 
 #### TextOM.RootNode() [[NLCST:RootNode](https://github.com/wooorm/nlcst#rootnode)]
 
-Constructor ([Parent](#textomparentnlcstparent)).
+Constructor ([Parent](#textomparent-nlcstparent)).
 
 ##### TextOM\.RootNode#type
 
@@ -509,7 +508,7 @@ Constructor ([Element](#textomelement)).
 
 Identifier for [SentenceNode](#textomsentencenode-nlcstsentencenode)s.
 
-#### TextOM.WordNode() [[NLCST:SentenceNode](https://github.com/wooorm/nlcst#wordnode)]
+#### TextOM.WordNode() [[NLCST:WordNode](https://github.com/wooorm/nlcst#wordnode)]
 
 Constructor ([Element](#textomelement)).
 
@@ -710,7 +709,7 @@ Fires when a [`Child`](#textomchild) is removed from `previousParent`.
 
 - this: Removed [`Child`](#textomchild);
 - parameters:
-  - previous: Removed from [`Parent`](#textomparentnlcstparent).
+  - previous: Removed from [`Parent`](#textomparent-nlcstparent).
 
 #### insert [[non-bubbling](#non-bubbling-normal-events)]
 
@@ -722,7 +721,7 @@ dogs.on('insert', function () {
 sentence.append(dogs);
 ```
 
-Fires when a [`Child`](#textomchild) is inserted into a [`Parent`](#textomparentnlcstparent).
+Fires when a [`Child`](#textomchild) is inserted into a [`Parent`](#textomparent-nlcstparent).
 
 - this: Inserted [`Child`](#textomchild).
 
@@ -858,7 +857,7 @@ A `"changetext"` event fires on `dogsText`. Because `dogsText` is a [`TextNode`]
 
 ### Bubbling events
 
-Bubbling events start on a [`Parent`](#textomparentnlcstparent) and continue through its ancestors. These events also fire on the ancestors constructor.
+Bubbling events start on a [`Parent`](#textomparent-nlcstparent) and continue through its ancestors. These events also fire on the ancestors constructor.
 
 Let’s say we have the example code [given in API](#api), and add the following line to it:
 
