@@ -1,11 +1,12 @@
 # TextOM [![Build Status](https://travis-ci.org/wooorm/textom.svg?branch=master)](https://travis-ci.org/wooorm/textom) [![Coverage Status](https://img.shields.io/coveralls/wooorm/textom.svg)](https://coveralls.io/r/wooorm/textom?branch=master)
 
-**TextOM** provides an object model for natural language in JavaScript. No dependencies. NodeJS, and the browser. Lots of tests (230+), including 350+ assertions. 100% coverage.
+Object model for manipulating natural language in JavaScript.
 
-Note: This project is **not** a parser for natural language, or an extensible system for analysing and manipulating natural language, its rather the core that lies underneath such systems. Its like a simplified and modified version of the DOM, without any parsing capabilities, for natural language. If you need the aforementioned functionalities, use the following projects—both build on top of this module.
+---
 
-* For parsing capabilities, see [parse-latin](https://github.com/wooorm/parse-latin "Parse Latin");
-* For a pluggable system for analysing and manipulating natural language, see [retext](https://github.com/wooorm/retext "Retext").
+* For parsing capabilities, see [parse-latin](https://github.com/wooorm/parse-latin);
+* For a pluggable system for analysing and manipulating natural language, see [retext](https://github.com/wooorm/retext);
+* For semantics of natural language nodes, see [NLCST](https://github.com/wooorm/nlcst).
 
 ## Installation
 
@@ -27,32 +28,47 @@ $ bower install textom
 ## Usage
 
 ```js
-TextOM = require('textom')();
+var TextOMConstructor = require('textom');
+
+/**
+ * Construct a new ``document''.
+ */
+
+var TextOM = new TextOMConstructor();
+
+/**
+ * Construct a new root node.
+ */
+
 var root = new TextOM.RootNode();
 ```
 
-Note that the exported object is a function, which in turn returns brand-new TextOM objects. There’s whole slew of issues that can arise from extending prototypes like (DOM) Node, NodeList, or Array—this feature however allows for multiple sandboxed environments (i.e., prototypes) without those disadvantages.
-
 ## API
-See below for an abbreviated IDL definition.
 
-Lets say all the following examples start with this code. Any changes made by below examples are discarded upon their ending.
+> See below for [IDL definitions](#idl).
+
+Let’s say all following examples start with below code.
+
+Any changes made by below examples are discarded upon their ending.
+
 ```js
-// Import TextOM.
-var TextOM = require('textom')();
+var TextOMConstructor = require('textom');
 
-// Create a root.
+/* Construct a new ``document''. */
+var TextOM = new TextOMConstructor();
+
+/* Construct a root node. */
 var root = new TextOM.RootNode();
 
-// Add a paragraph.
+/* Add a paragraph node. */
 var paragraph = new TextOM.ParagraphNode();
 root.append(paragraph);
 
-// Add a sentence.
+/* Add a sentence node. */
 var sentence = new TextOM.SentenceNode();
 paragraph.append(sentence);
 
-// Add some words, punctuation, and white space.
+/* Add words, punctuation, and white space. */
 var dogs = sentence.append(new TextOM.WordNode()),
     space0 = sentence.append(new TextOM.WhiteSpaceNode()),
     ampersand = sentence.append(new TextOM.PunctuationNode()),
@@ -60,7 +76,7 @@ var dogs = sentence.append(new TextOM.WordNode()),
     cats = sentence.append(new TextOM.WordNode()),
     fullStop = sentence.append(new TextOM.PunctuationNode());
 
-// Add some actual contents.
+/* Add content. */
 var dogsText = dogs.append(new TextOM.TextNode('Dogs')),
     space0Text = space0.append(new TextOM.TextNode(' ')),
     ampersandText = ampersand.append(new TextOM.TextNode('&')),
@@ -68,178 +84,209 @@ var dogsText = dogs.append(new TextOM.TextNode('Dogs')),
     catsText = cats.append(new TextOM.TextNode('cats')),
     fullStopText = fullStop.append(new TextOM.TextNode('.'));
 
-// Check what the current textual value is:
+/* Check root's content. */
 root.toString(); // 'Dogs & cats.'
 ```
 
 ### TextOM
 
-#### TextOM.Node
+Object.
+
+#### TextOM.Node() [[NLCST:Node](https://github.com/wooorm/nlcst#node)]
+
 Constructor.
 
 ##### TextOM\.Node.on(name, listener)
+
 ```js
 TextOM.RootNode.on('someeventname', function () {});
 ```
 
-Registers the specified listener on any instance of constructor, to events of the given name. Returns self.
+Subscribe `listener` to `name` events on instances of `Node`.
 
 ##### TextOM\.Node.off(name?, listener?)
+
 ```js
 TextOM.WordNode.off('someeventname');
 ```
 
-Removes the specified listener on all instances of constructor, to events of the given name.
-If no listener is given, removes all listeners to events of the given type.
-If no name and node listener are given, removes all listeners to all events.
-Returns self.
+- `off(name, listener)`: Unsubscribe `listener` from `name` events on instances of `Node`;
+- `off(name)`: Unsubscribe from `name` events on instances of `Node`;
+- `off()`: Unsubscribe from events on instances of `Node`.
 
 ##### TextOM\.Node#on(name, listener)
+
 ```js
 root.on('someeventname', function () {});
 ```
 
-Registers the specified listener on the node it's called on, to events of the given name. Returns self.
+Subscribe `listener` to `name` events on `node`.
 
 ##### TextOM\.Node#off(name?, listener?)
+
 ```js
-root.off('someeventname');
+dogs.off('someeventname');
 ```
 
-Removes the specified listener on the node it's called on, to events of the given name.
-If no listener is given, removes all listeners to events of the given type.
-If no name and node listener are given, removes all listeners to all events.
-Returns self.
+- `off(name, listener)`: Unsubscribe `listener` from `name` events on `node`;
+- `off(name)`: Unsubscribe from `name` events on `node`;
+- `off()`: Unsubscribe from events on `node`.
 
-##### TextOM\.Node#emit(name, values...)
+
+##### TextOM\.Node#emit(name, parameters...)
+
 ```js
-TextOM.WordNode.on('custom-emitted-event', function () {
+TextOM.WordNode.on('someeventname', function () {
     this; // dogs
-})
-dogs.trigger('custom-emitted-event');
+});
+
+dogs.emit('someeventname');
 ```
 
-Fire's an event of name `name` on the node, and bubbles up through its constructors.
+- `emit(name, parameters...)`: Fire a `name` event with `parameters` on `node`;
+- `emit(name)`: Fire a `name` event on `node`.
 
-##### TextOM\.Node#trigger(name, values...)
+Bubbles through `node`s constructors. In the case of `dogs`: `WordNode`, `Element`, `Child`, `Parent`, `Node`.
+
+##### TextOM\.Node#trigger(name, context, parameters...)
+
 ```js
-root.on('custom-triggered-event', function () {
+root.on('someeventnameinside', function () {
     this; // dogs
-})
-dogs.trigger('custom-triggered-event');
+});
+
+dogsText.trigger('someeventname', dogs);
 ```
 
-Fire's an event of name `name` on the node, and bubbles up through its parents.
+- `trigger(name, context, parameters...)`: Fire a `name` event with `parameters` on `node`;
+- `trigger(name, context)`: Fire a `name` event on `node`;
+- `trigger(name)`: Same as `TextOM\.Node#emit(name)`.
+
+[`emit`](#textomnodeemitnameparameters)s an event, and triggers `name + "inside"` events on context and its parents, and their constructor.
+
+In the case of `dogsText`: `someeventname` is emitted on `dogsText` and `TextNode`, and `someeventname` is triggered on `dogs` and `WordNode`; `sentence` and `SentenceNode`; `paragraph` and `ParagraphNode`; `root` and `RootNode`.
+
+##### TextOM\.Node#nodeName
+
+Identifier for [Node](#textomnodenlcstnode)s.
 
 ##### TextOM\.Node#TextOM
+
 ```js
 root.TextOM === TextOM; // true
 ```
 
-Every node contains a `TextOM` attribute linking back to the original TextOM.
+[TextOM](#textom) object associated with `node`.
 
 ##### TextOM\.Node#ROOT_NODE
-```js
-root.type === root.ROOT_NODE; // true
-root.type === TextOM.ROOT_NODE; // true
-```
 
-Unique identifier for all instances of [RootNode](#textomrootnode).
+Identifier for [RootNode](#textomrootnodenlcstrootnode)s.
 
 ##### TextOM\.Node#PARAGRAPH_NODE
-```js
-paragraph.type === paragraph.PARAGRAPH_NODE; // true
-paragraph.type === TextOM.PARAGRAPH_NODE; // true
-```
 
-Unique identifier for all instances of [ParagraphNode](#textomparagraphnode).
+Identifier for [ParagraphNode](#textomparagraphnodenlcstparagraphnode)s.
 
 ##### TextOM\.Node#SENTENCE_NODE
-```js
-sentence.type === sentence.SENTENCE_NODE; // true
-sentence.type === TextOM.SENTENCE_NODE; // true
-```
 
-Unique identifier for all instances of [SentenceNode](#textomsentencenode).
+Identifier for [SentenceNode](#textomsentencenodenlcstsentencenode)s.
 
 ##### TextOM\.Node#WORD_NODE
-```js
-dogs.type === dogs.WORD_NODE; // true
-dogs.type === TextOM.WORD_NODE; // true
-```
 
-Unique identifier for all instances of [WordNode](#textomwordnode).
+Identifier for [WordNode](#textomwordnodenlcstwordnode)s.
 
 ##### TextOM\.Node#PUNCTUATION_NODE
-```js
-fullStop.type === fullStop.PUNCTUATION_NODE; // true
-fullStop.type === TextOM.PUNCTUATION_NODE; // true
-```
 
-Unique identifier for all instances of [PunctuationNode](#textompunctuationnode).
+Identifier for [PunctuationNode](#textompunctuationnodenlcstpunctuationnode)s.
 
 ##### TextOM\.Node#WHITE_SPACE_NODE
-```js
-space0.type === space0.WHITE_SPACE_NODE; // true
-space0.type === TextOM.WHITE_SPACE_NODE; // true
-```
 
-Unique identifier for all instances of [WhiteSpaceNode](#textomwhitespacenode).
+Identifier for [WhiteSpaceNode](#textomwhitespacenodenlcstwhitespacenode)s.
 
 ##### TextOM\.Node#SOURCE_NODE
 
-Unique identifier for all instances of [SourceNode](#textomsourcenode).
+Identifier for [SourceNode](#textomsourcenodenlcstsourcenode)s.
 
 ##### TextOM\.Node#TEXT_NODE
 
-Unique identifier for all instances of [TextNode](#textomtextnode).
+Identifier for [TextNode](#textomtextnodenlcsttextnode)s.
 
-#### TextOM.Parent
-Constructor. Inherits from [Node](#textomnode).
+##### TextOM\.Node#NODE
+
+Identifier for [Node](#textomnodenlcstnode)s.
+
+##### TextOM\.Node#PARENT
+
+Identifier for [Parent](#textomparentnlcstparent)s.
+
+##### TextOM\.Node#ELEMENT
+
+Identifier for [element](#textomelement)s.
+
+##### TextOM\.Node#CHILD
+
+Identifier for [Child](#textomchild)s.
+
+##### TextOM\.Node#TEXT
+
+Identifier for [Text](#textomtextnlcsttext)s.
+
+#### TextOM.Parent() [[NLCST:Parent](https://github.com/wooorm/nlcst#parent)]
+
+Constructor ([Node](#textomnodenlcstnode)).
+
+##### TextOM\.Parent#nodeName
+
+Identifier for [Parent](#textomparentnlcstparent)s.
 
 ##### TextOM\.Parent#head
+
 ```js
 paragraph.head; // sentence
 sentence.head; // dogs
 ```
 
-The first [child](#textomchild) of a parent, null otherwise.
+First [child](#textomchild) of `parent` or `null`.
 
 ##### TextOM\.Parent#tail
+
 ```js
 paragraph.tail; // null (see description below);
 sentence.tail; // fullStop
 ```
 
-The last [child](#textomchild) of a parent (unless the last child is also the first child), null otherwise.
+Last [child](#textomchild) of `parent` (if more than one child exists) or `null`.
      
 ##### TextOM\.Parent#length
+
 ```js
 root.length; // 1
 sentence.length; // 6
 ```
 
-The number of children in a parent.
+Number of children in `parent`.
 
 ##### TextOM\.Parent#prepend(child)
+
 ```js
 sentence.head; // dogs
 sentence.prepend(fullStop);
 sentence.head; // fullStop
 ```
 
-Insert a [child](#textomchild) at the beginning of the parent (like Array#unshift).
+Insert [`child`](#textomchild) as `parent`s first child.
 
 ##### TextOM\.Parent#append(child)
+
 ```js
 sentence.tail; // fullStop
 sentence.append(dogs);
 sentence.tail; // dogs
 ```
 
-Insert a [child](#textomchild) at the end of the parent (like Array#push).
+Insert [`child`](#textomchild) as `parent`s last child.
 
 ##### TextOM\.Parent#item(index?)
+
 ```js
 root.item(); // paragraph
 sentence.item(0); // dogs
@@ -247,96 +294,171 @@ sentence.item(6); // fullStop
 sentence.item(7); // null
 ```
 
-Return a [child](#textomchild) at given position in parent, and null otherwise. (like NodeList#item).
+- `item(index)`: Get [`Child`](#textomchild) at `index` in `parent` or `null`;
+- `item()`: Get `parent`s first [`Child`](#textomchild) or `null`.
      
-##### TextOM\.Parent#toString
+##### TextOM\.Parent#toString()
+
 ```js
 root.toString(); // "Dogs & cats."
 '' + sentence; // "Dogs & cats."
 ```
 
-Return the result of calling `toString` on each of `Parent`s children.
+Get `parent`s content.
 
-#### TextOM.Child
-Constructor. Inherits from [Node](#textomnode).
+##### TextOM\.Parent#valueOf()
+
+```js
+dogs.valueOf();
+/**
+ * {
+ *   "type": "WordNode",
+ *   "children": [
+ *     {
+ *       "type": "TextNode",
+ *       "value": "Dogs"
+ *     }
+ *   ]
+ * }
+ */
+```
+
+Get `parent`s [NLCST](https://github.com/wooorm/nlcst) representation.
+
+#### TextOM.Child()
+
+Constructor ([Node](#textomnodenlcstnode)).
+
+##### TextOM\.Child#nodeName
+
+Identifier for [Child](#textomchild)s.
 
 ##### TextOM\.child#parent
+
 ```js
 dogs.parent; // sentence
 sentence.parent; // paragraph
 paragraph.parent; // root
 ```
 
-The [parent](#textomparent) node, null otherwise (when the child is detached).
+`child`s [parent](#textomparentnlcstparent) or `null`.
 
 ##### TextOM\.child#prev
+
 ```js
 dogs.prev; // null
 space1.prev; // dogs
 ```
 
-The previous sibling, null otherwise (when the context object is the first of its parent's children or detached).
+`child`s preceding sibling ([child](#textomchild)) or `null`.
      
 ##### TextOM\.child#next
+
 ```js
 cats.next; // fullStop
 fullStop.next; // null
 ```
 
-The next sibling, null otherwise (when the context object is the last of its parent's children, or detached).
+`child`s following sibling ([child](#textomchild)) or `null`.
 
-##### TextOM\.Child#before(child)
+##### TextOM\.Child#before(sibling)
+
 ```js
 dogs.prev; // null
 dogs.before(cats);
 dogs.prev; // cats
 ```
 
-Insert a given [child](#textomchild) before the context object's position in its [parent](#textomparent).
+Insert `sibling` ([child](#textomchild)) as `child`s preceding sibling in `parent`.
 
 ##### TextOM\.Child#after(child)
+
 ```js
 cats.next; // null
 cats.before(dogs);
 cats.next; // dogs
 ```
 
-Insert a given [child](#textomchild) after the context object's position in its [parent](#textomparent).
+Insert `sibling` ([child](#textomchild)) as `child`s following sibling in `parent`.
 
 ##### TextOM\.Child#remove()
+
 ```js
 root.toString(); // "Dogs & cats."
 fullStop.remove();
 root.toString(); // "Dogs & cats"
 ```
 
-Remove the operated on [child](#textomchild).
+Remove `child` from `parent`.
 
-##### TextOM\.Child#replace(child)
+##### TextOM\.Child#replace(sibling)
+
 ```js
 root.toString(); // "Dogs & cats."
 cats.replace(dogs);
 root.toString(); // " & Dogs"
 ```
 
-Remove the context object and insert a given [child](#textomchild) at its previous position in its [parent](#textomparent).
+
+Replace `child` with `sibling` ([child](#textomchild)) in `parent`.
 
 #### TextOM.Element()
-Constructor. Inherits from [Parent](#textomparent) and [Child](#textomchild) (i.e., a node accepting both children and a parent).
 
-#### TextOM.Text(value?)
-Constructor. Inherits from [Child](#textomchild). Has a value.
+Constructor ([Parent](#textomparentnlcstparent) and [Child](#textomchild)).
+
+##### TextOM\.Element#nodeName
+
+Identifier for [Element](#textomelement)s.
+
+##### TextOM\.Element#split(position?)
+
+```js
+sentence.prev; // null
+sentence.toString(); // "Dogs & cats."
+sentence.split(2);
+sentence.toString(); // "& cats"
+sentence.prev.toString(); // "Dogs "
+```
+
+Split `element` in two.
+
+- `split(position)`: A new node, `prependee` (a new instance of `element`s constructor), is inserted before `element` in `parent`. `prependee` receives the children from 0 to `position` (not including). `element` receives the children from `position` (including);
+- `split()`: A new node, `prependee` (a new instance of `element`s constructor), is inserted before `element` in `parent`.
+
+#### TextOM.Text(value?) [[NLCST:Text](https://github.com/wooorm/nlcst#text)]
+
+Constructor ([Child](#textomchild)).
+
+##### TextOM\.Text#nodeName
+
+Identifier for [Text](#textomtextnlcsttext)s.
 
 ##### TextOM\.Text#toString()
+
 ```js
 dogsText.toString(); // "Dogs"
 space1Text.toString(); // " "
 fullStopText.toString(); // "."
 ```
 
-Returns the internal value of the context object.
+Get `text`s value.
+
+##### TextOM\.Text#valueOf()
+
+```js
+dogsText.valueOf();
+/**
+ * {
+ *   "type": "TextNode",
+ *   "value": "Dogs"
+ * }
+ */
+```
+
+Get `text`s [NLCST](https://github.com/wooorm/nlcst) representation.
 
 ##### TextOM\.Text#fromString(value?)
+
 ```js
 root.toString(); // "Dogs & cats."
 catsText.fromString();
@@ -345,9 +467,11 @@ catsText.fromString("Lions");
 root.toString(); // "Dogs & Lions."
 ```
 
-(Re)sets and returns the internal value of the context object with the stringified version of the given value.
+- `fromString(value)`: Set `text`s value to `value`;
+- `fromString()`: Remove `text`s value.
 
-##### TextOM\.Text#split(position)
+##### TextOM\.Text#split(position?)
+
 ```js
 catsText.prev; // null
 catsText.toString(); // "cats"
@@ -356,50 +480,78 @@ catsText.toString(); // "ts"
 catsText.prev.toString(); // "ca"
 ```
 
-Split the context object into two nodes: prepends a new node (an instance of the context object's constructor), moving the internal value from 0–position to the prepended node, and removing the internal value from 0–position of the context object.
+Split `text` in two.
 
-#### TextOM.RootNode()
-Constructor. Inherits from [Parent](#textomparent).
+- `split(position)`: A new node, `prependee` (a new instance of `text`s constructor), is inserted before `text` in `parent`. `prependee` receives the value from 0 to `position` (not including). `text` receives the value from `position` (including);
+- `split()`: A new node, `prependee` (a new instance of `text`s constructor), is inserted before `text` in `parent`.
 
-Semantics: Root (Parent) represents the root of a TextOM document. Any subsequent nodes are the children of this root element.
+#### TextOM.RootNode() [[NLCST:RootNode](https://github.com/wooorm/nlcst#rootnode)]
 
-#### TextOM.ParagraphNode()
-Constructor. Inherits from [Element](#textomelement).
+Constructor ([Parent](#textomparentnlcstparent)).
 
-Semantics: Paragraph (Element) represents a self-contained unit of a discourse in writing dealing with a particular point or idea.
+##### TextOM\.RootNode#type
 
-#### TextOM.SentenceNode()
-Constructor. Inherits from [Element](#textomelement).
+Identifier for [RootNode](#textomrootnodenlcstrootnode)s.
 
-Semantics: Sentence (Element) represents a grouping of grammatically linked words, that in principle tells a complete thought (although it may make little sense taken in isolation out of context).
+#### TextOM.ParagraphNode() [[NLCST:ParagraphNode](https://github.com/wooorm/nlcst#paragraphnode)]
 
-#### TextOM.WordNode()
-Constructor. Inherits from [Element](#textomelement).
+Constructor ([Element](#textomelement)).
 
-Semantics: Word (Element) represents the smallest element that may be uttered in isolation with semantic or pragmatic content.
+##### TextOM\.ParagraphNode#type
 
-#### TextOM.PunctuationNode()
-Constructor. Inherits from [Element](#textomelement).
+Identifier for [ParagraphNode](#textomparagraphnodenlcstparagraphnode)s.
 
-Semantics: Punctuation (Element) represents typographical devices which aid the understanding and correct reading of other grammatical units.
+#### TextOM.SentenceNode() [[NLCST:SentenceNode](https://github.com/wooorm/nlcst#sentencenode)]
 
-#### TextOM.WhiteSpaceNode()
-Constructor. Inherits from [PunctuationNode](#textompunctuationnode).
+Constructor ([Element](#textomelement)).
 
-Semantics: White Space (Punctuation) represents typographical devices devoid of content, separating other grammatical units.
+##### TextOM\.SentenceNode#type
 
-#### TextOM.SourceNode()
-Constructor. Inherits from [Text](#textomtext).
+Identifier for [SentenceNode](#textomsentencenodenlcstsentencenode)s.
 
-Semantics: Source (Text) represents an external (non-grammatical) value embedded into a grammatical unit, for example a hyperlink or an emoticon.
+#### TextOM.WordNode() [[NLCST:SentenceNode](https://github.com/wooorm/nlcst#wordnode)]
 
-#### TextOM.TextNode()
-Constructor. Inherits from [Text](#textomtext).
+Constructor ([Element](#textomelement)).
 
-Semantics: Text (Text) represents actual content in a TextOM document: One or more characters.
+##### TextOM\.WordNode#type
+
+Identifier for [WordNode](#textomwordnodenlcstwordnode)s.
+
+#### TextOM.PunctuationNode() [[NLCST:PunctuationNode](https://github.com/wooorm/nlcst#punctuationnode)]
+
+Constructor ([Element](#textomelement)).
+
+##### TextOM\.PunctuationNode#type
+
+Identifier for [PunctuationNode](#textompunctuationnodenlcstpunctuationnode)s.
+
+#### TextOM.WhiteSpaceNode() [[NLCST:WhiteSpaceNode](https://github.com/wooorm/nlcst#whitespacenode)]
+
+Constructor ([PunctuationNode](#textompunctuationnodenlcstpunctuationnode)).
+
+##### TextOM\.WhiteSpaceNode#type
+
+Identifier for [WhiteSpaceNode](#textomwhitespacenodenlcstwhitespacenode)s.
+
+#### TextOM.SourceNode() [[NLCST:SourceNode](https://github.com/wooorm/nlcst#sourcenode)]
+
+Constructor ([Text](#textomtextnlcsttext)).
+
+##### TextOM\.SourceNode#type
+
+Identifier for [SourceNode](#textomsourcenodenlcstsourcenode)s.
+
+#### TextOM.TextNode() [[NLCST:TextNode](https://github.com/wooorm/nlcst#textnode)]
+
+Constructor ([Text](#textomtextnlcsttext)).
+
+##### TextOM\.TextNode#type
+
+Identifier for [TextNode](#textomtextnodenlcsttextnode)s.
 
 ### IDL
-The following IDL document gives a short view of the defined interfaces by TextOM. Note: It might not be that valid in the eyes of W3C standardistas, but it gives a nice overview nonetheless.
+
+The below IDL-like document gives a short view of the defined interfaces by **TextOM**.
 
 ```idl
 module textom
@@ -430,7 +582,7 @@ module textom
   [Constructor,
    ArrayClass]
   interface Parent {
-    const string nodeName = "Parent"
+    readonly attribute string nodeName = "Parent";
 
     getter Child? item(unsigned long index);
     readonly attribute unsigned long length;
@@ -441,7 +593,7 @@ module textom
     Child prepend(Child child);
     Child append(Child child);
 
-    [NewObject] valueOf();
+    [NewObject] Object valueOf();
 
     string toString();
   };
@@ -449,7 +601,7 @@ module textom
 
   [Constructor]
   interface Child {
-    const string nodeName = "Child"
+    readonly attribute nodeName = "Child"
 
     readonly attribute Parent? parent;
     readonly attribute Child? prev;
@@ -464,7 +616,7 @@ module textom
 
   [Constructor]
   interface Element {
-    const string nodeName = "Element"
+    readonly attribute nodeName = "Element"
 
     [NewObject] Element split(unsigned long position);
   };
@@ -473,9 +625,9 @@ module textom
 
   [Constructor(optional String value = "")]
   interface Text {
-    const string nodeName = "Text"
+    readonly attribute nodeName = "Text"
 
-    [NewObject] valueOf();
+    [NewObject] Object valueOf();
 
     string toString();
 
@@ -506,13 +658,13 @@ module textom
   interface WordNode {
     readonly attribute string type = "WordNode";
   };
-  WordNode implements Parent;
+  WordNode implements Element;
 
   [Constructor]
   interface PunctuationNode {
     readonly attribute string type = "PunctuationNode";
   };
-  PunctuationNode implements Parent;
+  PunctuationNode implements Element;
 
   [Constructor]
   interface WhiteSpaceNode {
@@ -534,169 +686,194 @@ module textom
 ```
 
 ## Events
-TextOM provides a few handy events, listened to through the `on`—and its opposite silencing functionality, `off`—methods. These `on` and `off` methods exist on every instance of [Node](#textomnode), and on every constructor (e.g., [Node](#textomnode), [Element](#textomelement), and [WhiteSpaceNode](#textomwhitespacenode)). When used on an instance, only events on that specific instance will be exposed to the listener. When however used on a constructor, all events on all instances will be exposed to the listener.
 
-TextOM provides two different types of events: Bubbling, and non-bubbling. In API terms, bubbling event names end with `"inside"`.
+**TextOM** provides events which can be subscribed to, to get notified when something changes.
+
+Event can be subscribed to through `on()` methods, and unsubscribed to through `off()` methods. These methods exist on every instance and on every constructor. 
+
+When subscribing to an instance's events, `listener` is invoked for changes to that specific instance. When subscribing to a constructor's events, `listener` is invoked for changes to any of constructor's instances.
+
+### List of events
+
+#### remove [[non-bubbling](#nonbubblingnormalevents)]
+
+```js
+dogs.on('remove', function (previous) {
+  this === dogs; // true
+  previous === sentence; // true
+});
+
+dogs.remove();
+```
+
+Fires when a [`Child`](#textomchild) is removed from `previousParent`.
+
+- this: Removed [`Child`](#textomchild);
+- parameters:
+  - previous: Removed from [`Parent`](#textomparentnlcstparent).
+
+#### insert [[non-bubbling](#nonbubblingnormalevents)]
+
+```js
+dogs.on('insert', function () {
+  this === dogs; // true
+});
+
+sentence.append(dogs);
+```
+
+Fires when a [`Child`](#textomchild) is inserted into a [`Parent`](#textomparentnlcstparent).
+
+- this: Inserted [`Child`](#textomchild).
+
+#### changetext [[non-bubbling](#nonbubblingnormalevents)]
+
+```js
+dogsText.on('changetext', function (current, previous) {
+  this === dogsText; // true
+  current === 'Poodles'; // true
+  previous === 'Dogs'; // true
+});
+
+dogsText.fromString('Poodles');
+```
+
+Fires when a [`Text`](#textomtextnlcsttext) changes value.
+
+- this: Changed [`Text`](#textomtextnlcsttext);
+- parameters:
+  - current: Current value;
+  - previous: Previous value;
+
+#### changeprev [[non-bubbling](#nonbubblingnormalevents)]
+
+```js
+cats.on('changeprev', function (current, previous) {
+  this === cats; // true
+  current === ampersand; // true
+  previousNode === space1; // true
+});
+
+space1.remove();
+```
+
+Fires when a preceding sibling ([`Child`](#textomtextnlcsttext)) changes.
+
+- this: [`Child`](#textomchild) following the changed sibling;
+- parameters:
+  - current: Current previous [`Child`](#textomchild) or `null`;
+  - previous: Previous previous [`Child`](#textomchild) or `null`;
+
+#### changenext [[non-bubbling](#nonbubblingnormalevents)]
+
+```js
+cats.on('changenext', function (current, previous) {
+  this === cats; // true
+  node === null; // true
+  previousNode === fullStop; // true
+});
+
+fullStop.remove();
+```
+
+Fires when a following sibling ([`Child`](#textomtextnlcsttext)) changes.
+
+- this: [`Child`](#textomchild) preceding the changed sibling;
+- parameters:
+  - current: Current next [`Child`](#textomchild) or `null`;
+  - previous: Previous next [`Child`](#textomchild) or `null`;
+
+#### changetextinside  [[bubbling](#bubblingevents)]
+
+```js
+root.on('changetextinside', function (node, current, previous) {
+  this === root; // true
+  node === catsText; // true
+  current === 'lions'; // true
+  previous === 'cats'; // true
+});
+
+catsText.fromString('lions');
+```
+
+Fires when a [`Text`](#textomtextnlcsttext) inside an ancestor.
+
+- this: Ancestor of a [`Text`](#textomtextnlcsttext);
+- parameters:
+  - node: Changed [`Text`](#textomtextnlcsttext);
+  - current: Current value;
+  - previous: Previous value;
+
+#### insertinside  [[bubbling](#bubblingevents)]
+
+```js
+sentence.on('insertinside', function (node) {
+  this === sentence; // true
+  node === ampersand; // true
+});
+
+sentence.append(ampersand);
+```
+
+Fires when a [`Child`](#textomchild) is inserted inside an ancestor.
+
+- this: Ancestor of a [`Child`](#textomchild);
+- parameters:
+  - node: Inserted [`Child`](#textomchild);
+
+#### removeinside  [[bubbling](#bubblingevents)]
+
+```js
+root.on('removeinside', function (node, previous) {
+  this === root; // true
+  previous === sentence; // true;
+  node === dogs; // true
+});
+
+dogs.remove();
+```
+
+Fires when a [`Child`](#textomchild) is removed inside an ancestor.
+
+- this: Ancestor of a [`Child`](#textomchild);
+- parameters:
+  - node: Removed [`Child`](#textomchild);
+  - previous: Removed from [`Parent`](#textomparent);
+
+### Bubbling & Non-bubbling events
+
+**TextOM** provides two types of events: Bubbling and non-bubbling. In API terms, bubbling event names end with `"inside"`.
 
 ### Non-bubbling (“normal”) events
-Normal events fire on instances of [Child](#textomchild) (and thus also on [Element](#textomelement), or [Text](#textomtext)—which both subclass [Child](#textomchild)), and do not continue firing on through ancestors. They do however, fire on all constructors of the instance.
 
-Lets say, for example, we have the example in [API](#api), and add the following code to it:
+Normal events fire on instances of [Child](#textomchild) and do not fire on ancestors. They additionally fire on all constructors of the instance.
+
+Let’s say we have the example code [given in API](#api), and add the following line to it:
 
 ```js
 dogsText.fromString('Poodles');
 ```
 
-A `"changetext"` event will fire on dogsText, and because dogs is an instance of [TextNode](#textomtextnode), the event will also fire on TextNode. Because a TextNode also inherits from [Text](#textomtext), the event will also fire on [Text](#textomtext), continuing with [Child](#textomchild), and finally on [Node](#textomnode).
+A `"changetext"` event fires on `dogsText`. Because `dogsText` is a [`TextNode`](#textomtextnodenlcsttextnode), the event fires on `TextNode` too. Because `TextNode` inherits from [`Text`](#textomtextnlcsttext), the event also fires on `Text`, continuing with [`Child`](#textomchild), and finally [`Node`](#textomnodenlcstnode).
 
 ### Bubbling events
-Bubbling events start at a [parent](#textomparent), and continue up through its ancestors, until no higher ancestor exists. These events also fire on the (single) parents constructor.
 
-Lets say, for example, we have the example in [API](#api), and add the following code to it:
+Bubbling events start on a [`Parent`](#textomparentnlcstparent) and continue through its ancestors. These events also fire on the ancestors constructor.
+
+Let’s say we have the example code [given in API](#api), and add the following line to it:
 
 ```js
 dogsText.fromString('Wolves');
 ```
 
-A `"changetextinside"` event will fire on the [parent](#textomparent) of dogsText (dogs), and because dogs is an instance of [WordNode](#textomwordnode), this event will also fire on WordNode. The same would happen through dogs ancestors: sentence and [SentenceNode](#textomsentencenode), paragraph and [ParagraphNode](#textomparagraphnode), and root and [RootNode](#textomrootnode).
-
-### List of events
-#### remove
-```js
-dogs.on('remove', function (previousParent) {
-  this === dogs; // true
-  previousParent === sentence; // true
-})
-dogs.remove();
-```
-
-Fired when a child is removed from its parent.
-
-- this: the removed [child](#textomchild);
-- arguments:
-  - previousParent: the previous [parent](#textomparent).
-
-#### insert
-```js
-dogs.on('insert', function () {
-  this === dogs; // true
-})
-sentence.append(dogs);
-```
-
-Fired when a child is inserted into a parent.
-
-- this: the inserted [child](#textomchild);
-
-#### changetext
-```js
-dogsText.on('changetext', function (value, previousValue) {
-  this === dogsText; // true
-  value === 'Poodles'; // true
-  previousValue === 'Dogs'; // true
-})
-dogsText.fromString('Poodles');
-```
-
-Fired when the internal value of an instance of [Text](#textomtext) (i.e., TextNode, SourceNode) changes.
-
-- this: the [text](#textomtext) which value changed;
-- arguments:
-  - value: the current value;
-  - previousValue: the previous value;
-
-#### changeprev
-```js
-cats.on('changeprev', function (node, previousNode) {
-  this === cats; // true
-  node === ampersand; // true
-  previousNode === space1; // true
-})
-space1.remove();
-```
-
-Fired when the `prev` attribute on a [child](#textomchild) is changed (i.e., by removing the previous sibling, or inserting a sibling before the child).
-
-- this: the [child](#textomchild) succeeding the changed node;
-- arguments:
-  - node: the current previous [child](#textomchild), null otherwise;
-  - previousNode: the previous `prev` [child](#textomchild), null otherwise;
-
-#### changenext
-```js
-cats.on('changenext', function (node, previousNode) {
-  this === cats; // true
-  node === null; // true
-  previousNode === fullStop; // true
-})
-fullStop.remove();
-```
-
-Fired when the `next` attribute on a [child](#textomchild) is changed (i.e., by removing the next sibling, or inserting a sibling after the child).
-
-- this: the [child](#textomchild) succeeding the changed node;
-- arguments:
-  - node: the current following [child](#textomchild), null otherwise;
-  - previousNode: the previous `next` [child](#textomchild), null otherwise;
-
-### List of Bubbling events
-#### changetextinside
-```js
-root.on('changetextinside', function (node, value, previousValue) {
-  this === root; // true
-  node === catsText; // true
-  value === 'lions'; // true
-  previousValue === 'cats'; // true
-})
-catsText.fromString('lions');
-```
-
-Fired when a [child](#textomchild)’s internal value changes inside an ancestor.
-
-- this: a [parent](#textomparent) in which the change happened;
-- arguments:
-  - node: the changed [child](#textomchild);
-  - value: the current value;
-  - previousValue: the previous value;
-
-#### insertinside
-```js
-sentence.on('insertinside', function (node) {
-  this === sentence; // true
-  node === ampersand; // true
-})
-sentence.append(ampersand);
-```
-
-Fired when a [child](#textomchild) is inserted inside an ancestor.
-
-- this: a [parent](#textomparent) in which the change happened;
-- arguments:
-  - node: the inserted [child](#textomchild);
-
-#### removeinside
-```js
-root.on('removeinside', function (node, parent) {
-  this === root; // true
-  parent === sentence; // true;
-  node === dogs; // true
-})
-dogs.remove();
-```
-
-Fired when a [child](#textomchild) is removed from an ancestor.
-
-- this: a [parent](#textomparent) in which the change happened;
-- arguments:
-  - node: the removed [child](#textomchild);
-  - parent: the previous [parent](#textomparent).
+A `"changetextinside"` event fires on `dogsText` parent, `dogs`, and because `dogs` is a [`WordNode`](#textomwordnodenlcstwordnode), the event fires on `WordNode` too, continuing with `sentence` and [`SentenceNode`](#textomsentencenodenlcstsentencenode), `paragraph` and [`ParagraphNode`](#textomparagraphnodenlcstparagraphnode), and finally `root` and [`RootNode`](#textomrootnodenlcstrootnode).
 
 ## Related
 
-  * [parse-dutch](https://github.com/wooorm/parse-dutch "Parse Dutch")
-  * [parse-latin](https://github.com/wooorm/parse-latin "Parse Latin")
-  * [parse-english](https://github.com/wooorm/parse-english "Parse English")
-  * [retext](https://github.com/wooorm/retext "Retext")
+- [parse-dutch](https://github.com/wooorm/parse-dutch "Parse Dutch")
+- [parse-latin](https://github.com/wooorm/parse-latin "Parse Latin")
+- [parse-english](https://github.com/wooorm/parse-english "Parse English")
+- [retext](https://github.com/wooorm/retext "Retext")
 
 ## License
 
