@@ -401,9 +401,7 @@ function insert(parent, item, child) {
 
     next = child.next;
 
-    if (child.emit('insert')) {
-        parent.trigger('insertinside', child);
-    }
+    child.trigger('insert', parent);
 
     if (item) {
         item.emit('changenext', child, next);
@@ -512,9 +510,7 @@ function remove(node) {
      * Emit events.
      */
 
-    if (node.emit('remove', parent)) {
-        parent.trigger('removeinside', node, parent);
-    }
+    node.trigger('remove', parent, parent);
 
     if (next) {
         next.emit('changeprev', prev || null, node);
@@ -766,15 +762,16 @@ function TextOMConstructor() {
     };
 
     /**
-     * Trigger a bubbling event.
+     * Emit an event, and trigger a bubbling event on context.
      *
      * @param {string} name
+     * @param {Node} context
      * @param {...*} parameters
      * @this {Node}
      * @return self
      */
 
-    nodePrototype.trigger = function (name) {
+    nodePrototype.trigger = function (name, context) {
         var self,
             node,
             parameters,
@@ -782,11 +779,35 @@ function TextOMConstructor() {
 
         self = this;
 
+        parameters = arraySlice.call(arguments, 2);
+
+        /**
+         * Emit the event, exit with an error if it's canceled.
+         */
+
+        if (!self.emit.apply(self, [name].concat(parameters))) {
+            return false;
+        }
+
+        /**
+         * Exit if no context exists.
+         */
+
+        if (!context) {
+            return true;
+        }
+
+        /**
+         * Start firing bubbling events.
+         */
+
+        name += 'inside';
+
         invoke = invokeEvent[name] || invokeAll;
 
-        parameters = arraySlice.call(arguments, 1);
+        parameters = [self].concat(parameters);
 
-        node = self;
+        node = context;
 
         while (node) {
             if (!invoke(node.callbacks, name, parameters, node)) {
@@ -1288,8 +1309,7 @@ function TextOMConstructor() {
 
     textPrototype.fromString = function (value) {
         var self,
-            current,
-            parent;
+            current;
 
         self = this;
 
@@ -1303,11 +1323,8 @@ function TextOMConstructor() {
 
         if (value !== current) {
             self.internalValue = value;
-            parent = self.parent;
 
-            if (self.emit('changetext', value, current) && parent) {
-                parent.trigger('changetextinside', self, value, current);
-            }
+            self.trigger('changetext', self.parent, value, current);
         }
 
         return value;
