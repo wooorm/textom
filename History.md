@@ -1,4 +1,12 @@
 
+n.n.n / 2014-10-07
+==================
+
+ * Fix links to sections for GitHub
+ * Fix few typos, links to sections for GitHub
+ * Refactor in Readme.md
+ * Add automatic `emit`ting of events to trigger
+
 0.2.0-rc.5 / 2014-10-06
 ==================
 
