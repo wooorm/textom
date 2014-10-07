@@ -162,13 +162,13 @@ dogsText.trigger('someeventname', dogs);
 - `trigger(name, context)`: Fire a `name` event on `node`;
 - `trigger(name)`: Same as `TextOM\.Node#emit(name)`.
 
-[`emit`](#textomnodeemitnameparameters)s an event, and triggers `name + "inside"` events on context and its parents, and their constructor.
+[`emit`](#textomnodeemitname-parameters)s an event, and triggers `name + "inside"` events on context and its parents, and their constructor.
 
 In the case of `dogsText`: `someeventname` is emitted on `dogsText` and `TextNode`, and `someeventname` is triggered on `dogs` and `WordNode`; `sentence` and `SentenceNode`; `paragraph` and `ParagraphNode`; `root` and `RootNode`.
 
 ##### TextOM\.Node#nodeName
 
-Identifier for [Node](#textomnodenlcstnode)s.
+Identifier for [Node](#textomnode-nlcstnode)s.
 
 ##### TextOM\.Node#TextOM
 
@@ -180,39 +180,39 @@ root.TextOM === TextOM; // true
 
 ##### TextOM\.Node#ROOT_NODE
 
-Identifier for [RootNode](#textomrootnodenlcstrootnode)s.
+Identifier for [RootNode](#textomrootnode-nlcstrootnode)s.
 
 ##### TextOM\.Node#PARAGRAPH_NODE
 
-Identifier for [ParagraphNode](#textomparagraphnodenlcstparagraphnode)s.
+Identifier for [ParagraphNode](#textomparagraphnode-nlcstparagraphnode)s.
 
 ##### TextOM\.Node#SENTENCE_NODE
 
-Identifier for [SentenceNode](#textomsentencenodenlcstsentencenode)s.
+Identifier for [SentenceNode](#textomsentencenode-nlcstsentencenode)s.
 
 ##### TextOM\.Node#WORD_NODE
 
-Identifier for [WordNode](#textomwordnodenlcstwordnode)s.
+Identifier for [WordNode](#textomwordnode-nlcstwordnode)s.
 
 ##### TextOM\.Node#PUNCTUATION_NODE
 
-Identifier for [PunctuationNode](#textompunctuationnodenlcstpunctuationnode)s.
+Identifier for [PunctuationNode](#textompunctuationnode-nlcstpunctuationnode)s.
 
 ##### TextOM\.Node#WHITE_SPACE_NODE
 
-Identifier for [WhiteSpaceNode](#textomwhitespacenodenlcstwhitespacenode)s.
+Identifier for [WhiteSpaceNode](#textomwhitespacenode-nlcstwhitespacenode)s.
 
 ##### TextOM\.Node#SOURCE_NODE
 
-Identifier for [SourceNode](#textomsourcenodenlcstsourcenode)s.
+Identifier for [SourceNode](#textomsourcenode-nlcstsourcenode)s.
 
 ##### TextOM\.Node#TEXT_NODE
 
-Identifier for [TextNode](#textomtextnodenlcsttextnode)s.
+Identifier for [TextNode](#textomtextnode-nlcsttextnode)s.
 
 ##### TextOM\.Node#NODE
 
-Identifier for [Node](#textomnodenlcstnode)s.
+Identifier for [Node](#textomnode-nlcstnode)s.
 
 ##### TextOM\.Node#PARENT
 
@@ -228,11 +228,11 @@ Identifier for [Child](#textomchild)s.
 
 ##### TextOM\.Node#TEXT
 
-Identifier for [Text](#textomtextnlcsttext)s.
+Identifier for [Text](#textomtextvalue-nlcsttext)s.
 
 #### TextOM.Parent() [[NLCST:Parent](https://github.com/wooorm/nlcst#parent)]
 
-Constructor ([Node](#textomnodenlcstnode)).
+Constructor ([Node](#textomnode-nlcstnode)).
 
 ##### TextOM\.Parent#nodeName
 
@@ -327,7 +327,7 @@ Get `parent`s [NLCST](https://github.com/wooorm/nlcst) representation.
 
 #### TextOM.Child()
 
-Constructor ([Node](#textomnodenlcstnode)).
+Constructor ([Node](#textomnode-nlcstnode)).
 
 ##### TextOM\.Child#nodeName
 
@@ -431,7 +431,7 @@ Constructor ([Child](#textomchild)).
 
 ##### TextOM\.Text#nodeName
 
-Identifier for [Text](#textomtextnlcsttext)s.
+Identifier for [Text](#textomtextvalue-nlcsttext)s.
 
 ##### TextOM\.Text#toString()
 
@@ -491,7 +491,7 @@ Constructor ([Parent](#textomparentnlcstparent)).
 
 ##### TextOM\.RootNode#type
 
-Identifier for [RootNode](#textomrootnodenlcstrootnode)s.
+Identifier for [RootNode](#textomrootnode-nlcstrootnode)s.
 
 #### TextOM.ParagraphNode() [[NLCST:ParagraphNode](https://github.com/wooorm/nlcst#paragraphnode)]
 
@@ -499,7 +499,7 @@ Constructor ([Element](#textomelement)).
 
 ##### TextOM\.ParagraphNode#type
 
-Identifier for [ParagraphNode](#textomparagraphnodenlcstparagraphnode)s.
+Identifier for [ParagraphNode](#textomparagraphnode-nlcstparagraphnode)s.
 
 #### TextOM.SentenceNode() [[NLCST:SentenceNode](https://github.com/wooorm/nlcst#sentencenode)]
 
@@ -507,7 +507,7 @@ Constructor ([Element](#textomelement)).
 
 ##### TextOM\.SentenceNode#type
 
-Identifier for [SentenceNode](#textomsentencenodenlcstsentencenode)s.
+Identifier for [SentenceNode](#textomsentencenode-nlcstsentencenode)s.
 
 #### TextOM.WordNode() [[NLCST:SentenceNode](https://github.com/wooorm/nlcst#wordnode)]
 
@@ -515,7 +515,7 @@ Constructor ([Element](#textomelement)).
 
 ##### TextOM\.WordNode#type
 
-Identifier for [WordNode](#textomwordnodenlcstwordnode)s.
+Identifier for [WordNode](#textomwordnode-nlcstwordnode)s.
 
 #### TextOM.PunctuationNode() [[NLCST:PunctuationNode](https://github.com/wooorm/nlcst#punctuationnode)]
 
@@ -523,31 +523,31 @@ Constructor ([Element](#textomelement)).
 
 ##### TextOM\.PunctuationNode#type
 
-Identifier for [PunctuationNode](#textompunctuationnodenlcstpunctuationnode)s.
+Identifier for [PunctuationNode](#textompunctuationnode-nlcstpunctuationnode)s.
 
 #### TextOM.WhiteSpaceNode() [[NLCST:WhiteSpaceNode](https://github.com/wooorm/nlcst#whitespacenode)]
 
-Constructor ([PunctuationNode](#textompunctuationnodenlcstpunctuationnode)).
+Constructor ([PunctuationNode](#textompunctuationnode-nlcstpunctuationnode)).
 
 ##### TextOM\.WhiteSpaceNode#type
 
-Identifier for [WhiteSpaceNode](#textomwhitespacenodenlcstwhitespacenode)s.
+Identifier for [WhiteSpaceNode](#textomwhitespacenode-nlcstwhitespacenode)s.
 
 #### TextOM.SourceNode() [[NLCST:SourceNode](https://github.com/wooorm/nlcst#sourcenode)]
 
-Constructor ([Text](#textomtextnlcsttext)).
+Constructor ([Text](#textomtextvalue-nlcsttext)).
 
 ##### TextOM\.SourceNode#type
 
-Identifier for [SourceNode](#textomsourcenodenlcstsourcenode)s.
+Identifier for [SourceNode](#textomsourcenode-nlcstsourcenode)s.
 
 #### TextOM.TextNode() [[NLCST:TextNode](https://github.com/wooorm/nlcst#textnode)]
 
-Constructor ([Text](#textomtextnlcsttext)).
+Constructor ([Text](#textomtextvalue-nlcsttext)).
 
 ##### TextOM\.TextNode#type
 
-Identifier for [TextNode](#textomtextnodenlcsttextnode)s.
+Identifier for [TextNode](#textomtextnode-nlcsttextnode)s.
 
 ### IDL
 
@@ -695,7 +695,7 @@ When subscribing to an instance's events, `listener` is invoked for changes to t
 
 ### List of events
 
-#### remove [[non-bubbling](#nonbubblingnormalevents)]
+#### remove [[non-bubbling](#non-bubbling-normal-events)]
 
 ```js
 dogs.on('remove', function (previous) {
@@ -712,7 +712,7 @@ Fires when a [`Child`](#textomchild) is removed from `previousParent`.
 - parameters:
   - previous: Removed from [`Parent`](#textomparentnlcstparent).
 
-#### insert [[non-bubbling](#nonbubblingnormalevents)]
+#### insert [[non-bubbling](#non-bubbling-normal-events)]
 
 ```js
 dogs.on('insert', function () {
@@ -726,7 +726,7 @@ Fires when a [`Child`](#textomchild) is inserted into a [`Parent`](#textomparent
 
 - this: Inserted [`Child`](#textomchild).
 
-#### changetext [[non-bubbling](#nonbubblingnormalevents)]
+#### changetext [[non-bubbling](#non-bubbling-normal-events)]
 
 ```js
 dogsText.on('changetext', function (current, previous) {
@@ -738,14 +738,14 @@ dogsText.on('changetext', function (current, previous) {
 dogsText.fromString('Poodles');
 ```
 
-Fires when a [`Text`](#textomtextnlcsttext) changes value.
+Fires when a [`Text`](#textomtextvalue-nlcsttext) changes value.
 
-- this: Changed [`Text`](#textomtextnlcsttext);
+- this: Changed [`Text`](#textomtextvalue-nlcsttext);
 - parameters:
   - current: Current value;
   - previous: Previous value;
 
-#### changeprev [[non-bubbling](#nonbubblingnormalevents)]
+#### changeprev [[non-bubbling](#non-bubbling-normal-events)]
 
 ```js
 cats.on('changeprev', function (current, previous) {
@@ -757,33 +757,33 @@ cats.on('changeprev', function (current, previous) {
 space1.remove();
 ```
 
-Fires when a preceding sibling ([`Child`](#textomtextnlcsttext)) changes.
+Fires when a preceding sibling ([`Child`](#textomtextvalue-nlcsttext)) changes.
 
 - this: [`Child`](#textomchild) following the changed sibling;
 - parameters:
   - current: Current previous [`Child`](#textomchild) or `null`;
   - previous: Previous previous [`Child`](#textomchild) or `null`;
 
-#### changenext [[non-bubbling](#nonbubblingnormalevents)]
+#### changenext [[non-bubbling](#non-bubbling-normal-events)]
 
 ```js
 cats.on('changenext', function (current, previous) {
   this === cats; // true
-  node === null; // true
+  current === null; // true
   previousNode === fullStop; // true
 });
 
 fullStop.remove();
 ```
 
-Fires when a following sibling ([`Child`](#textomtextnlcsttext)) changes.
+Fires when a following sibling ([`Child`](#textomtextvalue-nlcsttext)) changes.
 
 - this: [`Child`](#textomchild) preceding the changed sibling;
 - parameters:
   - current: Current next [`Child`](#textomchild) or `null`;
   - previous: Previous next [`Child`](#textomchild) or `null`;
 
-#### changetextinside  [[bubbling](#bubblingevents)]
+#### changetextinside  [[bubbling](#bubbling-events)]
 
 ```js
 root.on('changetextinside', function (node, current, previous) {
@@ -796,15 +796,15 @@ root.on('changetextinside', function (node, current, previous) {
 catsText.fromString('lions');
 ```
 
-Fires when a [`Text`](#textomtextnlcsttext) inside an ancestor.
+Fires when a [`Text`](#textomtextvalue-nlcsttext) inside an ancestor.
 
-- this: Ancestor of a [`Text`](#textomtextnlcsttext);
+- this: Ancestor of a [`Text`](#textomtextvalue-nlcsttext);
 - parameters:
-  - node: Changed [`Text`](#textomtextnlcsttext);
+  - node: Changed [`Text`](#textomtextvalue-nlcsttext);
   - current: Current value;
   - previous: Previous value;
 
-#### insertinside  [[bubbling](#bubblingevents)]
+#### insertinside  [[bubbling](#bubbling-events)]
 
 ```js
 sentence.on('insertinside', function (node) {
@@ -821,13 +821,13 @@ Fires when a [`Child`](#textomchild) is inserted inside an ancestor.
 - parameters:
   - node: Inserted [`Child`](#textomchild);
 
-#### removeinside  [[bubbling](#bubblingevents)]
+#### removeinside  [[bubbling](#bubbling-events)]
 
 ```js
 root.on('removeinside', function (node, previous) {
   this === root; // true
-  previous === sentence; // true;
   node === dogs; // true
+  previous === sentence; // true;
 });
 
 dogs.remove();
@@ -854,7 +854,7 @@ Let’s say we have the example code [given in API](#api), and add the following
 dogsText.fromString('Poodles');
 ```
 
-A `"changetext"` event fires on `dogsText`. Because `dogsText` is a [`TextNode`](#textomtextnodenlcsttextnode), the event fires on `TextNode` too. Because `TextNode` inherits from [`Text`](#textomtextnlcsttext), the event also fires on `Text`, continuing with [`Child`](#textomchild), and finally [`Node`](#textomnodenlcstnode).
+A `"changetext"` event fires on `dogsText`. Because `dogsText` is a [`TextNode`](#textomtextnode-nlcsttextnode), the event fires on `TextNode` too. Because `TextNode` inherits from [`Text`](#textomtextvalue-nlcsttext), the event also fires on `Text`, continuing with [`Child`](#textomchild), and finally [`Node`](#textomnode-nlcstnode).
 
 ### Bubbling events
 
@@ -866,7 +866,7 @@ Let’s say we have the example code [given in API](#api), and add the following
 dogsText.fromString('Wolves');
 ```
 
-A `"changetextinside"` event fires on `dogsText` parent, `dogs`, and because `dogs` is a [`WordNode`](#textomwordnodenlcstwordnode), the event fires on `WordNode` too, continuing with `sentence` and [`SentenceNode`](#textomsentencenodenlcstsentencenode), `paragraph` and [`ParagraphNode`](#textomparagraphnodenlcstparagraphnode), and finally `root` and [`RootNode`](#textomrootnodenlcstrootnode).
+A `"changetextinside"` event fires on `dogsText` parent, `dogs`, and because `dogs` is a [`WordNode`](#textomwordnode-nlcstwordnode), the event fires on `WordNode` too, continuing with `sentence` and [`SentenceNode`](#textomsentencenode-nlcstsentencenode), `paragraph` and [`ParagraphNode`](#textomparagraphnode-nlcstparagraphnode), and finally `root` and [`RootNode`](#textomrootnode-nlcstrootnode).
 
 ## Related
 
