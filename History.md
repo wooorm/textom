@@ -1,5 +1,5 @@
 
-n.n.n / 2014-10-07
+0.2.0 / 2014-10-07
 ==================
 
  * Fix links to sections for GitHub
