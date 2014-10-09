@@ -7,7 +7,7 @@
 var TextOMConstructor,
     assert;
 
-TextOMConstructor = require('..');
+TextOMConstructor = require('./');
 assert = require('assert');
 
 /**
