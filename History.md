@@ -1,4 +1,11 @@
 
+n.n.n / 2014-10-13
+==================
+
+ * Add support for data-properties in `valueOf()`
+ * Update .gitignore, .npmignore, bower ignore
+ * Move spec/textom.spec.js to test.js
+
 0.2.0 / 2014-10-07
 ==================
 
