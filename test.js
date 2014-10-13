@@ -1444,6 +1444,21 @@ describe('TextOM.Parent#valueOf()', function () {
         assert(typeof result.children[1] === 'object');
         assert(typeof result.children[1].type === 'string');
     });
+
+    it('should include a data property when non-empty', function () {
+        var node;
+
+        node = new Parent();
+
+        assert('data' in node.valueOf() === false);
+
+        node.data.test = 'test';
+        node.data.otherTest = 'another';
+
+        assert('data' in node.valueOf() === true);
+        assert(node.valueOf().data.test === 'test');
+        assert(node.valueOf().data.otherTest === 'another');
+    });
 });
 
 describe('TextOM.Child', function () {
@@ -2900,6 +2915,21 @@ describe('TextOM.Text#valueOf()', function () {
             assert(new Text().valueOf().value === '');
         }
     );
+
+    it('should include a data property when non-empty', function () {
+        var node;
+
+        node = new Text();
+
+        assert('data' in node.valueOf() === false);
+
+        node.data.test = 'test';
+        node.data.otherTest = 'another';
+
+        assert('data' in node.valueOf() === true);
+        assert(node.valueOf().data.test === 'test');
+        assert(node.valueOf().data.otherTest === 'another');
+    });
 });
 
 describe('TextOM.Text#fromString(value?)', function () {

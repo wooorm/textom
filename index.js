@@ -4,12 +4,15 @@
  * Cached methods.
  */
 
-var arrayPrototype,
+var has,
+    arrayPrototype,
     arrayUnshift,
     arrayPush,
     arraySlice,
     arrayIndexOf,
     arraySplice;
+
+has = Object.prototype.hasOwnProperty;
 
 arrayPrototype = Array.prototype;
 
@@ -555,6 +558,29 @@ function validateSplitPosition(position, length) {
     return position;
 }
 
+function mergeData(node, nlcst) {
+    var data,
+        attribute;
+
+    data = node.data;
+
+    for (attribute in data) {
+        /* istanbul ignore else */
+        if (has.call(data, attribute)) {
+            /**
+             * This makes sure no empy data objects
+             * are created.
+             */
+
+            if (!nlcst.data) {
+                nlcst.data = {};
+            }
+
+            nlcst.data[attribute] = data[attribute];
+        }
+    }
+}
+
 function TextOMConstructor() {
     var nodePrototype,
         parentPrototype,
@@ -885,7 +911,7 @@ function TextOMConstructor() {
 
         for (key in self) {
             /* istanbul ignore else */
-            if (self.hasOwnProperty(key)) {
+            if (has.call(self, key)) {
                 Constructor[key] = self[key];
             }
         }
@@ -1036,24 +1062,29 @@ function TextOMConstructor() {
      */
 
     parentPrototype.valueOf = function () {
-        var children,
+        var self,
+            children,
             nlcst,
             node;
+
+        self = this;
 
         children = [];
 
         nlcst = {
-            'type' : this.type || '',
+            'type' : self.type || '',
             'children' : children
         };
 
-        node = this.head;
+        node = self.head;
 
         while (node) {
             children.push(node.valueOf());
 
             node = node.next;
         }
+
+        mergeData(self, nlcst);
 
         return nlcst;
     };
@@ -1292,10 +1323,19 @@ function TextOMConstructor() {
      */
 
     textPrototype.valueOf = function () {
-        return {
-            'type' : this.type || '',
-            'value' : this.internalValue
+        var self,
+            nlcst;
+
+        self = this;
+
+        nlcst = {
+            'type' : self.type || '',
+            'value' : self.internalValue
         };
+
+        mergeData(self, nlcst);
+
+        return nlcst;
     };
 
     /**
