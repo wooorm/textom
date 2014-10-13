@@ -1,5 +1,5 @@
 
-n.n.n / 2014-10-13
+0.2.1 / 2014-10-13
 ==================
 
  * Add support for data-properties in `valueOf()`
