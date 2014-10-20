@@ -1,5 +1,5 @@
 
-n.n.n / 2014-10-20
+0.3.0-rc.2 / 2014-10-20
 ==================
 
  * Merge branch 'feature/symbol-node-sub-class-text'
