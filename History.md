@@ -1,4 +1,12 @@
 
+n.n.n / 2014-10-20
+==================
+
+ * Merge branch 'feature/add-symbol-node'
+ * Add docs for SymbolNode
+ * Add functionality for SymbolNode
+ * Add tests for SymbolNode
+
 0.2.1 / 2014-10-13
 ==================
 
