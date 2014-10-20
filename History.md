@@ -1,4 +1,12 @@
 
+n.n.n / 2014-10-20
+==================
+
+ * Merge branch 'feature/symbol-node-sub-class-text'
+ * Add docs for SymbolNodes new super-class
+ * Add tests to super-class SymbolNode from Element to Text
+ * Add functionality to super-class SymbolNode from Element to Text
+
 0.3.0-rc.1 / 2014-10-20
 ==================
 
