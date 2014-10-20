@@ -1,5 +1,5 @@
 
-n.n.n / 2014-10-20
+0.3.0-rc.1 / 2014-10-20
 ==================
 
  * Merge branch 'feature/add-symbol-node'
