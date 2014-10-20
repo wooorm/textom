@@ -70,19 +70,15 @@ paragraph.append(sentence);
 
 /* Add words, symbols, punctuation, and white space. */
 var dogs = sentence.append(new TextOM.WordNode()),
-    space0 = sentence.append(new TextOM.WhiteSpaceNode()),
-    ampersand = sentence.append(new TextOM.SymbolNode()),
-    space1 = sentence.append(new TextOM.WhiteSpaceNode()),
+    space0 = sentence.append(new TextOM.WhiteSpaceNode(' ')),
+    ampersand = sentence.append(new TextOM.SymbolNode('&')),
+    space1 = sentence.append(new TextOM.WhiteSpaceNode(' ')),
     cats = sentence.append(new TextOM.WordNode()),
-    fullStop = sentence.append(new TextOM.PunctuationNode());
+    fullStop = sentence.append(new TextOM.PunctuationNode('.'));
 
-/* Add content. */
+/* Add words. */
 var dogsText = dogs.append(new TextOM.TextNode('Dogs')),
-    space0Text = space0.append(new TextOM.TextNode(' ')),
-    ampersandText = ampersand.append(new TextOM.TextNode('&')),
-    space1Text = space1.append(new TextOM.TextNode(' ')),
-    catsText = cats.append(new TextOM.TextNode('cats')),
-    fullStopText = fullStop.append(new TextOM.TextNode('.'));
+    catsText = cats.append(new TextOM.TextNode('cats'));
 
 /* Check root's content. */
 root.toString(); // 'Dogs & cats.'
@@ -151,8 +147,9 @@ Bubbles through `node`s constructors. In the case of `dogs`: `WordNode`, `Elemen
 ##### TextOM\.Node#trigger(name, context, parameters...)
 
 ```js
-root.on('someeventnameinside', function () {
-    this; // dogs
+root.on('someeventnameinside', function (context) {
+    this; // root
+    context; // dogsText
 });
 
 dogsText.trigger('someeventname', dogs);
@@ -294,8 +291,8 @@ Insert [`child`](#textomchild) as `parent`s last child.
 ```js
 root.item(); // paragraph
 sentence.item(0); // dogs
-sentence.item(6); // fullStop
-sentence.item(7); // null
+sentence.item(5); // fullStop
+sentence.item(6); // null
 ```
 
 - `item(index)`: Get [`Child`](#textomchild) at `index` in `parent` or `null`;
@@ -351,7 +348,7 @@ paragraph.parent; // root
 
 ```js
 dogs.prev; // null
-space1.prev; // dogs
+space0.prev; // dogs
 ```
 
 `child`s preceding sibling ([`Child`](#textomchild)) or `null`.
@@ -379,7 +376,7 @@ Insert `sibling` ([`Child`](#textomchild)) as `child`s preceding sibling in `par
 
 ```js
 cats.next; // null
-cats.before(dogs);
+cats.after(dogs);
 cats.next; // dogs
 ```
 
@@ -440,8 +437,8 @@ Identifier for [Text](#textomtextvalue-nlcsttext)s.
 
 ```js
 dogsText.toString(); // "Dogs"
-space1Text.toString(); // " "
-fullStopText.toString(); // "."
+space1.toString(); // " "
+fullStop.toString(); // "."
 ```
 
 Get `text`s value.
@@ -522,7 +519,7 @@ Identifier for [WordNode](#textomwordnode-nlcstwordnode)s.
 
 #### TextOM.SymbolNode() [[NLCST:SymbolNode](https://github.com/wooorm/nlcst#symbolnode)]
 
-Constructor ([Element](#textomelement)).
+Constructor ([Text](#textomtextvalue-nlcsttext)).
 
 ##### TextOM\.SymbolNode#type
 
@@ -672,19 +669,19 @@ module textom
   };
   WordNode implements Element;
 
-  [Constructor]
+  [Constructor(optional String value = "")]
   interface SymbolNode {
     readonly attribute string type = "SymbolNode";
   };
-  SymbolNode implements Element;
+  SymbolNode implements Text;
 
-  [Constructor]
+  [Constructor(optional String value = "")]
   interface PunctuationNode {
     readonly attribute string type = "PunctuationNode";
   };
   PunctuationNode implements SymbolNode;
 
-  [Constructor]
+  [Constructor(optional String value = "")]
   interface WhiteSpaceNode {
     readonly attribute string type = "WhiteSpaceNode";
   };
