@@ -24,6 +24,7 @@ var TextOM,
     ParagraphNode,
     SentenceNode,
     WordNode,
+    SymbolNode,
     PunctuationNode,
     WhiteSpaceNode,
     SourceNode,
@@ -43,6 +44,7 @@ RootNode = TextOM.RootNode;
 ParagraphNode = TextOM.ParagraphNode;
 SentenceNode = TextOM.SentenceNode;
 WordNode = TextOM.WordNode;
+SymbolNode = TextOM.SymbolNode;
 PunctuationNode = TextOM.PunctuationNode;
 WhiteSpaceNode = TextOM.WhiteSpaceNode;
 SourceNode = TextOM.SourceNode;
@@ -84,6 +86,7 @@ afterEach(function () {
     ParagraphNode.off();
     SentenceNode.off();
     WordNode.off();
+    SymbolNode.off();
     PunctuationNode.off();
     WhiteSpaceNode.off();
     SourceNode.off();
@@ -141,6 +144,13 @@ describe('TextOM', function () {
         'on an instance of `WordNode`',
         function () {
             assert(TextOM.WORD_NODE === new WordNode().type);
+        }
+    );
+
+    it('should have a `SYMBOL_NODE` property equal to the `type` ' +
+        'property on an instance of `SymbolNode`',
+        function () {
+            assert(TextOM.SYMBOL_NODE === new SymbolNode().type);
         }
     );
 
@@ -418,6 +428,17 @@ describe('TextOM.Node#WORD_NODE', function () {
     it('should be equal to the `type` property on an instance of `WordNode`',
         function () {
             assert(nodePrototype.WORD_NODE === new WordNode().type);
+        }
+    );
+});
+
+describe('TextOM.Node#SYMBOL_NODE', function () {
+    it('should be equal to the `type` property on an instance of ' +
+        '`SymbolNode`',
+        function () {
+            assert(
+                nodePrototype.SYMBOL_NODE === new SymbolNode().type
+            );
         }
     );
 });
@@ -3202,6 +3223,22 @@ describe('TextOM.WordNode()', function () {
     );
 });
 
+describe('TextOM.SymbolNode()', function () {
+    it('should be a `function`', function () {
+        assert(typeof SymbolNode === 'function');
+    });
+
+    it('should inherit from `Element`', function () {
+        assert(new SymbolNode() instanceof Element);
+    });
+
+    it('TextOM.SymbolNode#nodeName should be equal to Node#ELEMENT',
+        function () {
+            assert(new SymbolNode().nodeName === nodePrototype.ELEMENT);
+        }
+    );
+});
+
 describe('TextOM.PunctuationNode()', function () {
     it('should be a `function`', function () {
         assert(typeof PunctuationNode === 'function');
@@ -3209,6 +3246,10 @@ describe('TextOM.PunctuationNode()', function () {
 
     it('should inherit from `Element`', function () {
         assert(new PunctuationNode() instanceof Element);
+    });
+
+    it('should inherit from `SymbolNode`', function () {
+        assert(new PunctuationNode() instanceof SymbolNode);
     });
 
     it('TextOM.PunctuationNode#nodeName should be equal to Node#ELEMENT',
@@ -3227,8 +3268,8 @@ describe('TextOM.WhiteSpaceNode()', function () {
         assert(new WhiteSpaceNode() instanceof Element);
     });
 
-    it('should inherit from `PunctuationNode`', function () {
-        assert(new WhiteSpaceNode() instanceof PunctuationNode);
+    it('should inherit from `SymbolNode`', function () {
+        assert(new WhiteSpaceNode() instanceof SymbolNode);
     });
 
     it('TextOM.WhiteSpaceNode#nodeName should be equal to Node#ELEMENT',
@@ -3352,6 +3393,25 @@ describe('TextOM.WordNode().valueOf().children', function () {
     });
 });
 
+describe('TextOM.SymbolNode().valueOf().type', function () {
+    it('should be equal to TextOM.Node#SYMBOL_NODE', function () {
+        assert(new SymbolNode().valueOf().type === nodePrototype.SYMBOL_NODE);
+    });
+});
+
+describe('TextOM.SymbolNode().valueOf().children', function () {
+    it('should be an array', function () {
+        assert(
+            objectToString.call(new SymbolNode().valueOf().children) ===
+            '[object Array]'
+        );
+    });
+
+    it('should be empty', function () {
+        assert(new SymbolNode().valueOf().children.length === 0);
+    });
+});
+
 describe('TextOM.PunctuationNode().valueOf().type', function () {
     it('should be equal to TextOM.Node#PUNCTUATION_NODE', function () {
         assert(
@@ -3453,6 +3513,14 @@ describe('HierarchyError', function () {
         }
     );
 
+    it('should throw when appending a `SymbolNode` to a `RootNode`',
+        function () {
+            assert.throws(function () {
+                new RootNode().append(new SymbolNode());
+            }, /HierarchyError/);
+        }
+    );
+
     it('should throw when appending a `PunctuationNode` to a `RootNode`',
         function () {
             assert.throws(function () {
@@ -3522,13 +3590,19 @@ describe('HierarchyError', function () {
         }
     );
 
+    it('should throw when appending a `SymbolNode` to a `ParagraphNode`',
+        function () {
+            assert.throws(function () {
+                new ParagraphNode().append(new SymbolNode());
+            }, /HierarchyError/);
+        }
+    );
+
     it('should throw when appending a `PunctuationNode` to a ' +
         '`ParagraphNode`',
         function () {
             assert.throws(function () {
-                new ParagraphNode().append(
-                    new PunctuationNode()
-                );
+                new ParagraphNode().append(new PunctuationNode());
             }, /HierarchyError/);
         }
     );
@@ -3537,9 +3611,7 @@ describe('HierarchyError', function () {
         '`ParagraphNode`',
         function () {
             assert.doesNotThrow(function () {
-                new ParagraphNode().append(
-                    new WhiteSpaceNode()
-                );
+                new ParagraphNode().append(new WhiteSpaceNode());
             }, /HierarchyError/);
         }
     );
@@ -3589,13 +3661,19 @@ describe('HierarchyError', function () {
         }
     );
 
+    it('should NOT throw when appending a `SymbolNode` to a `SentenceNode`',
+        function () {
+            assert.doesNotThrow(function () {
+                new SentenceNode().append(new SymbolNode());
+            }, /HierarchyError/);
+        }
+    );
+
     it('should NOT throw when appending a `PunctuationNode` to a ' +
         '`SentenceNode`',
         function () {
             assert.doesNotThrow(function () {
-                new SentenceNode().append(
-                    new PunctuationNode()
-                );
+                new SentenceNode().append(new PunctuationNode());
             }, /HierarchyError/);
         }
     );
@@ -3654,6 +3732,14 @@ describe('HierarchyError', function () {
         }
     );
 
+    it('should NOT throw when appending a `TextNode` to a `SymbolNode`',
+        function () {
+            assert.doesNotThrow(function () {
+                new SymbolNode().append(new TextNode());
+            }, /HierarchyError/);
+        }
+    );
+
     it('should NOT throw when appending a `TextNode` to a `PunctuationNode`',
         function () {
             assert.doesNotThrow(function () {
@@ -3666,6 +3752,14 @@ describe('HierarchyError', function () {
         function () {
             assert.doesNotThrow(function () {
                 new WordNode().append(new PunctuationNode());
+            }, /HierarchyError/);
+        }
+    );
+
+    it('should NOT throw when appending a `SymbolNode` to a `WordNode`',
+        function () {
+            assert.doesNotThrow(function () {
+                new WordNode().append(new SymbolNode());
             }, /HierarchyError/);
         }
     );
