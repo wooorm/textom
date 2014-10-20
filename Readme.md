@@ -68,10 +68,10 @@ root.append(paragraph);
 var sentence = new TextOM.SentenceNode();
 paragraph.append(sentence);
 
-/* Add words, punctuation, and white space. */
+/* Add words, symbols, punctuation, and white space. */
 var dogs = sentence.append(new TextOM.WordNode()),
     space0 = sentence.append(new TextOM.WhiteSpaceNode()),
-    ampersand = sentence.append(new TextOM.PunctuationNode()),
+    ampersand = sentence.append(new TextOM.SymbolNode()),
     space1 = sentence.append(new TextOM.WhiteSpaceNode()),
     cats = sentence.append(new TextOM.WordNode()),
     fullStop = sentence.append(new TextOM.PunctuationNode());
@@ -193,6 +193,10 @@ Identifier for [SentenceNode](#textomsentencenode-nlcstsentencenode)s.
 ##### TextOM\.Node#WORD_NODE
 
 Identifier for [WordNode](#textomwordnode-nlcstwordnode)s.
+
+##### TextOM\.Node#SYMBOL_NODE
+
+Identifier for [SymbolNode](#textomsymbolnode-nlcstsymbolnode)s.
 
 ##### TextOM\.Node#PUNCTUATION_NODE
 
@@ -516,9 +520,17 @@ Constructor ([Element](#textomelement)).
 
 Identifier for [WordNode](#textomwordnode-nlcstwordnode)s.
 
-#### TextOM.PunctuationNode() [[NLCST:PunctuationNode](https://github.com/wooorm/nlcst#punctuationnode)]
+#### TextOM.SymbolNode() [[NLCST:SymbolNode](https://github.com/wooorm/nlcst#symbolnode)]
 
 Constructor ([Element](#textomelement)).
+
+##### TextOM\.SymbolNode#type
+
+Identifier for [SymbolNode](#textomsymbolnode-nlcstsymbolnode)s.
+
+#### TextOM.PunctuationNode() [[NLCST:PunctuationNode](https://github.com/wooorm/nlcst#punctuationnode)]
+
+Constructor ([SymbolNode](#textomsymbolnode-nlcstsymbolnode)).
 
 ##### TextOM\.PunctuationNode#type
 
@@ -526,7 +538,7 @@ Identifier for [PunctuationNode](#textompunctuationnode-nlcstpunctuationnode)s.
 
 #### TextOM.WhiteSpaceNode() [[NLCST:WhiteSpaceNode](https://github.com/wooorm/nlcst#whitespacenode)]
 
-Constructor ([PunctuationNode](#textompunctuationnode-nlcstpunctuationnode)).
+Constructor ([SymbolNode](#textomsymbolnode-nlcstsymbolnode)).
 
 ##### TextOM\.WhiteSpaceNode#type
 
@@ -569,6 +581,7 @@ module textom
     const string PARAGRAPH_NODE = "ParagraphNode"
     const string SENTENCE_NODE = "SentenceNode"
     const string WORD_NODE = "WordNode"
+    const string SYMBOL_NODE = "SymbolNode"
     const string PUNCTUATION_NODE = "PunctuationNode"
     const string WHITE_SPACE_NODE = "WhiteSpaceNode"
     const string SOURCE_NODE = "SourceNode"
@@ -660,16 +673,22 @@ module textom
   WordNode implements Element;
 
   [Constructor]
+  interface SymbolNode {
+    readonly attribute string type = "SymbolNode";
+  };
+  SymbolNode implements Element;
+
+  [Constructor]
   interface PunctuationNode {
     readonly attribute string type = "PunctuationNode";
   };
-  PunctuationNode implements Element;
+  PunctuationNode implements SymbolNode;
 
   [Constructor]
   interface WhiteSpaceNode {
     readonly attribute string type = "WhiteSpaceNode";
   };
-  WhiteSpaceNode implements PunctuationNode;
+  WhiteSpaceNode implements SymbolNode;
 
   [Constructor(optional String value = "")]
   interface TextNode {
