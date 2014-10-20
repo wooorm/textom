@@ -1563,7 +1563,7 @@ function TextOMConstructor() {
      */
 
     function SymbolNode() {
-        Element.apply(this, arguments);
+        Text.apply(this, arguments);
     }
 
     /**
@@ -1576,20 +1576,10 @@ function TextOMConstructor() {
     SymbolNode.prototype.type = SYMBOL_NODE;
 
     /**
-     * Define allowed children.
-     *
-     * @readonly
-     */
-
-    SymbolNode.prototype.allowedChildTypes = [
-        TEXT_NODE
-    ];
-
-    /**
      * Inherit from `SymbolNode.prototype`.
      */
 
-    Element.isImplementedBy(SymbolNode);
+    Text.isImplementedBy(SymbolNode);
 
     /**
      * Define `PunctuationNode`.
