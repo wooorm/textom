@@ -3228,13 +3228,13 @@ describe('TextOM.SymbolNode()', function () {
         assert(typeof SymbolNode === 'function');
     });
 
-    it('should inherit from `Element`', function () {
-        assert(new SymbolNode() instanceof Element);
+    it('should inherit from `Text`', function () {
+        assert(new SymbolNode() instanceof Text);
     });
 
-    it('TextOM.SymbolNode#nodeName should be equal to Node#ELEMENT',
+    it('TextOM.SymbolNode#nodeName should be equal to Node#TEXT',
         function () {
-            assert(new SymbolNode().nodeName === nodePrototype.ELEMENT);
+            assert(new SymbolNode().nodeName === nodePrototype.TEXT);
         }
     );
 });
@@ -3244,17 +3244,17 @@ describe('TextOM.PunctuationNode()', function () {
         assert(typeof PunctuationNode === 'function');
     });
 
-    it('should inherit from `Element`', function () {
-        assert(new PunctuationNode() instanceof Element);
+    it('should inherit from `Text`', function () {
+        assert(new PunctuationNode() instanceof Text);
     });
 
     it('should inherit from `SymbolNode`', function () {
         assert(new PunctuationNode() instanceof SymbolNode);
     });
 
-    it('TextOM.PunctuationNode#nodeName should be equal to Node#ELEMENT',
+    it('TextOM.PunctuationNode#nodeName should be equal to Node#TEXT',
         function () {
-            assert(new PunctuationNode().nodeName === nodePrototype.ELEMENT);
+            assert(new PunctuationNode().nodeName === nodePrototype.TEXT);
         }
     );
 });
@@ -3264,17 +3264,17 @@ describe('TextOM.WhiteSpaceNode()', function () {
         assert(typeof WhiteSpaceNode === 'function');
     });
 
-    it('should inherit from `Element`', function () {
-        assert(new WhiteSpaceNode() instanceof Element);
+    it('should inherit from `Text`', function () {
+        assert(new WhiteSpaceNode() instanceof Text);
     });
 
     it('should inherit from `SymbolNode`', function () {
         assert(new WhiteSpaceNode() instanceof SymbolNode);
     });
 
-    it('TextOM.WhiteSpaceNode#nodeName should be equal to Node#ELEMENT',
+    it('TextOM.WhiteSpaceNode#nodeName should be equal to Node#TEXT',
         function () {
-            assert(new WhiteSpaceNode().nodeName === nodePrototype.ELEMENT);
+            assert(new WhiteSpaceNode().nodeName === nodePrototype.TEXT);
         }
     );
 });
@@ -3399,16 +3399,9 @@ describe('TextOM.SymbolNode().valueOf().type', function () {
     });
 });
 
-describe('TextOM.SymbolNode().valueOf().children', function () {
-    it('should be an array', function () {
-        assert(
-            objectToString.call(new SymbolNode().valueOf().children) ===
-            '[object Array]'
-        );
-    });
-
-    it('should be empty', function () {
-        assert(new SymbolNode().valueOf().children.length === 0);
+describe('TextOM.SymbolNode().valueOf().value', function () {
+    it('should be equal the value of `text`', function () {
+        assert(new SymbolNode('Alfred').valueOf().value === 'Alfred');
     });
 });
 
@@ -3421,16 +3414,9 @@ describe('TextOM.PunctuationNode().valueOf().type', function () {
     });
 });
 
-describe('TextOM.PunctuationNode().valueOf().children', function () {
-    it('should be an array', function () {
-        assert(
-            objectToString.call(new PunctuationNode().valueOf().children) ===
-            '[object Array]'
-        );
-    });
-
-    it('should be empty', function () {
-        assert(new PunctuationNode().valueOf().children.length === 0);
+describe('TextOM.PunctuationNode().valueOf().value', function () {
+    it('should be equal the value of `text`', function () {
+        assert(new PunctuationNode('Alfred').valueOf().value === 'Alfred');
     });
 });
 
@@ -3443,16 +3429,9 @@ describe('TextOM.WhiteSpaceNode().valueOf().type', function () {
     });
 });
 
-describe('TextOM.WhiteSpaceNode().valueOf().children', function () {
-    it('should be an array', function () {
-        assert(
-            objectToString.call(new WhiteSpaceNode().valueOf().children) ===
-            '[object Array]'
-        );
-    });
-
-    it('should be empty', function () {
-        assert(new WhiteSpaceNode().valueOf().children.length === 0);
+describe('TextOM.WhiteSpaceNode().valueOf().value', function () {
+    it('should be equal the value of `text`', function () {
+        assert(new WhiteSpaceNode('Alfred').valueOf().value === 'Alfred');
     });
 });
 
@@ -3720,30 +3699,6 @@ describe('HierarchyError', function () {
         function () {
             assert.doesNotThrow(function () {
                 new WordNode().append(new TextNode());
-            }, /HierarchyError/);
-        }
-    );
-
-    it('should NOT throw when appending a `TextNode` to a `WhiteSpaceNode`',
-        function () {
-            assert.doesNotThrow(function () {
-                new WhiteSpaceNode().append(new TextNode());
-            }, /HierarchyError/);
-        }
-    );
-
-    it('should NOT throw when appending a `TextNode` to a `SymbolNode`',
-        function () {
-            assert.doesNotThrow(function () {
-                new SymbolNode().append(new TextNode());
-            }, /HierarchyError/);
-        }
-    );
-
-    it('should NOT throw when appending a `TextNode` to a `PunctuationNode`',
-        function () {
-            assert.doesNotThrow(function () {
-                new PunctuationNode().append(new TextNode());
             }, /HierarchyError/);
         }
     );
@@ -4110,9 +4065,7 @@ describe('Events on TextOM.Parent', function () {
                     paragraphNode,
                     sentenceNode,
                     wordNode,
-                    textNode0,
-                    whiteSpaceNode,
-                    textNode1,
+                    textNode,
                     index,
                     shouldBePreviousValue,
                     shouldBeChild;
@@ -4121,16 +4074,12 @@ describe('Events on TextOM.Parent', function () {
                 paragraphNode = new ParagraphNode();
                 sentenceNode = new SentenceNode();
                 wordNode = new WordNode();
-                whiteSpaceNode = new WhiteSpaceNode();
-                textNode0 = new TextNode('alfred');
-                textNode1 = new TextNode('\n\n');
+                textNode = new TextNode('alfred');
 
                 rootNode.append(paragraphNode);
                 paragraphNode.append(sentenceNode);
                 sentenceNode.append(wordNode);
-                wordNode.append(textNode0);
-                rootNode.append(whiteSpaceNode);
-                whiteSpaceNode.append(textNode1);
+                wordNode.append(textNode);
 
                 index = 0;
 
@@ -4164,20 +4113,12 @@ describe('Events on TextOM.Parent', function () {
                     onchangetextinsideFactory(wordNode)
                 );
 
-                shouldBeChild = textNode0;
-                shouldBePreviousValue = textNode0.toString();
+                shouldBeChild = textNode;
+                shouldBePreviousValue = textNode.toString();
 
                 shouldBeChild.fromString('bertrand');
 
                 assert(index === 4);
-
-                index = 0;
-                shouldBeChild = textNode1;
-                shouldBePreviousValue = textNode1.toString();
-
-                shouldBeChild.fromString('\n');
-
-                assert(index === 1);
             }
         );
 
@@ -4189,9 +4130,7 @@ describe('Events on TextOM.Parent', function () {
                     paragraphNode,
                     sentenceNode,
                     wordNode,
-                    textNode0,
-                    whiteSpaceNode,
-                    textNode1,
+                    textNode,
                     index,
                     shouldBePreviousValue,
                     shouldBeChild;
@@ -4200,16 +4139,12 @@ describe('Events on TextOM.Parent', function () {
                 paragraphNode = new ParagraphNode();
                 sentenceNode = new SentenceNode();
                 wordNode = new WordNode();
-                whiteSpaceNode = new WhiteSpaceNode();
-                textNode0 = new TextNode('alfred');
-                textNode1 = new TextNode('\n\n');
+                textNode = new TextNode('alfred');
 
                 rootNode.append(paragraphNode);
                 paragraphNode.append(sentenceNode);
                 sentenceNode.append(wordNode);
-                wordNode.append(textNode0);
-                rootNode.append(whiteSpaceNode);
-                whiteSpaceNode.append(textNode1);
+                wordNode.append(textNode);
 
                 index = 0;
 
@@ -4243,20 +4178,12 @@ describe('Events on TextOM.Parent', function () {
                     onchangetextinsideFactory(wordNode)
                 );
 
-                shouldBeChild = textNode0;
-                shouldBePreviousValue = textNode0.toString();
+                shouldBeChild = textNode;
+                shouldBePreviousValue = textNode.toString();
 
-                textNode0.fromString('bertrand');
+                textNode.fromString('bertrand');
 
                 assert(index === 4);
-
-                index = 0;
-                shouldBeChild = textNode1;
-                shouldBePreviousValue = textNode1.toString();
-
-                textNode1.fromString('\n');
-
-                assert(index === 1);
             }
         );
     });
