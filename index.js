@@ -41,6 +41,7 @@ var ROOT_NODE,
     PARAGRAPH_NODE,
     SENTENCE_NODE,
     WORD_NODE,
+    SYMBOL_NODE,
     PUNCTUATION_NODE,
     WHITE_SPACE_NODE,
     SOURCE_NODE,
@@ -50,6 +51,7 @@ ROOT_NODE = 'RootNode';
 PARAGRAPH_NODE = 'ParagraphNode';
 SENTENCE_NODE = 'SentenceNode';
 WORD_NODE = 'WordNode';
+SYMBOL_NODE = 'SymbolNode';
 PUNCTUATION_NODE = 'PunctuationNode';
 WHITE_SPACE_NODE = 'WhiteSpaceNode';
 SOURCE_NODE = 'SourceNode';
@@ -1509,6 +1511,7 @@ function TextOMConstructor() {
 
     SentenceNode.prototype.allowedChildTypes = [
         WORD_NODE,
+        SYMBOL_NODE,
         PUNCTUATION_NODE,
         WHITE_SPACE_NODE,
         SOURCE_NODE
@@ -1545,6 +1548,7 @@ function TextOMConstructor() {
 
     WordNode.prototype.allowedChildTypes = [
         TEXT_NODE,
+        SYMBOL_NODE,
         PUNCTUATION_NODE
     ];
 
@@ -1555,11 +1559,44 @@ function TextOMConstructor() {
     Element.isImplementedBy(WordNode);
 
     /**
+     * Define `SymbolNode`.
+     */
+
+    function SymbolNode() {
+        Element.apply(this, arguments);
+    }
+
+    /**
+     * The type of an instance of SymbolNode.
+     *
+     * @readonly
+     * @static
+     */
+
+    SymbolNode.prototype.type = SYMBOL_NODE;
+
+    /**
+     * Define allowed children.
+     *
+     * @readonly
+     */
+
+    SymbolNode.prototype.allowedChildTypes = [
+        TEXT_NODE
+    ];
+
+    /**
+     * Inherit from `SymbolNode.prototype`.
+     */
+
+    Element.isImplementedBy(SymbolNode);
+
+    /**
      * Define `PunctuationNode`.
      */
 
     function PunctuationNode() {
-        Element.apply(this, arguments);
+        SymbolNode.apply(this, arguments);
     }
 
     /**
@@ -1572,27 +1609,17 @@ function TextOMConstructor() {
     PunctuationNode.prototype.type = PUNCTUATION_NODE;
 
     /**
-     * Define allowed children.
-     *
-     * @readonly
+     * Inherit from `SymbolNode.prototype`.
      */
 
-    PunctuationNode.prototype.allowedChildTypes = [
-        TEXT_NODE
-    ];
-
-    /**
-     * Inherit from `Text.prototype`.
-     */
-
-    Element.isImplementedBy(PunctuationNode);
+    SymbolNode.isImplementedBy(PunctuationNode);
 
     /**
      * Expose `WhiteSpaceNode`.
      */
 
     function WhiteSpaceNode() {
-        PunctuationNode.apply(this, arguments);
+        SymbolNode.apply(this, arguments);
     }
 
     /**
@@ -1605,20 +1632,10 @@ function TextOMConstructor() {
     WhiteSpaceNode.prototype.type = WHITE_SPACE_NODE;
 
     /**
-     * Define allowed children.
-     *
-     * @readonly
+     * Inherit from `SymbolNode.prototype`.
      */
 
-    WhiteSpaceNode.prototype.allowedChildTypes = [
-        TEXT_NODE
-    ];
-
-    /**
-     * Inherit from `Text.prototype`.
-     */
-
-    PunctuationNode.isImplementedBy(WhiteSpaceNode);
+    SymbolNode.isImplementedBy(WhiteSpaceNode);
 
     /**
      * Expose `SourceNode`.
@@ -1706,6 +1723,7 @@ function TextOMConstructor() {
     TextOM.PARAGRAPH_NODE = PARAGRAPH_NODE;
     TextOM.SENTENCE_NODE = SENTENCE_NODE;
     TextOM.WORD_NODE = WORD_NODE;
+    TextOM.SYMBOL_NODE = SYMBOL_NODE;
     TextOM.PUNCTUATION_NODE = PUNCTUATION_NODE;
     TextOM.WHITE_SPACE_NODE = WHITE_SPACE_NODE;
     TextOM.SOURCE_NODE = SOURCE_NODE;
@@ -1719,6 +1737,7 @@ function TextOMConstructor() {
     nodePrototype.PARAGRAPH_NODE = PARAGRAPH_NODE;
     nodePrototype.SENTENCE_NODE = SENTENCE_NODE;
     nodePrototype.WORD_NODE = WORD_NODE;
+    nodePrototype.SYMBOL_NODE = SYMBOL_NODE;
     nodePrototype.PUNCTUATION_NODE = PUNCTUATION_NODE;
     nodePrototype.WHITE_SPACE_NODE = WHITE_SPACE_NODE;
     nodePrototype.SOURCE_NODE = SOURCE_NODE;
@@ -1737,6 +1756,7 @@ function TextOMConstructor() {
     TextOM.ParagraphNode = ParagraphNode;
     TextOM.SentenceNode = SentenceNode;
     TextOM.WordNode = WordNode;
+    TextOM.SymbolNode = SymbolNode;
     TextOM.PunctuationNode = PunctuationNode;
     TextOM.WhiteSpaceNode = WhiteSpaceNode;
     TextOM.SourceNode = SourceNode;
