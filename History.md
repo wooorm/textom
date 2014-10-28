@@ -1,4 +1,11 @@
 
+n.n.n / 2014-10-28
+==================
+
+ * Add `.eslintrc`
+ * Refactor to disallow space after object keys
+ * Update eslint, mocha
+
 0.3.0-rc.2 / 2014-10-20
 ==================
 
