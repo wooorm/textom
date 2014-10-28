@@ -1074,8 +1074,8 @@ function TextOMConstructor() {
         children = [];
 
         nlcst = {
-            'type' : self.type || '',
-            'children' : children
+            'type': self.type || '',
+            'children': children
         };
 
         node = self.head;
@@ -1331,8 +1331,8 @@ function TextOMConstructor() {
         self = this;
 
         nlcst = {
-            'type' : self.type || '',
-            'value' : self.internalValue
+            'type': self.type || '',
+            'value': self.internalValue
         };
 
         mergeData(self, nlcst);
