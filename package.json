@@ -1,6 +1,6 @@
 {
   "name": "textom",
-  "version": "0.3.0-rc.2",
+  "version": "0.3.0",
   "description": "Object model for natural languages",
   "license": "MIT",
   "keywords": [
