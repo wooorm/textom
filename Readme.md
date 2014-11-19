@@ -886,6 +886,7 @@ A `"changetextinside"` event fires on `dogsText` parent, `dogs`, and because `do
 - [parse-dutch](https://github.com/wooorm/parse-dutch "Parse Dutch")
 - [parse-latin](https://github.com/wooorm/parse-latin "Parse Latin")
 - [parse-english](https://github.com/wooorm/parse-english "Parse English")
+- [textom-link-node](https://github.com/wooorm/textom-link-node "Textom Link Node")
 - [retext](https://github.com/wooorm/retext "Retext")
 
 ## License
