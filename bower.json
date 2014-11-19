@@ -7,7 +7,9 @@
     "natural",
     "language",
     "object",
-    "model"
+    "model",
+    "retext",
+    "nlcst"
   ],
   "repository": {
     "type": "git",
