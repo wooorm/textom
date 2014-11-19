@@ -1,4 +1,15 @@
 
+n.n.n / 2014-11-19
+==================
+
+ * Refactor property order for npm script targets in `package.json`
+ * Add "retext", "nlcst" to package keywords
+ * Add textom-link-node to related projects in `Readme.md`
+ * Remove superfluous horizontal-line in `Readme.md`
+ * Add flat badges to `Readme.md`
+ * Fix overly specific version range for jscs
+ * Fix incorrect executive rights on `test.js`
+
 0.3.0 / 2014-10-28
 ==================
 
