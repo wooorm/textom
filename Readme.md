@@ -2,8 +2,6 @@
 
 Object model for manipulating natural language in JavaScript.
 
----
-
 * For parsing capabilities, see [parse-latin](https://github.com/wooorm/parse-latin);
 * For a pluggable system for analysing and manipulating natural language, see [retext](https://github.com/wooorm/retext);
 * For semantics of natural language nodes, see [NLCST](https://github.com/wooorm/nlcst).
