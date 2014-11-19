@@ -1,5 +1,5 @@
 
-n.n.n / 2014-11-19
+0.3.1 / 2014-11-19
 ==================
 
  * Refactor property order for npm script targets in `package.json`
