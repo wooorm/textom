@@ -1,4 +1,4 @@
-# TextOM [![Build Status](https://img.shields.io/travis/wooorm/TextOM.svg?style=flat)](https://travis-ci.org/wooorm/TextOM) [![Coverage Status](https://img.shields.io/coveralls/wooorm/TextOM.svg?style=flat)](https://coveralls.io/r/wooorm/TextOM?branch=master)
+# TextOM [![Build Status](https://img.shields.io/travis/wooorm/textom.svg?style=flat)](https://travis-ci.org/wooorm/textom) [![Coverage Status](https://img.shields.io/coveralls/wooorm/textom.svg?style=flat)](https://coveralls.io/r/wooorm/textom?branch=master)
 
 Object model for manipulating natural language in JavaScript.
 
