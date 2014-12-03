@@ -881,6 +881,44 @@ dogsText.fromString('Wolves');
 
 A `"changetextinside"` event fires on `dogsText` parent, `dogs`, and because `dogs` is a [`WordNode`](#textomwordnode-nlcstwordnode), the event fires on `WordNode` too, continuing with `sentence` and [`SentenceNode`](#textomsentencenode-nlcstsentencenode), `paragraph` and [`ParagraphNode`](#textomparagraphnode-nlcstparagraphnode), and finally `root` and [`RootNode`](#textomrootnode-nlcstrootnode).
 
+## Performance
+
+Not that intersting. Fast enough. Just for checking performance regression for new features.
+
+```
+               Parent
+  147,733 op/s » Append 1 new node to an empty parent
+   47,774 op/s » Append 2 new nodes to an empty parent
+   32,162 op/s » Append 3 new nodes to an empty parent
+   53,681 op/s » Append 1 attached node to an empty parent
+   22,177 op/s » Append 2 attached nodes to an empty parent
+   13,898 op/s » Append 3 attached nodes to an empty parent
+      358 op/s » Append 100 attached nodes to an empty parent
+  147,802 op/s » Prepend 1 new node to an empty parent
+   52,773 op/s » Prepend 2 new nodes to an empty parent
+   34,512 op/s » Prepend 3 new nodes to an empty parent
+   53,233 op/s » Prepend 1 attached node to an empty parent
+   23,312 op/s » Prepend 2 attached nodes to an empty parent
+   14,401 op/s » Prepend 3 attached nodes to an empty parent
+      373 op/s » Prepend 100 attached nodes to an empty parent
+
+               Child
+   47,636 op/s » Insert 1 new node after an only child
+   29,698 op/s » Insert 2 new nodes after an only child
+   21,819 op/s » Insert 3 new nodes after an only child
+   28,486 op/s » Insert 1 attached node after an only child
+   15,800 op/s » Insert 2 attached nodes after an only child
+   10,500 op/s » Insert 3 attached nodes after an only child
+      300 op/s » Insert 100 attached nodes after an only child
+   50,841 op/s » Insert 1 new node before an only child
+   31,894 op/s » Insert 2 new nodes before an only child
+   22,896 op/s » Insert 3 new nodes before an only child
+   28,532 op/s » Insert 1 attached node before an only child
+   15,319 op/s » Insert 2 attached nodes before an only child
+   10,841 op/s » Insert 3 attached nodes before an only child
+      320 op/s » Insert 100 attached nodes before an only child
+```
+
 ## Related
 
 - [parse-dutch](https://github.com/wooorm/parse-dutch "Parse Dutch")
