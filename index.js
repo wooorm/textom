@@ -404,8 +404,6 @@ function insert(parent, item, child) {
      * Emit events.
      */
 
-    next = child.next;
-
     child.trigger('insert', parent);
 
     if (item) {
