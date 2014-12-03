@@ -226,14 +226,18 @@ function canInsertIntoParent(parent, child) {
 }
 
 /**
- * Throw an error if an insertion is invalid.
+ * Insert `child` after `item` in `parent`, or at
+ * `parent`s head when `item` is not given.
  *
  * @param {Parent} parent
  * @param {Child} item
  * @param {Child} child
+ * @return {Child} - `child`.
  */
 
-function validateInsert(parent, item, child) {
+function insert(parent, item, child) {
+    var next;
+
     if (!parent) {
         throw new Error(
             'TypeError: `' + parent + '` is not a ' +
@@ -274,6 +278,10 @@ function validateInsert(parent, item, child) {
      */
 
     if (item) {
+        if (item === child) {
+            return child;
+        }
+
         if (item.parent !== parent) {
             throw new Error(
                 'HierarchyError: The operated on node ' +
@@ -289,22 +297,6 @@ function validateInsert(parent, item, child) {
             );
         }
     }
-}
-
-/**
- * Insert `child` after `item` in `parent`, or at
- * `parent`s head when `item` is not given.
- *
- * @param {Parent} parent
- * @param {Child} item
- * @param {Child} child
- * @return {Child} - `child`.
- */
-
-function insert(parent, item, child) {
-    var next;
-
-    validateInsert(parent, item, child);
 
     /**
      * Detach `child`.
