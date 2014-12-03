@@ -54,16 +54,21 @@ nodePrototype = Node.prototype;
 parentPrototype = Parent.prototype;
 childPrototype = Child.prototype;
 
-/* istanbul ignore next: noop */
 function noop() {}
 
-/* istanbul ignore next: noop */
+noop();
+
 function altNoop() {}
 
-/* istanbul ignore next: should never be called */
+altNoop();
+
 function doNotCall() {
     throw new Error('doNotCall was called, but shouldn\'t be');
 }
+
+try {
+    doNotCall();
+} catch (exception) {}
 
 var has,
     objectToString;
@@ -245,20 +250,16 @@ describe('TextOM.Node.isImplementedBy', function () {
     it('should add the properties of the operated on context ' +
         'to the given constructor',
         function () {
-            var property;
-
-            /* istanbul ignore next */
             function CustomNode() {}
+
+            assert(new CustomNode() instanceof CustomNode);
 
             Node.isImplementedBy(CustomNode);
 
-            for (property in Node) {
-                /* istanbul ignore else */
-                if (has.call(Node, property)) {
-                    assert(property in CustomNode);
-                    assert(CustomNode[property] === Node[property]);
-                }
-            }
+            Object.keys(Node).forEach(function (key) {
+                assert(key in CustomNode);
+                assert(CustomNode[key] === Node[key]);
+            });
         }
     );
 
@@ -275,38 +276,34 @@ describe('TextOM.Node.isImplementedBy', function () {
 
     it('should not remove properties defined on the given constructor',
         function () {
-            /* istanbul ignore next */
             function CustomNode() {}
 
-            /* istanbul ignore next */
-            function someFunction() {}
+            assert(new CustomNode() instanceof CustomNode);
 
             CustomNode.test = 'test';
-            CustomNode.someFunction = someFunction;
+            CustomNode.noop = noop;
 
             Node.isImplementedBy(CustomNode);
 
             assert(CustomNode.test === 'test');
-            assert(CustomNode.someFunction === someFunction);
+            assert(CustomNode.noop === noop);
         }
     );
 
     it('should not remove properties defined on the given constructors ' +
         'prototype',
         function () {
-            /* istanbul ignore next */
             function CustomNode() {}
 
-            /* istanbul ignore next */
-            function someFunction() {}
+            assert(new CustomNode() instanceof CustomNode);
 
             CustomNode.prototype.test = 'test';
-            CustomNode.prototype.someFunction = someFunction;
+            CustomNode.prototype.noop = noop;
 
             Node.isImplementedBy(CustomNode);
 
             assert(CustomNode.prototype.test === 'test');
-            assert(CustomNode.prototype.someFunction === someFunction);
+            assert(CustomNode.prototype.noop === noop);
         }
     );
 
@@ -315,8 +312,9 @@ describe('TextOM.Node.isImplementedBy', function () {
         function () {
             var constructor;
 
-            /* istanbul ignore next */
             function CustomNode() {}
+
+            assert(new CustomNode() instanceof CustomNode);
 
             constructor = CustomNode.prototype.constructor;
 
@@ -329,8 +327,9 @@ describe('TextOM.Node.isImplementedBy', function () {
     it('should add a `constructors` array to the given constructor, filled ' +
         'with the given constructor, and the operated on context',
         function () {
-            /* istanbul ignore next */
             function CustomNode() {}
+
+            assert(new CustomNode() instanceof CustomNode);
 
             Node.isImplementedBy(CustomNode);
 
@@ -339,6 +338,22 @@ describe('TextOM.Node.isImplementedBy', function () {
             assert(CustomNode.constructors[1] === Node);
         }
     );
+
+    it('should not fail on inherited keys', function () {
+        /* eslint-disable no-extend-native */
+        Function.prototype.noop = noop;
+        /* eslint-enable no-extend-native */
+
+        function CustomNode() {}
+
+        assert(new CustomNode() instanceof CustomNode);
+
+        Node.isImplementedBy(CustomNode);
+
+        assert(Object.hasOwnProperty.call(CustomNode, 'noop') === false);
+
+        delete Function.prototype.noop;
+    });
 });
 
 describe('TextOM.Node.on', function () {
@@ -710,6 +725,12 @@ describe('TextOM.Node#off(name?, callback?)', function () {
 describe('TextOM.Node#emit(name, values...)', function () {
     it('should be a `function`', function () {
         assert(typeof nodePrototype.emit === 'function');
+    });
+
+    it('should throw when not operating on a node', function () {
+        assert.throws(function () {
+            nodePrototype.emit.call({});
+        }, /not a node/);
     });
 });
 
@@ -1100,6 +1121,46 @@ describe('TextOM.Parent#append(childNode)', function () {
         }, /false/);
     });
 
+    it('should throw when an anchor is not attach to its parent',
+        function () {
+            var parent,
+                child,
+                otherChild;
+
+            parent = new Parent();
+            child = new Child();
+            otherChild = new Child();
+
+            parent.append(child);
+
+            child.parent = null;
+
+            assert.throws(function () {
+                parent.append(otherChild);
+            }, /detached/);
+        }
+    );
+
+    it('should throw when an anchor is not an indice in its parent',
+        function () {
+            var parent,
+                child,
+                otherChild;
+
+            parent = new Parent();
+            child = new Child();
+            otherChild = new Child();
+
+            parent.append(child);
+
+            parent[0] = null;
+
+            assert.throws(function () {
+                parent.append(otherChild);
+            }, /no indice/);
+        }
+    );
+
     it('should throw when non-removable nodes are appended (e.g., not ' +
         'inheriting from TextOM.Child)',
         function () {
@@ -1480,6 +1541,22 @@ describe('TextOM.Parent#valueOf()', function () {
         assert(node.valueOf().data.test === 'test');
         assert(node.valueOf().data.otherTest === 'another');
     });
+
+    it('should NOT include inherited data', function () {
+        var node;
+
+        node = new Parent();
+
+        /* eslint-disable no-extend-native */
+        Object.prototype.test = 'test';
+        /* eslint-enable no-extend-native */
+
+        assert('test' in node.data);
+
+        assert('data' in node.valueOf() === false);
+
+        delete Object.prototype.test;
+    });
 });
 
 describe('TextOM.Child', function () {
@@ -1590,6 +1667,32 @@ describe('TextOM.Child#before(childNode)', function () {
             new Child().before(new Child());
         }, /parent/);
     });
+
+    it('should throw when an anchor is not an indice in its parent',
+        function () {
+            var parent,
+                child,
+                otherChild,
+                anotherChild;
+
+            parent = new Parent();
+            child = new Child();
+            otherChild = new Child();
+            anotherChild = new Child();
+
+            parent.append(child);
+            child.after(otherChild);
+
+            parent[0] = null;
+            parent[1] = null;
+            parent.head = null;
+            parent.tail = null;
+
+            assert.throws(function () {
+                otherChild.before(anotherChild);
+            }, /no indice/);
+        }
+    );
 
     it('should throw when falsey values are provided', function () {
         var parent,
@@ -1865,6 +1968,32 @@ describe('TextOM.Child#after(childNode)', function () {
         }, /parent/);
     });
 
+    it('should throw when an anchor is not an indice in its parent',
+        function () {
+            var parent,
+                child,
+                otherChild,
+                anotherChild;
+
+            parent = new Parent();
+            child = new Child();
+            otherChild = new Child();
+            anotherChild = new Child();
+
+            parent.append(child);
+            child.after(otherChild);
+
+            parent[0] = null;
+            parent[1] = null;
+            parent.head = null;
+            parent.tail = null;
+
+            assert.throws(function () {
+                otherChild.after(anotherChild);
+            }, /no indice/);
+        }
+    );
+
     it('should throw when falsey values are provided', function () {
         var parent,
             child;
@@ -2135,11 +2264,37 @@ describe('TextOM.Child#after(childNode)', function () {
 });
 
 describe('TextOM.Child#remove()', function () {
+    it('should throw when the operated on item is not a node',
+        function () {
+            assert.throws(function () {
+                new Child().remove.call();
+            }, /undefined/);
+        }
+    );
+
     it('should NOT throw when the operated on item is not attached',
         function () {
             assert.doesNotThrow(function () {
                 new Child().remove();
             });
+        }
+    );
+
+    it('should throw when a node is not an indice in its parent',
+        function () {
+            var parent,
+                child;
+
+            parent = new Parent();
+            child = new Child();
+
+            parent.append(child);
+
+            parent[0] = null;
+
+            assert.throws(function () {
+                child.remove();
+            }, /no indice/);
         }
     );
 
@@ -2677,13 +2832,10 @@ describe('TextOM.Element()', function () {
 
         element = new Element();
 
-        for (key in childPrototype) {
+        for (key in parentPrototype) {
             if (has.call(parentPrototype, key)) {
-                /* istanbul ignore else: maybe in the future? */
                 if (typeof parentPrototype[key] === 'function') {
                     assert(key in element);
-                } else if (!has.call(Element.prototype, key)) {
-                    assert(element[key] === parentPrototype[key]);
                 }
             }
         }
@@ -2950,6 +3102,22 @@ describe('TextOM.Text#valueOf()', function () {
         assert('data' in node.valueOf() === true);
         assert(node.valueOf().data.test === 'test');
         assert(node.valueOf().data.otherTest === 'another');
+    });
+
+    it('should NOT include inherited data', function () {
+        var node;
+
+        node = new Text();
+
+        /* eslint-disable no-extend-native */
+        Object.prototype.test = 'test';
+        /* eslint-enable no-extend-native */
+
+        assert('test' in node.data);
+
+        assert('data' in node.valueOf() === false);
+
+        delete Object.prototype.test;
     });
 });
 

@@ -274,7 +274,6 @@ function validateInsert(parent, item, child) {
      */
 
     if (item) {
-        /* istanbul ignore if: Wrong-usage */
         if (item.parent !== parent) {
             throw new Error(
                 'HierarchyError: The operated on node ' +
@@ -282,7 +281,6 @@ function validateInsert(parent, item, child) {
             );
         }
 
-        /* istanbul ignore if: Wrong-usage */
         if (arrayIndexOf.call(parent, item) === -1) {
             throw new Error(
                 'HierarchyError: The operated on node ' +
@@ -432,9 +430,11 @@ function remove(node) {
         next,
         indice;
 
-    /* istanbul ignore if: Wrong-usage */
     if (!node) {
-        return false;
+        throw new Error(
+            'TypeError: `' + node + '` is not a ' +
+            'valid `node` for `remove`'
+        );
     }
 
     /**
@@ -497,10 +497,15 @@ function remove(node) {
 
     indice = arrayIndexOf.call(parent, node);
 
-    /* istanbul ignore else: Wrong-usage */
-    if (indice !== -1) {
-        arraySplice.call(parent, indice, 1);
+    if (indice === -1) {
+        throw new Error(
+            'HierarchyError: The operated on node ' +
+            'is attached to `parent`, but `parent` ' +
+            'has no indice corresponding to the node'
+        );
     }
+
+    arraySplice.call(parent, indice, 1);
 
     /**
      * Remove links from `node` to both its next and
@@ -565,7 +570,6 @@ function mergeData(node, nlcst) {
     data = node.data;
 
     for (attribute in data) {
-        /* istanbul ignore else */
         if (has.call(data, attribute)) {
             /**
              * This makes sure no empy data objects
@@ -768,9 +772,11 @@ function TextOMConstructor() {
 
         constructors = self.constructor.constructors;
 
-        /* istanbul ignore if: Wrong-usage */
         if (!constructors) {
-            return true;
+            throw new Error(
+                'HierarchyError: The operated on node ' +
+                'is not a node'
+            );
         }
 
         length = constructors.length;
@@ -910,7 +916,6 @@ function TextOMConstructor() {
          */
 
         for (key in self) {
-            /* istanbul ignore else */
             if (has.call(self, key)) {
                 Constructor[key] = self[key];
             }
