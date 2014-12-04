@@ -1464,6 +1464,10 @@ describe('TextOM.Parent#toString()', function () {
             node.tail = tail;
             head.next = tail;
 
+            node[0] = head;
+            node[1] = tail;
+            node.length = 2;
+
             head.toString = function () {
                 return 'a ';
             };
@@ -4423,84 +4427,6 @@ describe('Events on TextOM.Child', function () {
                 WordNode.on('insert', remove);
 
                 sentenceNode.append(wordNode);
-            }
-        );
-    });
-
-    describe('[changenext]', function () {
-        it('emits on child and all child\'s constructors, with child as ' +
-            'the context, and the new and the old next nodes as arguments, ' +
-            'when the `next` attribute on child changes',
-            function () {
-                var sentenceNode,
-                    wordNode,
-                    whiteSpaceNode,
-                    punctuationNode,
-                    index;
-
-                sentenceNode = new SentenceNode();
-                wordNode = new WordNode();
-                whiteSpaceNode = new WhiteSpaceNode();
-                punctuationNode = new PunctuationNode();
-
-                index = 0;
-
-                sentenceNode.append(wordNode);
-                sentenceNode.append(whiteSpaceNode);
-
-                function onchangenext(node, previousNode) {
-                    index++;
-
-                    assert(this === wordNode);
-                    assert(node === punctuationNode);
-                    assert(previousNode === whiteSpaceNode);
-                }
-
-                wordNode.on('changenext', onchangenext);
-                WordNode.on('changenext', onchangenext);
-
-                wordNode.after(punctuationNode);
-
-                assert(index === 2);
-            }
-        );
-    });
-
-    describe('[changeprev]', function () {
-        it('emits on child and all child\'s constructors, with child as ' +
-            'the context, and the new and the old prev nodes as arguments, ' +
-            'when the `prev` attribute on child changes',
-            function () {
-                var sentenceNode,
-                    wordNode,
-                    whiteSpaceNode,
-                    punctuationNode,
-                    index;
-
-                sentenceNode = new SentenceNode();
-                wordNode = new WordNode();
-                whiteSpaceNode = new WhiteSpaceNode();
-                punctuationNode = new PunctuationNode();
-
-                index = 0;
-
-                sentenceNode.append(wordNode);
-                sentenceNode.append(whiteSpaceNode);
-
-                function onchangeprev(node, previousValue) {
-                    index++;
-
-                    assert(this === whiteSpaceNode);
-                    assert(node === punctuationNode);
-                    assert(previousValue === wordNode);
-                }
-
-                whiteSpaceNode.on('changeprev', onchangeprev);
-                WhiteSpaceNode.on('changeprev', onchangeprev);
-
-                whiteSpaceNode.before(punctuationNode);
-
-                assert(index === 2);
             }
         );
     });
