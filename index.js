@@ -5,32 +5,94 @@
  */
 
 var has,
-    arrayPrototype,
-    arrayUnshift,
-    arrayPush,
-    arraySlice,
-    arrayIndexOf,
-    arraySplice;
+    arraySlice;
 
 has = Object.prototype.hasOwnProperty;
 
-arrayPrototype = Array.prototype;
-
-arrayUnshift = arrayPrototype.unshift;
-arrayPush = arrayPrototype.push;
-arraySlice = arrayPrototype.slice;
-arrayIndexOf = arrayPrototype.indexOf;
-arraySplice = arrayPrototype.splice;
+arraySlice = Array.prototype.slice;
 
 /**
- * Warning message when `indexOf` is not available.
+ * Utilities.
+ *
+ * These utilties are specialised to work on nodes,
+ * with a length property that needs updating,
+ * and without falsey/missing values.
  */
 
-/* istanbul ignore if */
-if (!arrayIndexOf) {
-    throw new Error(
-        'Missing `Array#indexOf()` method for TextOM'
-    );
+/**
+ * Insert `value` at `position` in `arrayLike`,
+ * and move all values in `arrayLike` from `position`
+ * to `length` one position forwards.
+ *
+ * Expects all values in `arrayLike` to be truthy.
+ *
+ * @param {Array.<*>} arrayLike
+ * @param {*} value
+ * @param {number} position
+ */
+
+function arrayLikeMove(arrayLike, value, position) {
+    var next;
+
+    if (!arrayLike[position]) {
+        arrayLike[position] = value;
+    } else {
+        while (value) {
+            next = arrayLike[position];
+
+            arrayLike[position] = value;
+
+            position++;
+
+            value = next;
+        }
+    }
+
+    arrayLike.length++;
+}
+
+/**
+ * Remove the item at `position` in `arrayLike`,
+ * and move all values in `arrayLike` from `position`
+ * to `length` one position backwards.
+ *
+ * Expects all values in `arrayLike` to be truthy.
+ *
+ * @param {Array.<*>} arrayLike
+ * @param {number} position
+ */
+
+function arrayLikeRemove(arrayLike, position) {
+    while (arrayLike[position]) {
+        arrayLike[position] = arrayLike[++position];
+    }
+
+    arrayLike.length--;
+}
+
+/**
+ * Find the position of `value` in `arrayLike`.
+ * Returns `-1` if value is not found.
+ *
+ * Expects all values in `arrayLike` to be truthy.
+ *
+ * @param {Array.<*>} arrayLike
+ * @param {*} value
+ * @return {number} position, or `-1`
+ */
+
+function arrayLikeIndexOf(arrayLike, value) {
+    var index;
+
+    index = -1;
+
+    while (arrayLike[++index]) {
+        if (arrayLike[index] === value) {
+            return index;
+        }
+    }
+
+    return -1;
 }
 
 /**
@@ -222,7 +284,7 @@ function canInsertIntoParent(parent, child) {
         return true;
     }
 
-    return allowed.indexOf(child.type) > -1;
+    return arrayLikeIndexOf(allowed, child.type) !== -1;
 }
 
 /**
@@ -236,7 +298,8 @@ function canInsertIntoParent(parent, child) {
  */
 
 function insert(parent, item, child) {
-    var next;
+    var next,
+        indice;
 
     if (!parent) {
         throw new Error(
@@ -289,7 +352,9 @@ function insert(parent, item, child) {
             );
         }
 
-        if (arrayIndexOf.call(parent, item) === -1) {
+        indice = arrayLikeIndexOf(parent, item);
+
+        if (indice === -1) {
             throw new Error(
                 'HierarchyError: The operated on node ' +
                 'is attached to `parent`, but `parent` ' +
@@ -343,12 +408,9 @@ function insert(parent, item, child) {
 
         if (item === parent.tail || !parent.tail) {
             parent.tail = child;
-            arrayPush.call(parent, child);
-        } else {
-            arraySplice.call(
-                parent, arrayIndexOf.call(parent, item) + 1, 0, child
-            );
         }
+
+        arrayLikeMove(parent, child, indice + 1);
     } else if (parent.head) {
         next = parent.head;
 
@@ -376,7 +438,7 @@ function insert(parent, item, child) {
             parent.tail = next;
         }
 
-        arrayUnshift.call(parent, child);
+        arrayLikeMove(parent, child, 0);
     } else {
         /**
          * Prepend the node: There is no `head`, nor
@@ -487,7 +549,7 @@ function remove(node) {
         next.prev = prev;
     }
 
-    indice = arrayIndexOf.call(parent, node);
+    indice = arrayLikeIndexOf(parent, node);
 
     if (indice === -1) {
         throw new Error(
@@ -497,14 +559,16 @@ function remove(node) {
         );
     }
 
-    arraySplice.call(parent, indice, 1);
+    arrayLikeRemove(parent, indice);
 
     /**
      * Remove links from `node` to both its next and
      * previous items, and its parent.
      */
 
-    node.prev = node.next = node.parent = null;
+    node.prev = null;
+    node.next = null;
+    node.parent = null;
 
     /**
      * Emit events.
@@ -1234,7 +1298,6 @@ function TextOMConstructor() {
 
     Element.prototype.split = function (position) {
         var self,
-            clone,
             cloneNode,
             index;
 
@@ -1246,12 +1309,17 @@ function TextOMConstructor() {
         cloneNode = insert(self.parent, self.prev, new self.constructor());
         /*eslint-enable new-cap */
 
-        clone = arraySlice.call(self);
-
         index = -1;
 
-        while (++index < position && clone[index]) {
-            cloneNode.append(clone[index]);
+        /**
+         * Move the children of `self` to the clone,
+         * from `0` to `position`. Looks a bit weird,
+         * but when a node is appended, it's also
+         * removed.
+         */
+
+        while (++index < position && self[0]) {
+            cloneNode.append(self[0]);
         }
 
         return cloneNode;

@@ -887,36 +887,36 @@ Not that intersting. Fast enough. Just for checking performance regression for n
 
 ```
                Parent
-  147,733 op/s » Append 1 new node to an empty parent
-   47,774 op/s » Append 2 new nodes to an empty parent
-   32,162 op/s » Append 3 new nodes to an empty parent
-   53,681 op/s » Append 1 attached node to an empty parent
-   22,177 op/s » Append 2 attached nodes to an empty parent
-   13,898 op/s » Append 3 attached nodes to an empty parent
-      358 op/s » Append 100 attached nodes to an empty parent
-  147,802 op/s » Prepend 1 new node to an empty parent
-   52,773 op/s » Prepend 2 new nodes to an empty parent
-   34,512 op/s » Prepend 3 new nodes to an empty parent
-   53,233 op/s » Prepend 1 attached node to an empty parent
-   23,312 op/s » Prepend 2 attached nodes to an empty parent
-   14,401 op/s » Prepend 3 attached nodes to an empty parent
-      373 op/s » Prepend 100 attached nodes to an empty parent
+  137,794 op/s » Append 1 new node to an empty parent
+   58,364 op/s » Append 2 new nodes to an empty parent
+   37,790 op/s » Append 3 new nodes to an empty parent
+   73,651 op/s » Append 1 attached node to an empty parent
+   30,310 op/s » Append 2 attached nodes to an empty parent
+   18,818 op/s » Append 3 attached nodes to an empty parent
+      469 op/s » Append 100 attached nodes to an empty parent
+  140,373 op/s » Prepend 1 new node to an empty parent
+   58,256 op/s » Prepend 2 new nodes to an empty parent
+   38,002 op/s » Prepend 3 new nodes to an empty parent
+   70,078 op/s » Prepend 1 attached node to an empty parent
+   30,342 op/s » Prepend 2 attached nodes to an empty parent
+   18,725 op/s » Prepend 3 attached nodes to an empty parent
+      445 op/s » Prepend 100 attached nodes to an empty parent
 
                Child
-   47,636 op/s » Insert 1 new node after an only child
-   29,698 op/s » Insert 2 new nodes after an only child
-   21,819 op/s » Insert 3 new nodes after an only child
-   28,486 op/s » Insert 1 attached node after an only child
-   15,800 op/s » Insert 2 attached nodes after an only child
-   10,500 op/s » Insert 3 attached nodes after an only child
-      300 op/s » Insert 100 attached nodes after an only child
-   50,841 op/s » Insert 1 new node before an only child
-   31,894 op/s » Insert 2 new nodes before an only child
-   22,896 op/s » Insert 3 new nodes before an only child
-   28,532 op/s » Insert 1 attached node before an only child
-   15,319 op/s » Insert 2 attached nodes before an only child
-   10,841 op/s » Insert 3 attached nodes before an only child
-      320 op/s » Insert 100 attached nodes before an only child
+   50,175 op/s » Insert 1 new node after a last child
+   32,094 op/s » Insert 2 new nodes after a last child
+   23,518 op/s » Insert 3 new nodes after a last child
+   32,643 op/s » Insert 1 attached node after a last child
+   17,977 op/s » Insert 2 attached nodes after a last child
+   12,660 op/s » Insert 3 attached nodes after a last child
+      381 op/s » Insert 100 attached nodes after a first child
+   50,534 op/s » Insert 1 new node before a first child
+   31,891 op/s » Insert 2 new nodes before a first child
+   23,241 op/s » Insert 3 new nodes before a first child
+   32,874 op/s » Insert 1 attached node before a first child
+   18,775 op/s » Insert 2 attached nodes before a first child
+   13,403 op/s » Insert 3 attached nodes before a first child
+      429 op/s » Insert 100 attached nodes before a first child
 ```
 
 ## Related
