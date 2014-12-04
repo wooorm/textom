@@ -1464,6 +1464,10 @@ describe('TextOM.Parent#toString()', function () {
             node.tail = tail;
             head.next = tail;
 
+            node[0] = head;
+            node[1] = tail;
+            node.length = 2;
+
             head.toString = function () {
                 return 'a ';
             };

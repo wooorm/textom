@@ -5,11 +5,13 @@
  */
 
 var has,
-    arraySlice;
+    arraySlice,
+    arrayJoin;
 
 has = Object.prototype.hasOwnProperty;
 
 arraySlice = Array.prototype.slice;
+arrayJoin = Array.prototype.join;
 
 /**
  * Utilities.
@@ -36,6 +38,8 @@ function arrayLikeMove(arrayLike, value, position) {
 
     if (!arrayLike[position]) {
         arrayLike[position] = value;
+
+        position++;
     } else {
         while (value) {
             next = arrayLike[position];
@@ -48,7 +52,7 @@ function arrayLikeMove(arrayLike, value, position) {
         }
     }
 
-    arrayLike.length++;
+    arrayLike.length = position;
 }
 
 /**
@@ -755,7 +759,7 @@ function TextOMConstructor() {
 
         if (typeof handler !== 'function') {
             if (handler === null || handler === undefined) {
-                handlers.length = 0;
+                self.callbacks[name] = [];
 
                 return self;
             }
@@ -1079,20 +1083,7 @@ function TextOMConstructor() {
      */
 
     parentPrototype.toString = function () {
-        var values,
-            node;
-
-        values = [];
-
-        node = this.head;
-
-        while (node) {
-            values.push(node);
-
-            node = node.next;
-        }
-
-        return values.join('');
+        return arrayJoin.call(this, '');
     };
 
     /**
@@ -1104,9 +1095,9 @@ function TextOMConstructor() {
 
     parentPrototype.valueOf = function () {
         var self,
+            index,
             children,
-            nlcst,
-            node;
+            nlcst;
 
         self = this;
 
@@ -1117,12 +1108,10 @@ function TextOMConstructor() {
             'children': children
         };
 
-        node = self.head;
+        index = -1;
 
-        while (node) {
-            children.push(node.valueOf());
-
-            node = node.next;
+        while (self[++index]) {
+            children[index] = self[index].valueOf();
         }
 
         mergeData(self, nlcst);
