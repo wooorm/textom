@@ -298,7 +298,7 @@ function canInsertIntoParent(parent, child) {
  * @param {Parent} parent
  * @param {Child} item
  * @param {Child} child
- * @return {Child} - `child`.
+ * @return {Child} `child`.
  */
 
 function insert(parent, item, child) {
@@ -322,7 +322,7 @@ function insert(parent, item, child) {
     if (parent === child || parent === item) {
         throw new Error(
             'HierarchyError: Cannot insert `node` into ' +
-            '`node`'
+            'self'
         );
     }
 
@@ -341,29 +341,12 @@ function insert(parent, item, child) {
     }
 
     /**
-     * Insert after...
+     * Exit early.
      */
 
     if (item) {
         if (item === child) {
             return child;
-        }
-
-        if (item.parent !== parent) {
-            throw new Error(
-                'HierarchyError: The operated on node ' +
-                'is detached from `parent`'
-            );
-        }
-
-        indice = arrayLikeIndexOf(parent, item);
-
-        if (indice === -1) {
-            throw new Error(
-                'HierarchyError: The operated on node ' +
-                'is attached to `parent`, but `parent` ' +
-                'has no indice corresponding to the node'
-            );
         }
     }
 
@@ -382,6 +365,29 @@ function insert(parent, item, child) {
     if (item) {
         next = item.next;
 
+        if (item.parent !== parent) {
+            throw new Error(
+                'HierarchyError: The operated on node ' +
+                'is detached from `parent`'
+            );
+        }
+
+        indice = arrayLikeIndexOf(parent, item);
+
+        if (indice === -1) {
+            throw new Error(
+                'HierarchyError: The operated on node ' +
+                'is attached to `parent`, but `parent` ' +
+                'has no indice corresponding to the node'
+            );
+        }
+    } else {
+        item = null;
+        next = parent.head;
+        indice = -1;
+    }
+
+    if (item || next) {
         /**
          * If `item` has a next node, link `child`s next
          * node, to `item`s next node, and link the next
@@ -398,51 +404,27 @@ function insert(parent, item, child) {
          * the next node of `item` to `child`.
          */
 
-        child.prev = item;
-        item.next = child;
+        if (item) {
+            child.prev = item;
+            item.next = child;
+
+            if (item === parent.tail || !parent.tail) {
+                parent.tail = child;
+            }
+        } else {
+            parent.head = child;
+
+            if (!parent.tail) {
+                parent.tail = next;
+            }
+        }
 
         /**
          * If the parent has no last node or if `item` is
-         * `parent`s last node, link `parent`s last node
-         * to `child`.
-         *
-         * Otherwise, insert `child` into `parent` after
-         * `item`s.
+         * `parent`s last node.
          */
-
-        if (item === parent.tail || !parent.tail) {
-            parent.tail = child;
-        }
 
         arrayLikeMove(parent, child, indice + 1);
-    } else if (parent.head) {
-        next = parent.head;
-
-        /**
-         * Set `child`s next node to head and set the
-         * previous node of head to `child`.
-         */
-
-        child.next = next;
-        next.prev = child;
-
-        /**
-         * Set the `parent`s head to `child`.
-         */
-
-        parent.head = child;
-
-        /**
-         * If the the parent has no last node, link the
-         * parents last node to what used to be it's
-         * head.
-         */
-
-        if (!parent.tail) {
-            parent.tail = next;
-        }
-
-        arrayLikeMove(parent, child, 0);
     } else {
         /**
          * Prepend the node: There is no `head`, nor
