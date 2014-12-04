@@ -1,4 +1,19 @@
 
+n.n.n / 2014-12-04
+==================
+
+ * Merge branch 'feature/improve-performance'
+ * Refactor to simplify `insert()` code
+ * Fix bug in last commit; Add tiny improvements
+ * Remove `changeprev` and `changenext` events
+ * Add specialised array methods; improve performance by 28%
+ * Merge branch 'feature/add-benchmarks'
+ * Add benchmarks for `append`, `prepend`, `before`, and `after`
+ * Add inline `validateInsert` in `insert`
+ * Add tests and remove istanbul-ignore cases, for wrong-useage
+ * Remove redundant assignment statement
+ * Fix casing for badges in `Readme.md`
+
 0.3.1 / 2014-11-19
 ==================
 
