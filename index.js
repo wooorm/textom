@@ -458,16 +458,6 @@ function insert(parent, item, child) {
 
     child.trigger('insert', parent);
 
-    if (item) {
-        item.emit('changenext', child, next);
-        child.emit('changeprev', item, null);
-    }
-
-    if (next) {
-        next.emit('changeprev', child, item);
-        child.emit('changenext', next, null);
-    }
-
     return child;
 }
 
@@ -575,16 +565,6 @@ function remove(node) {
      */
 
     node.trigger('remove', parent, parent);
-
-    if (next) {
-        next.emit('changeprev', prev || null, node);
-        node.emit('changenext', null, next);
-    }
-
-    if (prev) {
-        node.emit('changeprev', null, prev);
-        prev.emit('changenext', next || null, node);
-    }
 
     return node;
 }
