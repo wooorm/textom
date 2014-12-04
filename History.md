@@ -1,5 +1,5 @@
 
-n.n.n / 2014-12-04
+0.4.0-rc.1 / 2014-12-04
 ==================
 
  * Merge branch 'feature/improve-performance'
