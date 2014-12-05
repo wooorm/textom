@@ -1098,6 +1098,278 @@ describe('TextOM.Parent#prepend(childNode)', function () {
     });
 });
 
+describe('TextOM.Parent#prependAll(Array.<childNode>)', function () {
+    it('should throw when falsey values are provided', function () {
+        var parent;
+
+        parent = new Parent();
+
+        assert.throws(function () {
+            parent.prependAll();
+        }, /undefined/);
+
+        assert.throws(function () {
+            parent.prependAll(null);
+        }, /null/);
+
+        assert.throws(function () {
+            parent.prependAll(undefined);
+        }, /undefined/);
+
+        assert.throws(function () {
+            parent.prependAll(false);
+        }, /false/);
+    });
+
+    it('should NOT throw when prepending no nodes', function () {
+        var parent;
+
+        parent = new Parent();
+
+        assert.doesNotThrow(function () {
+            parent.prependAll([]);
+        });
+    });
+
+    it('should throw when non-removable nodes are prepended (e.g., not ' +
+        'inheriting from TextOM.Child)',
+        function () {
+            var parent;
+
+            parent = new Parent();
+
+            assert.throws(function () {
+                parent.prependAll([new Node()]);
+            }, /remove/);
+
+            assert.throws(function () {
+                parent.prependAll([{}]);
+            }, /remove/);
+        }
+    );
+
+    it('should throw when prepending a node into itself', function () {
+        var element;
+
+        element = new Element();
+
+        assert.throws(function () {
+            element.prependAll([element]);
+        }, /HierarchyError/);
+    });
+
+    it('should call the `remove` method on the prependee', function () {
+        var parent,
+            node,
+            nodeRemove,
+            isCalled;
+
+        parent = new Parent();
+        node = new Child();
+
+        nodeRemove = node.remove;
+
+        isCalled = false;
+
+        node.remove = function () {
+            isCalled = true;
+            nodeRemove.apply(this, arguments);
+        };
+
+        parent.prependAll([node]);
+
+        assert(isCalled === true);
+    });
+
+    it('should set the `parent` property on the prependee to the operated ' +
+        'on parent',
+        function () {
+            var parent,
+                node,
+                node1;
+
+            parent = new Parent();
+            node = new Child();
+            node1 = new Child();
+
+            parent.prependAll([node]);
+
+            assert(node.parent === parent);
+
+            parent.prependAll([node1]);
+
+            assert(node1.parent === parent);
+        }
+    );
+
+    it('should set the `head` and `0` properties to the prepended node',
+        function () {
+            var parent,
+                node;
+
+            parent = new Parent();
+            node = new Child();
+
+            parent.prependAll([node]);
+
+            assert(parent.head === node);
+            assert(parent[0] === node);
+        }
+    );
+
+    it('should set the `tail` and `1` properties to the previous `head`, ' +
+        'when no `tail` exists',
+        function () {
+            var parent,
+                node,
+                node1;
+
+            parent = new Parent();
+            node = new Child();
+            node1 = new Child();
+
+            parent.prependAll([node]);
+            parent.prependAll([node1]);
+
+            assert(parent.tail === node);
+            assert(parent[1] === node);
+        }
+    );
+
+    it('should set the `head` and `0` properties to further prepended nodes',
+        function () {
+            var parent,
+                node,
+                node1,
+                node2;
+
+            parent = new Parent();
+            node = new Child();
+            node1 = new Child();
+            node2 = new Child();
+
+            parent.prependAll([node]);
+            parent.prependAll([node1]);
+
+            assert(parent.head === node1);
+            assert(parent[0] === node1);
+
+            parent.prependAll([node2]);
+
+            assert(parent.head === node2);
+            assert(parent[0] === node2);
+        }
+    );
+
+    it('should set the `next` property on the prependee to the parents ' +
+        'previous `head`',
+        function () {
+            var parent,
+                node,
+                node1;
+
+            parent = new Parent();
+            node = new Child();
+            node1 = new Child();
+
+            parent.prependAll([node]);
+
+            assert(node.next === null);
+
+            parent.prependAll([node1]);
+
+            assert(node1.next === node);
+        }
+    );
+
+    it('should set the `prev` property on the parents previous `head` to ' +
+        'the prependee',
+        function () {
+            var parent,
+                node,
+                node1;
+
+            parent = new Parent();
+            node = new Child();
+            node1 = new Child();
+
+            parent.prependAll([node]);
+
+            parent.prependAll([node1]);
+
+            assert(node.prev === node1);
+        }
+    );
+
+    it('should update the `length` property to correspond to the number ' +
+        'of prepended children',
+        function () {
+            var parent,
+                node,
+                node1,
+                node2;
+
+            parent = new Parent();
+            node = new Child();
+            node1 = new Child();
+            node2 = new Child();
+
+            assert(parent.length === 0);
+
+            parent.prependAll([node]);
+
+            assert(parent.length === 1);
+
+            parent.prependAll([node1]);
+
+            assert(parent.length === 2);
+
+            parent.prependAll([node2]);
+
+            assert(parent.length === 3);
+        }
+    );
+
+    it('should shift the indices of all children', function () {
+        var parent,
+            child,
+            child1,
+            child2,
+            child3;
+
+        parent = new Parent();
+        child = new Child();
+        child1 = new Child();
+        child2 = new Child();
+        child3 = new Child();
+
+        parent.prependAll([child]);
+        parent.prependAll([child1]);
+        parent.prependAll([child2]);
+
+        assert(parent[0] === child2);
+        assert(parent[1] === child1);
+        assert(parent[2] === child);
+
+        parent.prependAll([child3]);
+
+        assert(parent[0] === child3);
+        assert(parent[1] === child2);
+        assert(parent[2] === child1);
+        assert(parent[3] === child);
+    });
+
+    it('should return the prepended children', function () {
+        var parent,
+            nodes;
+
+        parent = new Parent();
+        nodes = [new Child()];
+
+        assert(nodes === parent.prependAll(nodes));
+    });
+});
+
 describe('TextOM.Parent#append(childNode)', function () {
     it('should throw when falsey values are provided', function () {
         var parent;
@@ -1157,7 +1429,7 @@ describe('TextOM.Parent#append(childNode)', function () {
 
             assert.throws(function () {
                 parent.append(otherChild);
-            }, /no indice/);
+            }, /no index/);
         }
     );
 
@@ -1380,6 +1652,304 @@ describe('TextOM.Parent#append(childNode)', function () {
         node = new Child();
 
         assert(node === parent.append(node));
+    });
+});
+
+describe('TextOM.Parent#appendAll(Array.<childNode>)', function () {
+    it('should throw when falsey values are provided', function () {
+        var parent;
+
+        parent = new Parent();
+
+        assert.throws(function () {
+            parent.appendAll();
+        }, /undefined/);
+
+        assert.throws(function () {
+            parent.appendAll(null);
+        }, /null/);
+
+        assert.throws(function () {
+            parent.appendAll(undefined);
+        }, /undefined/);
+
+        assert.throws(function () {
+            parent.appendAll(false);
+        }, /false/);
+    });
+
+    it('should NOT throw when appending no nodes', function () {
+        var parent;
+
+        parent = new Parent();
+
+        assert.doesNotThrow(function () {
+            parent.appendAll([]);
+        });
+    });
+
+    it('should throw when an anchor is not attach to its parent',
+        function () {
+            var parent,
+                child,
+                otherChild;
+
+            parent = new Parent();
+            child = new Child();
+            otherChild = new Child();
+
+            parent.appendAll([child]);
+
+            child.parent = null;
+
+            assert.throws(function () {
+                parent.appendAll([otherChild]);
+            }, /detached/);
+        }
+    );
+
+    it('should throw when an anchor is not an indice in its parent',
+        function () {
+            var parent,
+                child,
+                otherChild;
+
+            parent = new Parent();
+            child = new Child();
+            otherChild = new Child();
+
+            parent.appendAll([child]);
+
+            parent[0] = null;
+
+            assert.throws(function () {
+                parent.appendAll([otherChild]);
+            }, /no index/);
+        }
+    );
+
+    it('should throw when non-removable nodes are appended (e.g., not ' +
+        'inheriting from TextOM.Child)',
+        function () {
+            var parent;
+
+            parent = new Parent();
+
+            assert.throws(function () {
+                parent.appendAll([new Node()]);
+            }, /remove/);
+
+            assert.throws(function () {
+                parent.appendAll([{}]);
+            }, /remove/);
+        }
+    );
+
+    it('should throw when appending a node into itself', function () {
+        var element;
+
+        element = new Element();
+
+        assert.throws(function () {
+            element.appendAll([element]);
+        }, /HierarchyError/);
+    });
+
+    it('should call the `remove` method on the appendee', function () {
+        var parent,
+            node,
+            nodeRemove,
+            isCalled;
+
+        parent = new Parent();
+        node = new Child();
+        nodeRemove = node.remove;
+        isCalled = false;
+
+        node.remove = function () {
+            isCalled = true;
+            nodeRemove.apply(this, arguments);
+        };
+
+        parent.appendAll([node]);
+
+        assert(isCalled === true);
+    });
+
+    it('should set the `parent` property on the appendee to the operated ' +
+        'on parent',
+        function () {
+            var parent,
+                node,
+                node1;
+
+            parent = new Parent();
+            node = new Child();
+            node1 = new Child();
+
+            parent.appendAll([node]);
+
+            assert(node.parent === parent);
+
+            parent.appendAll([node1]);
+
+            assert(node1.parent === parent);
+        }
+    );
+
+    it('should set the `head` and `0` properties to the first appended ' +
+        'node, when no `head` exists',
+        function () {
+            var parent,
+                node;
+
+            parent = new Parent();
+            node = new Child();
+
+            parent.appendAll([node]);
+
+            assert(parent.head === node);
+            assert(parent[0] === node);
+        }
+    );
+
+    it('should set the `tail` and `1` properties to the appended node, ' +
+        'when no `tail` exists',
+        function () {
+            var parent,
+                node,
+                node1;
+
+            parent = new Parent();
+            node = new Child();
+            node1 = new Child();
+
+            parent.appendAll([node, node1]);
+
+            assert(parent.tail === node1);
+            assert(parent[1] === node1);
+        }
+    );
+
+    it('should set the `tail`, and `length - 1`, properties to further ' +
+        'appended nodes',
+        function () {
+            var parent,
+                node,
+                node1,
+                node2;
+
+            parent = new Parent();
+            node = new Child();
+            node1 = new Child();
+            node2 = new Child();
+
+            parent.append(node);
+            parent.appendAll([node1]);
+
+            assert(parent.tail === node1);
+            assert(parent[1] === node1);
+
+            parent.appendAll([node2]);
+
+            assert(parent.tail === node2);
+            assert(parent[2] === node2);
+        }
+    );
+
+    it('should set the `prev` property on the appendee to the parents ' +
+        'previous `tail` (or `head`, when no `tail` exists)',
+        function () {
+            var parent,
+                node,
+                node1,
+                node2;
+
+            parent = new Parent();
+            node = new Child();
+            node1 = new Child();
+            node2 = new Child();
+
+            parent.appendAll([node]);
+
+            assert(node.prev === null);
+
+            parent.appendAll([node1]);
+
+            assert(node1.prev === node);
+
+            parent.appendAll([node2]);
+
+            assert(node2.prev === node1);
+        }
+    );
+
+    it('should set the `next` property on the parents previous `tail` (or ' +
+        '`head`, when no `tail` exists) to the appendee',
+        function () {
+            var parent,
+                node,
+                node1,
+                node2;
+
+            parent = new Parent();
+            node = new Child();
+            node1 = new Child();
+            node2 = new Child();
+
+            parent.appendAll([node]);
+
+            assert(node.next === null);
+
+            parent.appendAll([node1]);
+
+            assert(node.next === node1);
+            assert(node1.next === null);
+
+            parent.appendAll([node2]);
+
+            assert(node1.next === node2);
+            assert(node2.next === null);
+        }
+    );
+
+    it('should update the `length` property to correspond to the number of ' +
+        'appended children',
+        function () {
+            var parent,
+                node,
+                node1,
+                node2;
+
+            parent = new Parent();
+            node = new Child();
+            node1 = new Child();
+            node2 = new Child();
+
+            assert(parent.length === 0);
+
+            parent.appendAll([node]);
+
+            assert(parent.length === 1);
+
+            parent.appendAll([node1]);
+
+            assert(parent.length === 2);
+
+            parent.appendAll([node2]);
+
+            assert(parent.length === 3);
+        }
+    );
+
+    it('should return the appended children', function () {
+        var parent,
+            nodes;
+
+        parent = new Parent();
+        nodes = [new Child()];
+
+        assert(nodes === parent.appendAll(nodes));
     });
 });
 
@@ -1694,7 +2264,7 @@ describe('TextOM.Child#before(childNode)', function () {
 
             assert.throws(function () {
                 otherChild.before(anotherChild);
-            }, /no indice/);
+            }, /no index/);
         }
     );
 
@@ -1965,6 +2535,317 @@ describe('TextOM.Child#before(childNode)', function () {
     });
 });
 
+describe('TextOM.Child#beforeAll(Array.<childNode>)', function () {
+    it('should throw when not attached', function () {
+        assert.throws(function () {
+            new Child().beforeAll([new Child()]);
+        }, /parent/);
+    });
+
+    it('should NOT throw when prepending no nodes', function () {
+        var child;
+
+        child = new Parent().append(new Child());
+
+        assert.doesNotThrow(function () {
+            child.beforeAll([]);
+        });
+    });
+
+    it('should throw when an anchor is not an indice in its parent',
+        function () {
+            var parent,
+                child,
+                otherChild,
+                anotherChild;
+
+            parent = new Parent();
+            child = new Child();
+            otherChild = new Child();
+            anotherChild = new Child();
+
+            parent.append(child);
+            child.after(otherChild);
+
+            parent[0] = null;
+            parent[1] = null;
+            parent.head = null;
+            parent.tail = null;
+
+            assert.throws(function () {
+                otherChild.beforeAll([anotherChild]);
+            }, /no index/);
+        }
+    );
+
+    it('should throw when falsey values are provided', function () {
+        var parent,
+            child;
+
+        parent = new Parent();
+        child = new Child();
+
+        parent.append(child);
+
+        assert.throws(function () {
+            child.beforeAll();
+        }, /undefined/);
+
+        assert.throws(function () {
+            child.beforeAll(null);
+        }, /null/);
+
+        assert.throws(function () {
+            child.beforeAll(undefined);
+        }, /undefined/);
+
+        assert.throws(function () {
+            child.beforeAll(false);
+        }, /false/);
+    });
+
+    it('should throw when non-removable nodes are prepended (e.g., not ' +
+        'inheriting from TextOM.Child)',
+        function () {
+            var parent,
+                child;
+
+            parent = new Parent();
+            child = new Child();
+
+            parent.append(child);
+
+            assert.throws(function () {
+                child.beforeAll([new Node()]);
+            }, /remove/);
+
+            assert.throws(function () {
+                child.beforeAll([{}]);
+            }, /remove/);
+        }
+    );
+
+    it('should NOT throw when inserting a node before itself', function () {
+        var parent,
+            child;
+
+        parent = new Parent();
+        child = new Child();
+
+        parent.append(child);
+
+        assert.doesNotThrow(function () {
+            child.beforeAll([child]);
+        });
+    });
+
+    it('should call the `remove` method on the prependee', function () {
+        var parent,
+            child,
+            child1,
+            childRemove,
+            isCalled;
+
+        parent = new Parent();
+        child = new Child();
+        child1 = new Child();
+
+        parent.append(child);
+
+        childRemove = child1.remove;
+        isCalled = false;
+
+        child1.remove = function () {
+            isCalled = true;
+            childRemove.apply(this, arguments);
+        };
+
+        child.beforeAll([child1]);
+
+        assert(isCalled === true);
+    });
+
+    it('should set the `parent` property on the prependee to the operated ' +
+        'on nodes\' parent',
+        function () {
+            var parent,
+                child,
+                child1;
+
+            parent = new Parent();
+            child = new Child();
+            child1 = new Child();
+
+            parent.append(child);
+
+            child.beforeAll([child1]);
+
+            assert(child.parent === child1.parent);
+        }
+    );
+
+    it('should set the parents `head` and `0` properties to the prepended ' +
+        'node, when the operated on node is its parents `head`',
+        function () {
+            var parent,
+                child,
+                child1;
+
+            parent = new Parent();
+            child = new Child();
+            child1 = new Child();
+
+            parent.append(child);
+            child.beforeAll([child1]);
+
+            assert(parent.head === child1);
+            assert(parent[0] === child1);
+        }
+    );
+
+    it('should set the parents `tail` and `1` properties to the operated ' +
+        'on node, when no `tail` exists',
+        function () {
+            var parent,
+                child,
+                child1;
+
+            parent = new Parent();
+            child = new Child();
+            child1 = new Child();
+
+            parent.append(child);
+
+            child.beforeAll([child1]);
+
+            assert(parent.tail === child);
+            assert(parent[1] === child);
+        }
+    );
+
+    it('should set the `prev` property to the operated on nodes\' `prev` ' +
+        'property',
+        function () {
+            var parent,
+                child,
+                child1,
+                child2;
+
+            parent = new Parent();
+            child = new Child();
+            child1 = new Child();
+            child2 = new Child();
+
+            parent.append(child);
+
+            child.beforeAll([child1]);
+
+            assert(child1.prev === null);
+
+            child.beforeAll([child2]);
+
+            assert(child2.prev === child1);
+        }
+    );
+
+    it('should set the `next` property to the operated on node',
+        function () {
+            var parent,
+                child,
+                child1,
+                child2;
+
+            parent = new Parent();
+            child = new Child();
+            child1 = new Child();
+            child2 = new Child();
+
+            parent.append(child);
+
+            child.beforeAll([child1]);
+
+            assert(child1.next === child);
+
+            child.beforeAll([child2]);
+
+            assert(child2.next === child);
+        }
+    );
+
+    it('should update the parents `length` property to correspond to the' +
+        'number of prepended children',
+        function () {
+            var parent,
+                child,
+                child1,
+                child2;
+
+            parent = new Parent();
+            child = new Child();
+            child1 = new Child();
+            child2 = new Child();
+
+            parent.append(child);
+
+            child.beforeAll([child1]);
+
+            assert(parent.length === 2);
+
+            child.beforeAll([child2]);
+
+            assert(parent.length === 3);
+        }
+    );
+
+    it('should shift the indices of the operated on item, and its next' +
+        'siblings',
+        function () {
+            var parent,
+                child,
+                child1,
+                child2,
+                child3;
+
+            parent = new Parent();
+            child = new Child();
+            child1 = new Child();
+            child2 = new Child();
+            child3 = new Child();
+
+            parent.append(child);
+            parent.prepend(child1);
+
+            child1.beforeAll([child2]);
+
+            assert(parent[0] === child2);
+            assert(parent[1] === child1);
+            assert(parent[2] === child);
+
+            child2.beforeAll([child3]);
+
+            assert(parent[0] === child3);
+            assert(parent[1] === child2);
+            assert(parent[2] === child1);
+            assert(parent[3] === child);
+        }
+    );
+
+    it('should return the prepended children', function () {
+        var parent,
+            child,
+            nodes;
+
+        parent = new Parent();
+        child = new Child();
+
+        nodes = [new Child()];
+
+        parent.append(child);
+
+        assert(nodes === child.beforeAll(nodes));
+    });
+});
+
 describe('TextOM.Child#after(childNode)', function () {
     it('should throw when not attached', function () {
         assert.throws(function () {
@@ -1994,7 +2875,7 @@ describe('TextOM.Child#after(childNode)', function () {
 
             assert.throws(function () {
                 otherChild.after(anotherChild);
-            }, /no indice/);
+            }, /no index/);
         }
     );
 
@@ -2267,6 +3148,319 @@ describe('TextOM.Child#after(childNode)', function () {
     });
 });
 
+describe('TextOM.Child#afterAll(Array.<childNode>)', function () {
+    it('should throw when not attached', function () {
+        assert.throws(function () {
+            new Child().afterAll([new Child()]);
+        }, /parent/);
+    });
+
+    it('should NOT throw when appending no nodes', function () {
+        var child;
+
+        child = new Parent().append(new Child());
+
+        assert.doesNotThrow(function () {
+            child.afterAll([]);
+        });
+    });
+
+    it('should throw when an anchor is not an indice in its parent',
+        function () {
+            var parent,
+                child,
+                otherChild,
+                anotherChild;
+
+            parent = new Parent();
+            child = new Child();
+            otherChild = new Child();
+            anotherChild = new Child();
+
+            parent.append(child);
+            child.afterAll([otherChild]);
+
+            parent[0] = null;
+            parent[1] = null;
+            parent.head = null;
+            parent.tail = null;
+
+            assert.throws(function () {
+                otherChild.afterAll([anotherChild]);
+            }, /no index/);
+        }
+    );
+
+    it('should throw when falsey values are provided', function () {
+        var parent,
+            child;
+
+        parent = new Parent();
+        child = new Child();
+
+        parent.append(child);
+
+        assert.throws(function () {
+            child.afterAll();
+        }, /undefined/);
+
+        assert.throws(function () {
+            child.afterAll([null]);
+        }, /null/);
+
+        assert.throws(function () {
+            child.afterAll(undefined);
+        }, /undefined/);
+
+        assert.throws(function () {
+            child.afterAll([false]);
+        }, /false/);
+    });
+
+    it('should throw when non-removable nodes are appended (e.g., not' +
+        'inheriting from TextOM.Child)',
+        function () {
+            var parent,
+                child;
+
+            parent = new Parent();
+            child = new Child();
+
+            parent.append(child);
+
+            assert.throws(function () {
+                child.afterAll([new Node()]);
+            }, /remove/);
+
+            assert.throws(function () {
+                child.afterAll([{}]);
+            }, /remove/);
+        }
+    );
+
+    it('should NOT throw when inserting a node after itself', function () {
+        var parent,
+            child;
+
+        parent = new Parent();
+        child = new Child();
+
+        parent.append(child);
+
+        assert.doesNotThrow(function () {
+            child.afterAll([child]);
+        });
+    });
+
+    it('should call the `remove` method on the appendee', function () {
+        var parent,
+            child,
+            child1,
+            childRemove,
+            isCalled;
+
+        parent = new Parent();
+        child = new Child();
+        child1 = new Child();
+
+        parent.append(child);
+
+        childRemove = child1.remove;
+        isCalled = false;
+
+        child1.remove = function () {
+            isCalled = true;
+
+            childRemove.apply(this, arguments);
+        };
+
+        child.afterAll([child1]);
+
+        assert(isCalled === true);
+    });
+
+    it('should set the `parent` property on the appendee to the operated on' +
+        'nodes\' parent',
+        function () {
+            var parent,
+                child,
+                child1;
+
+            parent = new Parent();
+            child = new Child();
+            child1 = new Child();
+
+            parent.append(child);
+
+            child.afterAll([child1]);
+
+            assert(child.parent === child1.parent);
+        }
+    );
+
+    it('should set the parents `tail` and `1` properties to the appendee,' +
+        'when no `tail` exists',
+        function () {
+            var parent,
+                child,
+                child1;
+
+            parent = new Parent();
+            child = new Child();
+            child1 = new Child();
+
+            parent.append(child);
+            child.afterAll([child1]);
+
+            assert(parent.tail === child1);
+            assert(parent[1] === child1);
+        }
+    );
+
+    it('should set the parents `tail` and `1` properties to the appendee,' +
+        'when the operated on item is the parents `tail`',
+        function () {
+            var parent,
+                child,
+                child1,
+                child2;
+
+            parent = new Parent();
+            child = new Child();
+            child1 = new Child();
+            child2 = new Child();
+
+            parent.append(child);
+            parent.append(child1);
+            child1.afterAll([child2]);
+
+            assert(parent.tail === child2);
+            assert(parent[2] === child2);
+        }
+    );
+
+    it('should set the `next` property to the operated on nodes\' `next`' +
+        'property',
+        function () {
+            var parent,
+                child,
+                child1,
+                child2;
+
+            parent = new Parent();
+            child = new Child();
+            child1 = new Child();
+            child2 = new Child();
+
+            parent.append(child);
+
+            child.afterAll([child1]);
+
+            assert(child1.next === null);
+
+            child.afterAll([child2]);
+
+            assert(child2.next === child1);
+        }
+    );
+
+    it('should set the `prev` property to the operated on node',
+        function () {
+            var parent,
+                child,
+                child1,
+                child2;
+
+            parent = new Parent();
+            child = new Child();
+            child1 = new Child();
+            child2 = new Child();
+
+            parent.append(child);
+
+            child.afterAll([child1]);
+
+            assert(child1.prev === child);
+
+            child.afterAll([child2]);
+
+            assert(child2.prev === child);
+        }
+    );
+
+    it('should update the parents `length` property to correspond to the' +
+        'number of appended children',
+        function () {
+            var parent,
+                child,
+                child1,
+                child2;
+
+            parent = new Parent();
+            child = new Child();
+            child1 = new Child();
+            child2 = new Child();
+
+            parent.append(child);
+
+            child.afterAll([child1]);
+
+            assert(parent.length === 2);
+
+            child.afterAll([child2]);
+
+            assert(parent.length === 3);
+        }
+    );
+
+    it('should shift the indices of the operated on items next siblings',
+        function () {
+            var parent,
+                child,
+                child1,
+                child2,
+                child3;
+
+            parent = new Parent();
+            child = new Child();
+            child1 = new Child();
+            child2 = new Child();
+            child3 = new Child();
+
+            parent.append(child);
+            parent.append(child1);
+
+            child.afterAll([child2]);
+
+            assert(parent[0] === child);
+            assert(parent[1] === child2);
+            assert(parent[2] === child1);
+
+            child.afterAll([child3]);
+
+            assert(parent[0] === child);
+            assert(parent[1] === child3);
+            assert(parent[2] === child2);
+            assert(parent[3] === child1);
+        }
+    );
+
+    it('should return the appended children', function () {
+        var parent,
+            child,
+            nodes;
+
+        parent = new Parent();
+        child = new Child();
+
+        nodes = [new Child()];
+
+        parent.append(child);
+
+        assert(nodes === child.afterAll(nodes));
+    });
+});
+
 describe('TextOM.Child#remove()', function () {
     it('should throw when the operated on item is not a node',
         function () {
@@ -2298,7 +3492,7 @@ describe('TextOM.Child#remove()', function () {
 
             assert.throws(function () {
                 child.remove();
-            }, /no indice/);
+            }, /no index/);
         }
     );
 

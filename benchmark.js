@@ -141,20 +141,20 @@ suite('Parent', function () {
 });
 
 suite('Child', function () {
-    bench('Insert 1 new node after a last child', function () {
+    bench('Insert 1 new node after an only child', function () {
         new TextOM.Parent()
             .append(new TextOM.Child())
             .after(new TextOM.Child());
     });
 
-    bench('Insert 2 new nodes after a last child', function () {
+    bench('Insert 2 new nodes after an only child', function () {
         new TextOM.Parent()
             .append(new TextOM.Child())
             .after(new TextOM.Child())
             .after(new TextOM.Child());
     });
 
-    bench('Insert 3 new nodes after a last child', function () {
+    bench('Insert 3 new nodes after an only child', function () {
         new TextOM.Parent()
             .append(new TextOM.Child())
             .after(new TextOM.Child())
@@ -162,20 +162,20 @@ suite('Child', function () {
             .after(new TextOM.Child());
     });
 
-    bench('Insert 1 attached node after a last child', function () {
+    bench('Insert 1 attached node after an only child', function () {
         new TextOM.Parent()
             .append(new TextOM.Child())
             .after(child);
     });
 
-    bench('Insert 2 attached nodes after a last child', function () {
+    bench('Insert 2 attached nodes after an only child', function () {
         new TextOM.Parent()
             .append(new TextOM.Child())
             .after(child)
             .after(otherChild);
     });
 
-    bench('Insert 3 attached nodes after a last child', function () {
+    bench('Insert 3 attached nodes after an only child', function () {
         new TextOM.Parent()
             .append(new TextOM.Child())
             .after(child)
@@ -190,46 +190,212 @@ suite('Child', function () {
     bench('Insert 1 new node before a first child', function () {
         new TextOM.Parent()
             .append(new TextOM.Child())
-            .after(new TextOM.Child());
+            .before(new TextOM.Child());
     });
 
     bench('Insert 2 new nodes before a first child', function () {
         new TextOM.Parent()
             .append(new TextOM.Child())
-            .after(new TextOM.Child())
-            .after(new TextOM.Child());
+            .before(new TextOM.Child())
+            .before(new TextOM.Child());
     });
 
     bench('Insert 3 new nodes before a first child', function () {
         new TextOM.Parent()
             .append(new TextOM.Child())
-            .after(new TextOM.Child())
-            .after(new TextOM.Child())
-            .after(new TextOM.Child());
+            .before(new TextOM.Child())
+            .before(new TextOM.Child())
+            .before(new TextOM.Child());
     });
 
     bench('Insert 1 attached node before a first child', function () {
         new TextOM.Parent()
             .append(new TextOM.Child())
-            .after(child);
+            .before(child);
     });
 
     bench('Insert 2 attached nodes before a first child', function () {
         new TextOM.Parent()
             .append(new TextOM.Child())
-            .after(child)
-            .after(otherChild);
+            .before(child)
+            .before(otherChild);
     });
 
     bench('Insert 3 attached nodes before a first child', function () {
         new TextOM.Parent()
             .append(new TextOM.Child())
-            .after(child)
-            .after(otherChild)
-            .after(anotherChild);
+            .before(child)
+            .before(otherChild)
+            .before(anotherChild);
     });
 
     bench('Insert 100 attached nodes before a first child', function () {
         children.forEach(before, new TextOM.Parent().append(child));
+    });
+});
+
+suite('Parent: all', function () {
+    bench('Append 1 new node to an empty parent', function () {
+        new TextOM.Parent().appendAll([new TextOM.Child()]);
+    });
+
+    bench('Append 2 new nodes to an empty parent', function () {
+        new TextOM.Parent().appendAll([
+            new TextOM.Child(),
+            new TextOM.Child()
+        ]);
+    });
+
+    bench('Append 3 new nodes to an empty parent', function () {
+        new TextOM.Parent().appendAll([
+            new TextOM.Child(),
+            new TextOM.Child(),
+            new TextOM.Child()
+        ]);
+    });
+
+    bench('Append 1 attached node to an empty parent', function () {
+        new TextOM.Parent().appendAll([child]);
+    });
+
+    bench('Append 2 attached nodes to an empty parent', function () {
+        new TextOM.Parent().appendAll([child, otherChild]);
+    });
+
+    bench('Append 3 attached nodes to an empty parent', function () {
+        new TextOM.Parent().appendAll([child, otherChild, anotherChild]);
+    });
+
+    bench('Append 100 attached nodes to an empty parent', function () {
+        new TextOM.Parent().appendAll(children);
+    });
+
+    bench('Prepend 1 new node to an empty parent', function () {
+        new TextOM.Parent().prependAll([new TextOM.Child()]);
+    });
+
+    bench('Prepend 2 new nodes to an empty parent', function () {
+        new TextOM.Parent().prependAll([
+            new TextOM.Child(),
+            new TextOM.Child()
+        ]);
+    });
+
+    bench('Prepend 3 new nodes to an empty parent', function () {
+        new TextOM.Parent().prependAll([
+            new TextOM.Child(),
+            new TextOM.Child(),
+            new TextOM.Child()
+        ]);
+    });
+
+    bench('Prepend 1 attached node to an empty parent', function () {
+        new TextOM.Parent().prependAll([child]);
+    });
+
+    bench('Prepend 2 attached nodes to an empty parent', function () {
+        new TextOM.Parent().prependAll([child, otherChild]);
+    });
+
+    bench('Prepend 3 attached nodes to an empty parent', function () {
+        new TextOM.Parent().prependAll([child, otherChild, anotherChild]);
+    });
+
+    bench('Prepend 100 attached nodes to an empty parent', function () {
+        new TextOM.Parent().prependAll(children);
+    });
+});
+
+suite('Child: all', function () {
+    bench('Insert 1 new node after an only child', function () {
+        new TextOM.Parent()
+            .append(new TextOM.Child())
+            .afterAll([new TextOM.Child()]);
+    });
+
+    bench('Insert 2 new nodes after an only child', function () {
+        new TextOM.Parent()
+            .append(new TextOM.Child())
+            .afterAll([new TextOM.Child(), new TextOM.Child()]);
+    });
+
+    bench('Insert 3 new nodes after an only child', function () {
+        new TextOM.Parent()
+            .append(new TextOM.Child())
+            .afterAll([
+                new TextOM.Child(),
+                new TextOM.Child(),
+                new TextOM.Child()
+            ]);
+    });
+
+    bench('Insert 1 attached node after an only child', function () {
+        new TextOM.Parent()
+            .append(new TextOM.Child())
+            .afterAll([child]);
+    });
+
+    bench('Insert 2 attached nodes after an only child', function () {
+        new TextOM.Parent()
+            .append(new TextOM.Child())
+            .afterAll([child, otherChild]);
+    });
+
+    bench('Insert 3 attached nodes after an only child', function () {
+        new TextOM.Parent()
+            .append(new TextOM.Child())
+            .afterAll([child, otherChild, anotherChild]);
+    });
+
+    bench('Insert 100 attached nodes after a first child', function () {
+        new TextOM.Parent()
+            .append(new TextOM.Child())
+            .afterAll(children);
+    });
+
+    bench('Insert 1 new node before a first child', function () {
+        new TextOM.Parent()
+            .append(new TextOM.Child())
+            .beforeAll([new TextOM.Child()]);
+    });
+
+    bench('Insert 2 new nodes before a first child', function () {
+        new TextOM.Parent()
+            .append(new TextOM.Child())
+            .beforeAll([new TextOM.Child(), new TextOM.Child()]);
+    });
+
+    bench('Insert 3 new nodes before a first child', function () {
+        new TextOM.Parent()
+            .append(new TextOM.Child())
+            .beforeAll([
+                new TextOM.Child(),
+                new TextOM.Child(),
+                new TextOM.Child()
+            ]);
+    });
+
+    bench('Insert 1 attached node before a first child', function () {
+        new TextOM.Parent()
+            .append(new TextOM.Child())
+            .beforeAll([child]);
+    });
+
+    bench('Insert 2 attached nodes before a first child', function () {
+        new TextOM.Parent()
+            .append(new TextOM.Child())
+            .beforeAll([child, otherChild]);
+    });
+
+    bench('Insert 3 attached nodes before a first child', function () {
+        new TextOM.Parent()
+            .append(new TextOM.Child())
+            .beforeAll([child, otherChild, anotherChild]);
+    });
+
+    bench('Insert 100 attached nodes before a first child', function () {
+        new TextOM.Parent()
+            .append(new TextOM.Child())
+            .beforeAll(children);
     });
 });

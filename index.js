@@ -5,18 +5,21 @@
  */
 
 var has,
+    arrayPrototype,
     arraySlice,
     arrayJoin;
 
 has = Object.prototype.hasOwnProperty;
 
-arraySlice = Array.prototype.slice;
-arrayJoin = Array.prototype.join;
+arrayPrototype = Array.prototype;
+
+arraySlice = arrayPrototype.slice;
+arrayJoin = arrayPrototype.join;
 
 /**
  * Utilities.
  *
- * These utilties are specialised to work on nodes,
+ * These utilities are specialised to work on nodes,
  * with a length property that needs updating,
  * and without falsey/missing values.
  */
@@ -292,6 +295,198 @@ function canInsertIntoParent(parent, child) {
 }
 
 /**
+ * Insert all `children` after `start` in `parent`, or at
+ * `parent`s head when `start` is not given.
+ *
+ * @param {Parent} parent
+ * @param {Child} start
+ * @param {Array.<Child>} children
+ * @return {Array.<Child>} `children`.
+ */
+
+function insertAll(parent, start, children) {
+    var index,
+        length,
+        prev,
+        end,
+        child,
+        indice;
+
+    if (!parent) {
+        throw new Error(
+            'TypeError: `' + parent + '` is not a ' +
+            'valid `parent` for `insertAll`'
+        );
+    }
+
+    if (!children) {
+        throw new Error(
+            'TypeError: `' + children + '` is not a ' +
+            'valid `children` for `insertAll`'
+        );
+    }
+
+    /**
+     * Exit early.
+     */
+
+    length = children.length;
+
+    if (!length) {
+        return children;
+    }
+
+    if (start) {
+        if (start.parent !== parent) {
+            throw new Error(
+                'HierarchyError: The operated on node ' +
+                'is detached from `parent`'
+            );
+        }
+
+        indice = arrayLikeIndexOf(parent, start);
+
+        if (indice === -1) {
+            throw new Error(
+                'HierarchyError: The operated on node ' +
+                'is attached to `parent`, but `parent` ' +
+                'has no index corresponding to the node'
+            );
+        }
+    }
+
+    /**
+     * Remove `children` from their parents.
+     */
+
+    index = -1;
+
+    while (++index < length) {
+        child = children[index];
+
+        if (typeof child.remove !== 'function') {
+            throw new Error(
+                'TypeError: `' + child + '` does not ' +
+                'have a `remove` method'
+            );
+        }
+
+        if (parent === child) {
+            throw new Error(
+                'HierarchyError: Cannot insert `node` into ' +
+                'self'
+            );
+        }
+
+        /**
+         * Detach `child`.
+         */
+
+        child.remove();
+    }
+
+    /**
+     * Clean start and end after removal.
+     */
+
+    if (start && start.parent === parent) {
+        end = start.next;
+    } else {
+        start = null;
+        end = parent.head;
+        indice = -1;
+    }
+
+    /**
+     * Insert `children`.
+     */
+
+    index = -1;
+
+    prev = start;
+
+    while (children[++index]) {
+        child = children[index];
+
+        /**
+         * Set `child`s parent to parent.
+         */
+
+        child.parent = parent;
+
+        /**
+         * Set `child`s prev node to `prev` and
+         * `prev`s next node to `child`.
+         */
+
+        if (prev) {
+            child.prev = prev;
+
+            prev.next = child;
+        }
+
+        /**
+         * Prepare for the next iteration.
+         */
+
+        prev = child;
+    }
+
+    /**
+     * Set the `child`s next node to `end`.
+     */
+
+    if (end) {
+        prev.next = end;
+        end.prev = prev;
+    }
+
+    /**
+     * Update `head` and `tail`.
+     */
+
+    if (!start) {
+        parent.head = children[0];
+
+        if (!parent.tail && (end || length !== 1)) {
+            parent.tail = end || prev;
+        }
+    } else if (!end) {
+        parent.tail = prev;
+    }
+
+    /**
+     * Update array-like representation.
+     *
+     * The linked-list representation is valid, but
+     */
+
+    index = indice;
+
+    child = children[0];
+
+    while (child) {
+        parent[++index] = child;
+
+        child = child.next;
+    }
+
+    parent.length += children.length;
+
+    /**
+     * Emit events.
+     */
+
+    index = -1;
+
+    while (children[++index]) {
+        children[index].trigger('insert', parent);
+    }
+
+    return children;
+}
+
+/**
  * Insert `child` after `item` in `parent`, or at
  * `parent`s head when `item` is not given.
  *
@@ -344,10 +539,8 @@ function insert(parent, item, child) {
      * Exit early.
      */
 
-    if (item) {
-        if (item === child) {
-            return child;
-        }
+    if (item && item === child) {
+        return child;
     }
 
     /**
@@ -378,7 +571,7 @@ function insert(parent, item, child) {
             throw new Error(
                 'HierarchyError: The operated on node ' +
                 'is attached to `parent`, but `parent` ' +
-                'has no indice corresponding to the node'
+                'has no index corresponding to the node'
             );
         }
     } else {
@@ -531,7 +724,7 @@ function remove(node) {
         throw new Error(
             'HierarchyError: The operated on node ' +
             'is attached to `parent`, but `parent` ' +
-            'has no indice corresponding to the node'
+            'has no index corresponding to the node'
         );
     }
 
@@ -560,7 +753,7 @@ function remove(node) {
  *
  * @param {number} position
  * @param {number} length
- * @param {number} position - Normalized position.
+ * @param {number} position - Normalised position.
  */
 
 function validateSplitPosition(position, length) {
@@ -594,7 +787,7 @@ function mergeData(node, nlcst) {
     for (attribute in data) {
         if (has.call(data, attribute)) {
             /**
-             * This makes sure no empy data objects
+             * This makes sure no empty data objects
              * are created.
              */
 
@@ -1025,6 +1218,18 @@ function TextOMConstructor() {
     };
 
     /**
+     * Insert children at the beginning of the parent.
+     *
+     * @param {Array.<Child>} children - Children to
+     *   insert at the start.
+     * @return {self}
+     */
+
+    parentPrototype.prependAll = function (children) {
+        return insertAll(this, null, children);
+    };
+
+    /**
      * Insert a child at the end of the list (like Array#push).
      *
      * @param {Child} child - Child to insert as the new
@@ -1034,6 +1239,18 @@ function TextOMConstructor() {
 
     parentPrototype.append = function (child) {
         return insert(this, this.tail || this.head, child);
+    };
+
+    /**
+     * Insert children at the end of the parent.
+     *
+     * @param {Array.<Child>} children - Children to
+     *   insert at the end.
+     * @return {self}
+     */
+
+    parentPrototype.appendAll = function (children) {
+        return insertAll(this, this.tail || this.head, children);
     };
 
     /**
@@ -1170,6 +1387,19 @@ function TextOMConstructor() {
     };
 
     /**
+     * Insert `children` before the context in its parent.
+     *
+     * @param {Array.<Child>} children - Children to
+     *   insert.
+     * @this {Child}
+     * @return {self}
+     */
+
+    childPrototype.beforeAll = function (children) {
+        return insertAll(this.parent, this.prev, children);
+    };
+
+    /**
      * Insert `child` after the context in its parent.
      *
      * @param {Child} child - Child to insert.
@@ -1179,6 +1409,19 @@ function TextOMConstructor() {
 
     childPrototype.after = function (child) {
         return insert(this.parent, this, child);
+    };
+
+    /**
+     * Insert `children` after the context in its parent.
+     *
+     * @param {Array.<Child>} children - Children to
+     *   insert.
+     * @this {Child}
+     * @return {self}
+     */
+
+    childPrototype.afterAll = function (children) {
+        return insertAll(this.parent, this, children);
     };
 
     /**

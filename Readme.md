@@ -274,6 +274,19 @@ sentence.head; // fullStop
 
 Insert [`child`](#textomchild) as `parent`s first child.
 
+##### TextOM\.Parent#prependAll(child[])
+
+```js
+sentence.head; // dogs
+sentence.prependAll([fullStop, cats]);
+sentence.head; // fullStop
+sentence.head.next; // cat
+```
+
+Insert every [`child`](#textomchild) in `children` at the start of `parent`.
+
+Adheres to sorting (the first `child` in `children` will become `parent`s `head`).
+
 ##### TextOM\.Parent#append(child)
 
 ```js
@@ -283,6 +296,19 @@ sentence.tail; // dogs
 ```
 
 Insert [`child`](#textomchild) as `parent`s last child.
+
+##### TextOM\.Parent#appendAll(child[])
+
+```js
+sentence.tail; // fullStop
+sentence.appendAll([dogs, cats]);
+sentence.tail; // cats
+sentence.tail.prev; // dogs
+```
+
+Insert every [`child`](#textomchild) in `children` at the end of `parent`.
+
+Adheres to sorting (the last `child` in `children` will become `parent`s `tail`).
 
 ##### TextOM\.Parent#item(index?)
 
@@ -370,6 +396,19 @@ dogs.prev; // cats
 
 Insert `sibling` ([`Child`](#textomchild)) as `child`s preceding sibling in `parent`.
 
+##### TextOM\.Child#beforeAll(child[])
+
+```js
+dogs.prev; // null
+dogs.beforeAll([cats, space0]);
+dogs.prev; // space0
+dogs.prev.prev; // cats
+```
+
+Insert every ([`Child`](#textomchild)) in `siblings` (`Array`) before `child` in `parent`.
+
+Adheres to sorting (the last `sibling` in `siblings` will become `child`s `prev`).
+
 ##### TextOM\.Child#after(child)
 
 ```js
@@ -379,6 +418,19 @@ cats.next; // dogs
 ```
 
 Insert `sibling` ([`Child`](#textomchild)) as `child`s following sibling in `parent`.
+
+##### TextOM\.Child#afterAll(child[])
+
+```js
+cats.next; // null
+cats.afterAll([space0, dogs]);
+cats.next; // space0
+cats.next.next; // dogs
+```
+
+Insert every ([`Child`](#textomchild)) in `siblings` (`Array`) after `child` in `parent`.
+
+Adheres to sorting (the first `sibling` in `siblings` will become `child`s `next`).
 
 ##### TextOM\.Child#remove()
 
@@ -600,6 +652,9 @@ module textom
     Child prepend(Child child);
     Child append(Child child);
 
+    Child[] prependAll(Child[] children);
+    Child[] appendAll(Child[] children);
+
     [NewObject] Object valueOf();
 
     string toString();
@@ -618,6 +673,9 @@ module textom
     Child after(Child child);
     Child replace(Child child);
     Child remove(Child child);
+
+    Child[] beforeAll(Child[] children);
+    Child[] afterAll(Child[] children);
   };
   Child implements Node;
 
@@ -849,36 +907,68 @@ Not that intersting. Fast enough. Just for checking performance regression for n
 
 ```
                Parent
-  147,534 op/s » Append 1 new node to an empty parent
-   78,131 op/s » Append 2 new nodes to an empty parent
-   52,146 op/s » Append 3 new nodes to an empty parent
-   72,127 op/s » Append 1 attached node to an empty parent
-   37,148 op/s » Append 2 attached nodes to an empty parent
-   25,434 op/s » Append 3 attached nodes to an empty parent
-      706 op/s » Append 100 attached nodes to an empty parent
-  142,123 op/s » Prepend 1 new node to an empty parent
-   80,266 op/s » Prepend 2 new nodes to an empty parent
-   55,417 op/s » Prepend 3 new nodes to an empty parent
-   74,381 op/s » Prepend 1 attached node to an empty parent
-   38,788 op/s » Prepend 2 attached nodes to an empty parent
-   26,388 op/s » Prepend 3 attached nodes to an empty parent
-      696 op/s » Prepend 100 attached nodes to an empty parent
+  145,605 op/s » Append 1 new node to an empty parent
+   72,218 op/s » Append 2 new nodes to an empty parent
+   51,128 op/s » Append 3 new nodes to an empty parent
+   71,574 op/s » Append 1 attached node to an empty parent
+   37,524 op/s » Append 2 attached nodes to an empty parent
+   25,113 op/s » Append 3 attached nodes to an empty parent
+      709 op/s » Append 100 attached nodes to an empty parent
+  141,363 op/s » Prepend 1 new node to an empty parent
+   79,076 op/s » Prepend 2 new nodes to an empty parent
+   51,343 op/s » Prepend 3 new nodes to an empty parent
+   71,304 op/s » Prepend 1 attached node to an empty parent
+   25,229 op/s » Prepend 2 attached nodes to an empty parent
+   24,602 op/s » Prepend 3 attached nodes to an empty parent
+      709 op/s » Prepend 100 attached nodes to an empty parent
 
                Child
-   71,107 op/s » Insert 1 new node after a last child
-   49,126 op/s » Insert 2 new nodes after a last child
-   37,371 op/s » Insert 3 new nodes after a last child
-   46,361 op/s » Insert 1 attached node after a last child
-   27,973 op/s » Insert 2 attached nodes after a last child
-   20,338 op/s » Insert 3 attached nodes after a last child
-      649 op/s » Insert 100 attached nodes after a first child
-   71,091 op/s » Insert 1 new node before a first child
-   52,231 op/s » Insert 2 new nodes before a first child
-   41,665 op/s » Insert 3 new nodes before a first child
-   50,319 op/s » Insert 1 attached node before a first child
-   30,676 op/s » Insert 2 attached nodes before a first child
-   22,104 op/s » Insert 3 attached nodes before a first child
-      703 op/s » Insert 100 attached nodes before a first child
+   67,242 op/s » Insert 1 new node after an only child
+   48,706 op/s » Insert 2 new nodes after an only child
+   37,958 op/s » Insert 3 new nodes after an only child
+   45,709 op/s » Insert 1 attached node after an only child
+   29,501 op/s » Insert 2 attached nodes after an only child
+   20,721 op/s » Insert 3 attached nodes after an only child
+      633 op/s » Insert 100 attached nodes after a first child
+   69,084 op/s » Insert 1 new node before a first child
+   51,873 op/s » Insert 2 new nodes before a first child
+   41,888 op/s » Insert 3 new nodes before a first child
+   49,999 op/s » Insert 1 attached node before a first child
+   31,137 op/s » Insert 2 attached nodes before a first child
+   22,967 op/s » Insert 3 attached nodes before a first child
+      701 op/s » Insert 100 attached nodes before a first child
+
+               Parent: all
+  132,602 op/s » Append 1 new node to an empty parent
+   73,834 op/s » Append 2 new nodes to an empty parent
+   54,112 op/s » Append 3 new nodes to an empty parent
+   70,264 op/s » Append 1 attached node to an empty parent
+   38,496 op/s » Append 2 attached nodes to an empty parent
+   25,615 op/s » Append 3 attached nodes to an empty parent
+      785 op/s » Append 100 attached nodes to an empty parent
+  127,588 op/s » Prepend 1 new node to an empty parent
+   72,554 op/s » Prepend 2 new nodes to an empty parent
+   51,772 op/s » Prepend 3 new nodes to an empty parent
+   66,758 op/s » Prepend 1 attached node to an empty parent
+   36,683 op/s » Prepend 2 attached nodes to an empty parent
+   26,091 op/s » Prepend 3 attached nodes to an empty parent
+      800 op/s » Prepend 100 attached nodes to an empty parent
+
+               Child: all
+   68,083 op/s » Insert 1 new node after an only child
+   50,488 op/s » Insert 2 new nodes after an only child
+   39,463 op/s » Insert 3 new nodes after an only child
+   46,836 op/s » Insert 1 attached node after an only child
+   30,209 op/s » Insert 2 attached nodes after an only child
+   22,056 op/s » Insert 3 attached nodes after an only child
+      821 op/s » Insert 100 attached nodes after a first child
+   70,814 op/s » Insert 1 new node before a first child
+   49,249 op/s » Insert 2 new nodes before a first child
+   39,435 op/s » Insert 3 new nodes before a first child
+   45,303 op/s » Insert 1 attached node before a first child
+   29,465 op/s » Insert 2 attached nodes before a first child
+   21,631 op/s » Insert 3 attached nodes before a first child
+      792 op/s » Insert 100 attached nodes before a first child
 ```
 
 ## Related
