@@ -1,4 +1,12 @@
 
+n.n.n / 2014-12-05
+==================
+
+ * Update eslint
+ * Merge branch 'feature/add-insert-all'
+ * Add `appendAll`, `prependAll`, `afterAll`, `beforeAll` methods
+ * Fix bug/typo in benchmark
+
 0.4.0-rc.1 / 2014-12-04
 ==================
 
