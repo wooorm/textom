@@ -981,4 +981,4 @@ Not that intersting. Fast enough. Just for checking performance regression for n
 
 ## License
 
-MIT © Titus Wormer
+MIT © [Titus Wormer](http://wooorm.com)
