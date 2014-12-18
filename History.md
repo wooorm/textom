@@ -1,5 +1,5 @@
 
-n.n.n / 2014-12-18
+0.4.0-rc.3 / 2014-12-18
 ==================
 
  * Refactor to adhere to strict jsdoc style
