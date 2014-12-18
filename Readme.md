@@ -816,6 +816,22 @@ Fires when a [`Text`](#textomtextvalue-nlcsttext) changes value.
   - current: Current value;
   - previous: Previous value;
 
+#### change [[non-bubbling](#non-bubbling-normal-events)]
+
+```js
+dogs.on('change', function () {
+  this === dogs; // true
+});
+
+dogsText.fromString('Poodles');
+// or: dogsText.remove();
+// or: dogs.insert(catsText);
+```
+
+Fires when a direct child of a parent changes: either its value, when a new child is inserted, or when a child is removed.
+
+- this: Changed [`Parent`](#textomparent-nlcstparent);
+
 #### changetextinside  [[bubbling](#bubbling-events)]
 
 ```js
@@ -872,6 +888,25 @@ Fires when a [`Child`](#textomchild) is removed inside an ancestor.
 - parameters:
   - node: Removed [`Child`](#textomchild);
   - previous: Removed from [`Parent`](#textomparent);
+
+#### changeinside  [[bubbling](#bubbling-events)]
+
+```js
+root.on('changeinside', function (parent) {
+  this === root; // true
+  parent === sentence; // true
+});
+
+dogs.remove();
+// or sentence.insert(dogs)
+// or dogsText.fromString('cats');
+```
+
+Fires when a [`Child`](#textomchild) is removed inside an ancestor.
+
+- this: Ancestor of a [`Child`](#textomchild);
+- parameters:
+  - parent: Parent of the change.
 
 ### Bubbling & Non-bubbling events
 
