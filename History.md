@@ -1,4 +1,19 @@
 
+n.n.n / 2014-12-18
+==================
+
+ * Refactor to adhere to strict jsdoc style
+ * Add jscs-jsdoc configuration to `.jscs.json`
+ * Add jscs-jsdoc as a dev-dependency
+ * Refactor npm scripts for changes in npm
+ * Merge branch 'feature/add-change-event'
+ * Update benchmark results in `Readme.md`
+ * Add `change` and `changeinside` events
+ * Add tests for `change` and `changeinside` events
+ * Add docs for `change` and `changeinside` events
+ * Refactor npm script targets in `package.json`
+ * Add link to personal website to copyright in `Readme.md`
+
 0.4.0-rc.2 / 2014-12-05
 ==================
 
