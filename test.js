@@ -1,6 +1,6 @@
 'use strict';
 
-/**
+/*
  * Dependencies.
  */
 
@@ -10,7 +10,7 @@ var TextOMConstructor,
 TextOMConstructor = require('./');
 assert = require('assert');
 
-/**
+/*
  * Constants.
  */
 
@@ -54,21 +54,37 @@ nodePrototype = Node.prototype;
 parentPrototype = Parent.prototype;
 childPrototype = Child.prototype;
 
+/**
+ * No-operation.
+ */
 function noop() {}
 
-noop();
-
+/**
+ * Another no-operation function.
+ */
 function altNoop() {}
 
-altNoop();
-
+/**
+ * Function which throws on invocation.
+ */
 function doNotCall() {
     throw new Error('doNotCall was called, but shouldn\'t be');
 }
 
+/*
+ * Invoke for istanbul.
+ */
+
+noop();
+altNoop();
+
 try {
     doNotCall();
 } catch (exception) {}
+
+/*
+ * Cached methods.
+ */
 
 var has,
     objectToString;
@@ -76,7 +92,7 @@ var has,
 has = Object.prototype.hasOwnProperty;
 objectToString = Object.prototype.toString;
 
-/**
+/*
  * Remove all constructor events.
  */
 
@@ -98,7 +114,7 @@ afterEach(function () {
     TextNode.off();
 });
 
-/**
+/*
  * Tests.
  */
 
@@ -250,6 +266,9 @@ describe('TextOM.Node.isImplementedBy', function () {
     it('should add the properties of the operated on context ' +
         'to the given constructor',
         function () {
+            /**
+             * Test constructor.
+             */
             function CustomNode() {}
 
             assert(new CustomNode() instanceof CustomNode);
@@ -266,6 +285,9 @@ describe('TextOM.Node.isImplementedBy', function () {
     it('should add the operated on context as a prototype to the given ' +
         'constructor',
         function () {
+            /**
+             * Test constructor.
+             */
             function CustomNode() {}
 
             Node.isImplementedBy(CustomNode);
@@ -276,6 +298,9 @@ describe('TextOM.Node.isImplementedBy', function () {
 
     it('should not remove properties defined on the given constructor',
         function () {
+            /**
+             * Test constructor.
+             */
             function CustomNode() {}
 
             assert(new CustomNode() instanceof CustomNode);
@@ -293,6 +318,9 @@ describe('TextOM.Node.isImplementedBy', function () {
     it('should not remove properties defined on the given constructors ' +
         'prototype',
         function () {
+            /**
+             * Test constructor.
+             */
             function CustomNode() {}
 
             assert(new CustomNode() instanceof CustomNode);
@@ -312,6 +340,9 @@ describe('TextOM.Node.isImplementedBy', function () {
         function () {
             var constructor;
 
+            /**
+             * Test constructor.
+             */
             function CustomNode() {}
 
             assert(new CustomNode() instanceof CustomNode);
@@ -327,6 +358,9 @@ describe('TextOM.Node.isImplementedBy', function () {
     it('should add a `constructors` array to the given constructor, filled ' +
         'with the given constructor, and the operated on context',
         function () {
+            /**
+             * Test constructor.
+             */
             function CustomNode() {}
 
             assert(new CustomNode() instanceof CustomNode);
@@ -344,6 +378,9 @@ describe('TextOM.Node.isImplementedBy', function () {
         Function.prototype.noop = noop;
         /* eslint-enable no-extend-native */
 
+        /**
+         * Test constructor.
+         */
         function CustomNode() {}
 
         assert(new CustomNode() instanceof CustomNode);
@@ -898,6 +935,9 @@ describe('TextOM.Parent#prepend(childNode)', function () {
 
         isCalled = false;
 
+        /**
+         * Spy.
+         */
         node.remove = function () {
             isCalled = true;
             nodeRemove.apply(this, arguments);
@@ -1171,6 +1211,9 @@ describe('TextOM.Parent#prependAll(Array.<childNode>)', function () {
 
         isCalled = false;
 
+        /**
+         * Spy.
+         */
         node.remove = function () {
             isCalled = true;
             nodeRemove.apply(this, arguments);
@@ -1471,6 +1514,9 @@ describe('TextOM.Parent#append(childNode)', function () {
         nodeRemove = node.remove;
         isCalled = false;
 
+        /**
+         * Spy.
+         */
         node.remove = function () {
             isCalled = true;
             nodeRemove.apply(this, arguments);
@@ -1766,6 +1812,9 @@ describe('TextOM.Parent#appendAll(Array.<childNode>)', function () {
         nodeRemove = node.remove;
         isCalled = false;
 
+        /**
+         * Spy.
+         */
         node.remove = function () {
             isCalled = true;
             nodeRemove.apply(this, arguments);
@@ -2038,10 +2087,16 @@ describe('TextOM.Parent#toString()', function () {
             node[1] = tail;
             node.length = 2;
 
+            /**
+             * Overwrite `toString`.
+             */
             head.toString = function () {
                 return 'a ';
             };
 
+            /**
+             * Overwrite `toString`.
+             */
             tail.toString = function () {
                 return 'value';
             };
@@ -2345,6 +2400,9 @@ describe('TextOM.Child#before(childNode)', function () {
         childRemove = child1.remove;
         isCalled = false;
 
+        /**
+         * Spy.
+         */
         child1.remove = function () {
             isCalled = true;
             childRemove.apply(this, arguments);
@@ -2655,6 +2713,9 @@ describe('TextOM.Child#beforeAll(Array.<childNode>)', function () {
         childRemove = child1.remove;
         isCalled = false;
 
+        /**
+         * Spy.
+         */
         child1.remove = function () {
             isCalled = true;
             childRemove.apply(this, arguments);
@@ -2956,6 +3017,9 @@ describe('TextOM.Child#after(childNode)', function () {
         childRemove = child1.remove;
         isCalled = false;
 
+        /**
+         * Spy.
+         */
         child1.remove = function () {
             isCalled = true;
 
@@ -3268,6 +3332,9 @@ describe('TextOM.Child#afterAll(Array.<childNode>)', function () {
         childRemove = child1.remove;
         isCalled = false;
 
+        /**
+         * Spy.
+         */
         child1.remove = function () {
             isCalled = true;
 
@@ -3787,6 +3854,9 @@ describe('TextOM.Child#replace(childNode)', function () {
 
         parent.append(child);
 
+        /**
+         * Spy.
+         */
         child1.remove = function () {
             isCalled = true;
             childRemove.apply(this, arguments);
@@ -3997,7 +4067,7 @@ describe('TextOM.Element()', function () {
         assert(typeof Element === 'function');
     });
 
-    /**
+    /*
      * The following tests are a bit weird, because:
      *
      * - We need to ducktype because inheritance of both
@@ -5113,7 +5183,13 @@ describe('Events on TextOM.Parent', function () {
                 rootNode.append(paragraphNode);
                 paragraphNode.append(sentenceNode);
 
+                /**
+                 * Spy factory.
+                 */
                 function oninsertinsideFactory(context) {
+                    /**
+                     * Spy.
+                     */
                     return function (child) {
                         index++;
 
@@ -5159,6 +5235,9 @@ describe('Events on TextOM.Parent', function () {
                 sentenceNode = new SentenceNode();
                 wordNode = new WordNode();
 
+                /**
+                 * Spy.
+                 */
                 function remove() {
                     wordNode.remove();
                 }
@@ -5206,7 +5285,13 @@ describe('Events on TextOM.Parent', function () {
                 rootNode.append(paragraphNode);
                 paragraphNode.append(sentenceNode);
 
+                /**
+                 * Spy factory.
+                 */
                 function oninsertinsideFactory(context) {
+                    /**
+                     * Spy.
+                     */
                     return function (child) {
                         index++;
 
@@ -5273,7 +5358,13 @@ describe('Events on TextOM.Parent', function () {
                 paragraphNode.append(sentenceNode);
                 sentenceNode.append(wordNode);
 
+                /**
+                 * Spy factory.
+                 */
                 function onremoveinsideFactory(context) {
+                    /**
+                     * Spy.
+                     */
                     return function (child, parent) {
                         index++;
 
@@ -5322,8 +5413,11 @@ describe('Events on TextOM.Parent', function () {
                 sentenceNode = new SentenceNode();
                 wordNode = new WordNode();
 
+                /**
+                 * Spy.
+                 */
                 function insert() {
-                    /**
+                    /*
                      * Re-insert the node.
                      */
 
@@ -5381,7 +5475,13 @@ describe('Events on TextOM.Parent', function () {
                 paragraphNode.append(sentenceNode);
                 sentenceNode.append(wordNode);
 
+                /**
+                 * Spy factory.
+                 */
                 function onremoveinsideFactory(context) {
+                    /**
+                     * Spy.
+                     */
                     return function (child, parent) {
                         index++;
 
@@ -5452,7 +5552,13 @@ describe('Events on TextOM.Parent', function () {
                 shouldBePreviousValue = null;
                 shouldBeChild = null;
 
+                /**
+                 * Spy factory.
+                 */
                 function onchangetextinsideFactory(context) {
+                    /**
+                     * Spy.
+                     */
                     return function (child, value, previousValue) {
                         index++;
 
@@ -5517,7 +5623,13 @@ describe('Events on TextOM.Parent', function () {
                 shouldBePreviousValue = null;
                 shouldBeChild = null;
 
+                /**
+                 * Spy factory.
+                 */
                 function onchangetextinsideFactory(context) {
+                    /**
+                     * Spy.
+                     */
                     return function (child, value, previousValue) {
                         index++;
 
@@ -5574,6 +5686,9 @@ describe('Events on TextOM.Parent', function () {
                 sentenceNode.append(wordNode);
                 wordNode.append(new TextNode('test'));
 
+                /**
+                 * Spy.
+                 */
                 function onchange() {
                     index++;
 
@@ -5636,7 +5751,13 @@ describe('Events on TextOM.Parent', function () {
 
                 wordNode.append(new TextNode('test'));
 
+                /**
+                 * Spy factory.
+                 */
                 function onchangeinsideFactory(context) {
+                    /**
+                     * Spy.
+                     */
                     return function (parent) {
                         index++;
 
@@ -5708,7 +5829,13 @@ describe('Events on TextOM.Parent', function () {
 
                 wordNode.append(new TextNode('test'));
 
+                /**
+                 * Spy factory.
+                 */
                 function onchangeinsideFactory(context) {
+                    /**
+                     * Spy.
+                     */
                     return function (parent) {
                         index++;
 
@@ -5772,6 +5899,9 @@ describe('Events on TextOM.Child', function () {
 
                 sentenceNode.append(new WordNode());
 
+                /**
+                 * Spy.
+                 */
                 function oninsert() {
                     index++;
 
@@ -5799,8 +5929,11 @@ describe('Events on TextOM.Child', function () {
                 sentenceNode = new SentenceNode();
                 wordNode = new WordNode();
 
+                /**
+                 * Spy.
+                 */
                 function remove() {
-                    /**
+                    /*
                      * Re-remove the node.
                      */
 
@@ -5843,6 +5976,9 @@ describe('Events on TextOM.Child', function () {
 
                 paragraphNode.append(sentenceNode);
 
+                /**
+                 * Spy.
+                 */
                 function onremove(parent) {
                     index++;
 
@@ -5871,8 +6007,11 @@ describe('Events on TextOM.Child', function () {
                 sentenceNode = new SentenceNode();
                 wordNode = new WordNode();
 
+                /**
+                 * Spy.
+                 */
                 function insert() {
-                    /**
+                    /*
                      * Re-insert the node.
                      */
 
@@ -5928,6 +6067,9 @@ describe('Events on TextOM.Text', function () {
                 sentenceNode.append(wordNode);
                 wordNode.append(textNode);
 
+                /**
+                 * Spy.
+                 */
                 function onchangetext(value, previousValue) {
                     index++;
 
