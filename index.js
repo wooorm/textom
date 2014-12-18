@@ -299,7 +299,7 @@ function canInsertIntoParent(parent, child) {
  * `parent`s head when `start` is not given.
  *
  * @param {Parent} parent
- * @param {Child} start
+ * @param {Child?} start
  * @param {Array.<Child>} children
  * @return {Array.<Child>} `children`.
  */
@@ -483,6 +483,14 @@ function insertAll(parent, start, children) {
         children[index].trigger('insert', parent);
     }
 
+    /**
+     * Emit a single `change` event.
+     * This will also trigger `changeinside` events on
+     * `parent` and its constructors.
+     */
+
+    parent.trigger('change', parent);
+
     return children;
 }
 
@@ -637,6 +645,14 @@ function insert(parent, item, child) {
 
     child.trigger('insert', parent);
 
+    /**
+     * Emit a single `change` event.
+     * This will also trigger `changeinside` events on
+     * `parent` and its constructors.
+     */
+
+    parent.trigger('change', parent);
+
     return child;
 }
 
@@ -744,6 +760,14 @@ function remove(node) {
      */
 
     node.trigger('remove', parent, parent);
+
+    /**
+     * Emit a single `change` event.
+     * This will also trigger `changeinside` events on
+     * `parent` and its constructors.
+     */
+
+    parent.trigger('change', parent);
 
     return node;
 }
@@ -1608,7 +1632,8 @@ function TextOMConstructor() {
 
     textPrototype.fromString = function (value) {
         var self,
-            current;
+            current,
+            parent;
 
         self = this;
 
@@ -1621,9 +1646,21 @@ function TextOMConstructor() {
         current = self.toString();
 
         if (value !== current) {
+            parent = self.parent;
+
             self.internalValue = value;
 
-            self.trigger('changetext', self.parent, value, current);
+            self.trigger('changetext', parent, value, current);
+
+            /**
+             * Emit a single `change` event.
+             * This will also trigger `changeinside` events on
+             * `parent` and its constructors.
+             */
+
+            if (parent) {
+                parent.trigger('change', parent);
+            }
         }
 
         return value;
