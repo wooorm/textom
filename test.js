@@ -5553,6 +5553,208 @@ describe('Events on TextOM.Parent', function () {
             }
         );
     });
+
+    describe('[change]', function () {
+        it('emits on `parent` and all `parent`s constructors, with ' +
+            '`parent` as the context, when a child is inserted, removed, ' +
+            'or changes value inside `parent`',
+            function () {
+                var paragraphNode,
+                    sentenceNode,
+                    wordNode,
+                    index,
+                    shouldBeParent;
+
+                paragraphNode = new ParagraphNode();
+                sentenceNode = new SentenceNode();
+                index = 0;
+
+                wordNode = new WordNode();
+
+                sentenceNode.append(wordNode);
+                wordNode.append(new TextNode('test'));
+
+                function onchange() {
+                    index++;
+
+                    assert(this === shouldBeParent);
+                }
+
+                paragraphNode.on('change', onchange);
+                paragraphNode.on('change', onchange);
+                Element.on('change', onchange);
+                Child.on('change', onchange);
+                Parent.on('change', onchange);
+                Node.on('change', onchange);
+
+                shouldBeParent = paragraphNode;
+
+                paragraphNode.append(sentenceNode);
+
+                assert(index === 6);
+
+                index = 0;
+
+                sentenceNode.remove();
+
+                assert(index === 6);
+
+                index = 0;
+
+                shouldBeParent = wordNode;
+
+                wordNode.head.fromString('another test');
+
+                index = 5;
+            }
+        );
+    });
+
+    describe('[changeinside]', function () {
+        it('emits on all `Child`s ancestors, with the current ancestor ' +
+            'as the context, and the changed parent as an argument, ' +
+            'when a Child is inserted, removed, or changes value',
+            function () {
+                var rootNode,
+                    paragraphNode,
+                    sentenceNode,
+                    wordNode,
+                    index,
+                    shouldBeParent;
+
+                rootNode = new RootNode();
+                paragraphNode = new ParagraphNode();
+                sentenceNode = new SentenceNode();
+                wordNode = new WordNode();
+
+                index = 0;
+
+                shouldBeParent = null;
+
+                rootNode.append(paragraphNode);
+                paragraphNode.append(sentenceNode);
+
+                wordNode.append(new TextNode('test'));
+
+                function onchangeinsideFactory(context) {
+                    return function (parent) {
+                        index++;
+
+                        assert(this === context);
+                        assert(parent === shouldBeParent);
+                    };
+                }
+
+                rootNode.on('changeinside',
+                    onchangeinsideFactory(rootNode)
+                );
+
+                paragraphNode.on('changeinside',
+                    onchangeinsideFactory(paragraphNode)
+                );
+
+                sentenceNode.on('changeinside',
+                    onchangeinsideFactory(sentenceNode)
+                );
+
+                wordNode.on('changeinside',
+                    onchangeinsideFactory(wordNode)
+                );
+
+                shouldBeParent = sentenceNode;
+
+                sentenceNode.append(wordNode);
+
+                assert(index === 3);
+
+                index = 0;
+
+                wordNode.remove();
+
+                assert(index === 3);
+
+                shouldBeParent = wordNode;
+
+                index = 0;
+
+                wordNode.head.fromString('another test');
+
+                assert(index === 1);
+            }
+        );
+
+        it('emits on all `Child`s ancestors constructors, with the ' +
+            'current ancestor as the context, and the changed parent ' +
+            'as an argument, when a Child is inserted or removed',
+            function () {
+                var rootNode,
+                    paragraphNode,
+                    sentenceNode,
+                    wordNode,
+                    index,
+                    shouldBeParent;
+
+                rootNode = new RootNode();
+                paragraphNode = new ParagraphNode();
+                sentenceNode = new SentenceNode();
+                wordNode = new WordNode();
+
+                index = 0;
+
+                shouldBeParent = null;
+
+                rootNode.append(paragraphNode);
+                paragraphNode.append(sentenceNode);
+
+                wordNode.append(new TextNode('test'));
+
+                function onchangeinsideFactory(context) {
+                    return function (parent) {
+                        index++;
+
+                        assert(this === context);
+                        assert(parent === shouldBeParent);
+                    };
+                }
+
+                RootNode.on('changeinside',
+                    onchangeinsideFactory(rootNode)
+                );
+
+                ParagraphNode.on('changeinside',
+                    onchangeinsideFactory(paragraphNode)
+                );
+
+                SentenceNode.on('changeinside',
+                    onchangeinsideFactory(sentenceNode)
+                );
+
+                WordNode.on('changeinside',
+                    onchangeinsideFactory(wordNode)
+                );
+
+                shouldBeParent = sentenceNode;
+
+                sentenceNode.append(wordNode);
+
+                assert(index === 3);
+
+                index = 0;
+
+                wordNode.remove();
+
+                assert(index === 3);
+
+                shouldBeParent = wordNode;
+
+                index = 0;
+
+                wordNode.head.fromString('another test');
+
+                assert(index === 1);
+            }
+        );
+    });
 });
 
 describe('Events on TextOM.Child', function () {
