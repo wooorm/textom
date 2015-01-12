@@ -8,24 +8,27 @@ Object model for manipulating natural language in JavaScript.
 
 ## Installation
 
-npm:
-```sh
+[npm](https://docs.npmjs.com/cli/install):
+
+```bash
 $ npm install textom
 ```
 
-Component:
-```sh
+[Component.js](https://github.com/componentjs/component):
+
+```bash
 $ component install wooorm/textom
 ```
 
-Bower:
-```sh
+[Bower](http://bower.io/#install-packages):
+
+```bash
 $ bower install textom
 ```
 
 ## Usage
 
-```js
+```javascript
 var TextOMConstructor = require('textom');
 
 /**
@@ -49,7 +52,7 @@ Let’s say all following examples start with below code.
 
 Any changes made by below examples are discarded upon their ending.
 
-```js
+```javascript
 var TextOMConstructor = require('textom');
 
 /* Construct a new ``document''. */
@@ -92,7 +95,7 @@ Constructor.
 
 ##### TextOM\.Node.on(name, listener)
 
-```js
+```javascript
 TextOM.RootNode.on('someeventname', function () {});
 ```
 
@@ -100,7 +103,7 @@ Subscribe `listener` to `name` events on instances of `Node`.
 
 ##### TextOM\.Node.off(name?, listener?)
 
-```js
+```javascript
 TextOM.WordNode.off('someeventname');
 ```
 
@@ -110,7 +113,7 @@ TextOM.WordNode.off('someeventname');
 
 ##### TextOM\.Node#on(name, listener)
 
-```js
+```javascript
 root.on('someeventname', function () {});
 ```
 
@@ -118,7 +121,7 @@ Subscribe `listener` to `name` events on `node`.
 
 ##### TextOM\.Node#off(name?, listener?)
 
-```js
+```javascript
 dogs.off('someeventname');
 ```
 
@@ -129,7 +132,7 @@ dogs.off('someeventname');
 
 ##### TextOM\.Node#emit(name, parameters...)
 
-```js
+```javascript
 TextOM.WordNode.on('someeventname', function () {
     this; // dogs
 });
@@ -144,7 +147,7 @@ Bubbles through `node`s constructors. In the case of `dogs`: `WordNode`, `Elemen
 
 ##### TextOM\.Node#trigger(name, context, parameters...)
 
-```js
+```javascript
 root.on('someeventnameinside', function (context) {
     this; // root
     context; // dogsText
@@ -167,7 +170,7 @@ Identifier for [Node](#textomnode-nlcstnode)s.
 
 ##### TextOM\.Node#TextOM
 
-```js
+```javascript
 root.TextOM === TextOM; // true
 ```
 
@@ -239,7 +242,7 @@ Identifier for [Parent](#textomparent-nlcstparent)s.
 
 ##### TextOM\.Parent#head
 
-```js
+```javascript
 paragraph.head; // sentence
 sentence.head; // dogs
 ```
@@ -248,7 +251,7 @@ First [`Child`](#textomchild) of `parent` or `null`.
 
 ##### TextOM\.Parent#tail
 
-```js
+```javascript
 paragraph.tail; // null (see description below);
 sentence.tail; // fullStop
 ```
@@ -257,7 +260,7 @@ Last [`Child`](#textomchild) of `parent` (if more than one child exists) or `nul
      
 ##### TextOM\.Parent#length
 
-```js
+```javascript
 root.length; // 1
 sentence.length; // 6
 ```
@@ -266,7 +269,7 @@ Number of children in `parent`.
 
 ##### TextOM\.Parent#prepend(child)
 
-```js
+```javascript
 sentence.head; // dogs
 sentence.prepend(fullStop);
 sentence.head; // fullStop
@@ -276,7 +279,7 @@ Insert [`child`](#textomchild) as `parent`s first child.
 
 ##### TextOM\.Parent#prependAll(child[])
 
-```js
+```javascript
 sentence.head; // dogs
 sentence.prependAll([fullStop, cats]);
 sentence.head; // fullStop
@@ -289,7 +292,7 @@ Adheres to sorting (the first `child` in `children` will become `parent`s `head`
 
 ##### TextOM\.Parent#append(child)
 
-```js
+```javascript
 sentence.tail; // fullStop
 sentence.append(dogs);
 sentence.tail; // dogs
@@ -299,7 +302,7 @@ Insert [`child`](#textomchild) as `parent`s last child.
 
 ##### TextOM\.Parent#appendAll(child[])
 
-```js
+```javascript
 sentence.tail; // fullStop
 sentence.appendAll([dogs, cats]);
 sentence.tail; // cats
@@ -312,7 +315,7 @@ Adheres to sorting (the last `child` in `children` will become `parent`s `tail`)
 
 ##### TextOM\.Parent#item(index?)
 
-```js
+```javascript
 root.item(); // paragraph
 sentence.item(0); // dogs
 sentence.item(5); // fullStop
@@ -324,7 +327,7 @@ sentence.item(6); // null
      
 ##### TextOM\.Parent#toString()
 
-```js
+```javascript
 root.toString(); // "Dogs & cats."
 '' + sentence; // "Dogs & cats."
 ```
@@ -333,7 +336,7 @@ Get `parent`s content.
 
 ##### TextOM\.Parent#valueOf()
 
-```js
+```javascript
 dogs.valueOf();
 /**
  * {
@@ -360,7 +363,7 @@ Identifier for [Child](#textomchild)s.
 
 ##### TextOM\.child#parent
 
-```js
+```javascript
 dogs.parent; // sentence
 sentence.parent; // paragraph
 paragraph.parent; // root
@@ -370,7 +373,7 @@ paragraph.parent; // root
 
 ##### TextOM\.child#prev
 
-```js
+```javascript
 dogs.prev; // null
 space0.prev; // dogs
 ```
@@ -379,7 +382,7 @@ space0.prev; // dogs
      
 ##### TextOM\.child#next
 
-```js
+```javascript
 cats.next; // fullStop
 fullStop.next; // null
 ```
@@ -388,7 +391,7 @@ fullStop.next; // null
 
 ##### TextOM\.Child#before(sibling)
 
-```js
+```javascript
 dogs.prev; // null
 dogs.before(cats);
 dogs.prev; // cats
@@ -398,7 +401,7 @@ Insert `sibling` ([`Child`](#textomchild)) as `child`s preceding sibling in `par
 
 ##### TextOM\.Child#beforeAll(child[])
 
-```js
+```javascript
 dogs.prev; // null
 dogs.beforeAll([cats, space0]);
 dogs.prev; // space0
@@ -411,7 +414,7 @@ Adheres to sorting (the last `sibling` in `siblings` will become `child`s `prev`
 
 ##### TextOM\.Child#after(child)
 
-```js
+```javascript
 cats.next; // null
 cats.after(dogs);
 cats.next; // dogs
@@ -421,7 +424,7 @@ Insert `sibling` ([`Child`](#textomchild)) as `child`s following sibling in `par
 
 ##### TextOM\.Child#afterAll(child[])
 
-```js
+```javascript
 cats.next; // null
 cats.afterAll([space0, dogs]);
 cats.next; // space0
@@ -434,7 +437,7 @@ Adheres to sorting (the first `sibling` in `siblings` will become `child`s `next
 
 ##### TextOM\.Child#remove()
 
-```js
+```javascript
 root.toString(); // "Dogs & cats."
 fullStop.remove();
 root.toString(); // "Dogs & cats"
@@ -444,7 +447,7 @@ Remove `child` from `parent`.
 
 ##### TextOM\.Child#replace(sibling)
 
-```js
+```javascript
 root.toString(); // "Dogs & cats."
 cats.replace(dogs);
 root.toString(); // " & Dogs"
@@ -462,7 +465,7 @@ Identifier for [Element](#textomelement)s.
 
 ##### TextOM\.Element#split(position?)
 
-```js
+```javascript
 sentence.prev; // null
 sentence.toString(); // "Dogs & cats."
 sentence.split(2);
@@ -485,7 +488,7 @@ Identifier for [Text](#textomtextvalue-nlcsttext)s.
 
 ##### TextOM\.Text#toString()
 
-```js
+```javascript
 dogsText.toString(); // "Dogs"
 space1.toString(); // " "
 fullStop.toString(); // "."
@@ -495,7 +498,7 @@ Get `text`s value.
 
 ##### TextOM\.Text#valueOf()
 
-```js
+```javascript
 dogsText.valueOf();
 /**
  * {
@@ -509,7 +512,7 @@ Get `text`s [NLCST](https://github.com/wooorm/nlcst) representation.
 
 ##### TextOM\.Text#fromString(value?)
 
-```js
+```javascript
 root.toString(); // "Dogs & cats."
 catsText.fromString();
 root.toString(); // "Dogs & ."
@@ -522,7 +525,7 @@ root.toString(); // "Dogs & Lions."
 
 ##### TextOM\.Text#split(position?)
 
-```js
+```javascript
 catsText.prev; // null
 catsText.toString(); // "cats"
 catsText.split(2);
@@ -768,7 +771,7 @@ When subscribing to an instance's events, `listener` is invoked for changes to t
 
 #### remove [[non-bubbling](#non-bubbling-normal-events)]
 
-```js
+```javascript
 dogs.on('remove', function (previous) {
   this === dogs; // true
   previous === sentence; // true
@@ -785,7 +788,7 @@ Fires when a [`Child`](#textomchild) is removed from `previousParent`.
 
 #### insert [[non-bubbling](#non-bubbling-normal-events)]
 
-```js
+```javascript
 dogs.on('insert', function () {
   this === dogs; // true
 });
@@ -799,7 +802,7 @@ Fires when a [`Child`](#textomchild) is inserted into a [`Parent`](#textomparent
 
 #### changetext [[non-bubbling](#non-bubbling-normal-events)]
 
-```js
+```javascript
 dogsText.on('changetext', function (current, previous) {
   this === dogsText; // true
   current === 'Poodles'; // true
@@ -818,7 +821,7 @@ Fires when a [`Text`](#textomtextvalue-nlcsttext) changes value.
 
 #### change [[non-bubbling](#non-bubbling-normal-events)]
 
-```js
+```javascript
 dogs.on('change', function () {
   this === dogs; // true
 });
@@ -834,7 +837,7 @@ Fires when a direct child of a parent changes: either its value, when a new chil
 
 #### changetextinside  [[bubbling](#bubbling-events)]
 
-```js
+```javascript
 root.on('changetextinside', function (node, current, previous) {
   this === root; // true
   node === catsText; // true
@@ -855,7 +858,7 @@ Fires when a [`Text`](#textomtextvalue-nlcsttext) inside an ancestor.
 
 #### insertinside  [[bubbling](#bubbling-events)]
 
-```js
+```javascript
 sentence.on('insertinside', function (node) {
   this === sentence; // true
   node === ampersand; // true
@@ -872,7 +875,7 @@ Fires when a [`Child`](#textomchild) is inserted inside an ancestor.
 
 #### removeinside  [[bubbling](#bubbling-events)]
 
-```js
+```javascript
 root.on('removeinside', function (node, previous) {
   this === root; // true
   node === dogs; // true
@@ -891,7 +894,7 @@ Fires when a [`Child`](#textomchild) is removed inside an ancestor.
 
 #### changeinside  [[bubbling](#bubbling-events)]
 
-```js
+```javascript
 root.on('changeinside', function (parent) {
   this === root; // true
   parent === sentence; // true
@@ -918,7 +921,7 @@ Normal events fire on instances of [Child](#textomchild) and do not fire on ance
 
 Let’s say we have the example code [given in API](#api), and add the following line to it:
 
-```js
+```javascript
 dogsText.fromString('Poodles');
 ```
 
@@ -930,7 +933,7 @@ Bubbling events start on a [`Parent`](#textomparent-nlcstparent) and continue th
 
 Let’s say we have the example code [given in API](#api), and add the following line to it:
 
-```js
+```javascript
 dogsText.fromString('Wolves');
 ```
 
@@ -940,7 +943,7 @@ A `"changetextinside"` event fires on `dogsText` parent, `dogs`, and because `do
 
 Not that intersting. Fast enough. Just for checking performance regression for new features.
 
-```
+```text
               Parent
   80,260 op/s » Append 1 new node to an empty parent
   41,993 op/s » Append 2 new nodes to an empty parent
