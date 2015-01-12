@@ -27,11 +27,11 @@
   "scripts": {
     "test": "_mocha --check-leaks test.js",
     "test-travis": "istanbul cover _mocha --report lcovonly -- --check-leaks test.js",
-    "coverage": "istanbul cover _mocha -- -- test.js",
+    "coverage": "istanbul cover _mocha -- --check-leaks test.js",
     "lint-api": "eslint index.js",
     "lint-benchmark": "eslint --global suite,set,bench benchmark.js",
     "lint-test": "eslint --env mocha test.js",
-    "lint-style": "jscs --reporter=inline index.js test.js benchmark.js",
+    "lint-style": "jscs --reporter inline index.js test.js benchmark.js",
     "lint": "npm run lint-api && npm run lint-benchmark && npm run lint-test && npm run lint-style",
     "make": "npm run lint && npm run coverage",
     "benchmark": "matcha benchmark.js"
