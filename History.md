@@ -1,4 +1,15 @@
 
+n.n.n / 2015-01-12
+==================
+
+  * Update copyright notice in `LICENSE` to include 2015
+  * Add link to whole license in `Readme.md`
+  * Add Duo as an instalation method in `Readme.md`
+  * Add links to installation methods in `Readme.md`
+  * Refactor `package.json`
+  * Update jscs-jsdoc
+  * Update eslint
+
 0.4.0-rc.3 / 2014-12-18
 ==================
 
