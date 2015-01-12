@@ -26,6 +26,12 @@ $ component install wooorm/textom
 $ bower install textom
 ```
 
+[Duo](http://duojs.org/#getting-started):
+
+```javascript
+var TextOMConstructor = require('wooorm/textom');
+```
+
 ## Usage
 
 ```javascript
