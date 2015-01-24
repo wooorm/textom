@@ -1,4 +1,20 @@
 
+n.n.n / 2015-01-24
+==================
+
+  * Add UMD as an installation method in `Readme.md`
+  * Fix UMD global name: `TextOM` to `TextOMConstructor`
+  * Add `index.js` to bower ignore
+  * Remove bower dependencies due to UMD build
+  * Add `textom.js`, `textom.min.js`
+  * Add `textom.js`, `textom.min.js` to `.npmignore`
+  * Add `postbuild` npm script target to mangle build
+  * Add `build`, `prepublish` npm script target
+  * Add esmangle as a dev-dependency
+  * Add browserify as a dev-dependency
+  * Refactor npm script targets
+  * Update eslint
+
 0.4.0 / 2015-01-12
 ==================
 
