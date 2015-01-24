@@ -1,6 +1,6 @@
 {
   "name": "textom",
-  "main": "index.js",
+  "main": "textom.js",
   "description": "Object model for natural languages",
   "license": "MIT",
   "keywords": [
