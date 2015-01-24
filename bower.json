@@ -29,6 +29,7 @@
     "component.json",
     "package.json",
     "benchmark.js",
+    "index.js",
     "test.js"
   ]
 }
