@@ -32,6 +32,15 @@ $ bower install textom
 var TextOMConstructor = require('wooorm/textom');
 ```
 
+UMD (globals/AMD/CommonJS) ([uncompressed](textom.js) and [minified](textom.min.js):
+
+```html
+<script src="path/to/textom.js"></script>
+<script>
+  var TextOM = new TextOMConstructor();
+</script>
+```
+
 ## Usage
 
 ```javascript
