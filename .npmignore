@@ -7,6 +7,8 @@ coverage/
 node_modules/
 benchmark.js
 test.js
+textom.js
+textom.min.js
 bower.json
 component.json
 History.md
